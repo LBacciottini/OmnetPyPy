@@ -1,0 +1,13 @@
+repetitions: 1
+num_rngs: 1
+simulate_until: 800
+topology_file: "qnum_initial_topology.yaml"
+output_dir: "out"
+engine: "simpy"
+
+metrics:
+  - name: "Fidelity"
+    type: ["vector", "mean", "percentiles"]
+
+max_processes: 8
+log_level: "info"
