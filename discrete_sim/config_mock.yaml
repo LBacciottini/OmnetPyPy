@@ -1,0 +1,13 @@
+repetitions: 40
+num_rngs: 1
+simulate_until: 100000
+topology_file: "network_mock.yaml"
+output_dir: "out"
+engine: "simpy"
+
+metrics:
+  - name: "Throughput"
+    type: ["vector", "mean", "percentiles"]
+
+max-processes: 8
+log_level: "info"

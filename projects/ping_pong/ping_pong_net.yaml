@@ -1,0 +1,18 @@
+simple: # simple modules to import. These are the class names of the modules
+  - name: "PingPongModule"
+    package: "ping_pong"
+network:
+  - name: "PingPongNetwork"
+    submodules:
+      - type: "PingPongModule"
+        name: "ping"
+        parameters:
+          delay: 10
+      - type: "PingPongModule"
+        name: "pong"
+    connections:
+      - source: "ping.in_out"
+        target: "pong.in_out"
+        channel: "default"
+        parameters:
+          delay: 10

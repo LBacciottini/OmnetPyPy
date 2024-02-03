@@ -1,0 +1,54 @@
+simple: # simple modules to import. These are the class names of the modules
+  - name: "SimpleModuleSubClassName1"
+    package: "libraryName1"
+  - name: "SimpleModuleSubClassName2"
+    package: "libraryName2"
+
+channels:
+  - name: "ChannelName1"
+    package: "libraryName1"
+  - name: "ChannelName2"
+    package: "libraryName2"
+
+network: # here we define the simple module instances
+  - name: "NetworkName1" # this does not need to be a class name
+    parameters: # these are the parameters of the compound module
+      param1: "value1"
+      param2: "value2"
+    ports:
+      - name: "port1"
+      - name: "port2"
+    submodules:
+      - type: "SimpleModuleSubClassName1"
+        name: "mySimpleModuleSubClassName1"
+        parameters: # they must match the parameters of the submodule
+          param1: "value1"
+          param2: "value2"
+      - type: "SimpleModuleSubClassName2"
+        name: "mySimpleModuleSubClassName2"
+        parameters:
+          param1: "*.param1" # this is a reference to the parameter of this compound module
+          param2: "value2"
+          param3: "value3"
+    connections:
+      - source: "self.port1"
+        target: "mySimpleModuleSubClassName1.port1"
+        type: "forward input"
+      - source: "mySimpleModuleSubClassName2.port1"
+        target: "self.port2"
+        type: "forward output"
+      - source: "mySimpleModuleSubClassName1.port2"
+        target: "mySimpleModuleSubClassName2.port2"
+        channel: "default"
+        parameters:
+          delay: 20
+      - source: "mySimpleModuleSubClassName1.port3"
+        target: "mySimpleModuleSubClassName2.port2"
+        channel: "ChannelName1"
+        parameters:
+          param1: "value1"
+      - for i in 1 to 10:
+          source: "mySimpleModuleSubClassName1.other_port{i}"
+          target: "mySimpleModuleSubClassName2.other_port{i+1}"
+
+
