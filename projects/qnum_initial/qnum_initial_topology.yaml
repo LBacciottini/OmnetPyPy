@@ -12,8 +12,15 @@ network: # RG -> QN0 -> LC -> QN1 -> LC -> QN2
       - type: "RequestGenerator"
         name: "rg"
         parameters:
-          delay: 10
-          qubit_rate: 1
+          flow_descriptors:
+            - flow_id: 0
+              start_time: 0
+              end_time: 10000
+              flow_type: "default"
+              source: "qn0"
+              destination: "qn2"
+              flow_priority: 0
+              average_rate: 20
       - type: "QuantumNode"
         name: "qn0"
       - type: "LinkController"
