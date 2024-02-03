@@ -53,6 +53,18 @@ class Simulation:
 
         return collected_data
 
+    def time(self):
+        """
+        Return the current simulation time.
+
+        Returns
+        -------
+        int or float
+            The current simulation time.
+
+        """
+        return self.connector.get_time()
+
 
 class Experiment:
     """
