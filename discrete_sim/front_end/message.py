@@ -15,3 +15,10 @@ class Message:
         self.meta = meta
         if meta is None:
             self.meta = {}
+
+    def __str__(self):
+        return f"Message(fields={self.fields}, meta={self.meta})"
+
+    def __copy__(self):
+        new_meta = self.meta.copy()
+        return Message(fields=self.fields[:], **new_meta)

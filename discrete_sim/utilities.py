@@ -44,6 +44,9 @@ class MultiRandom(random.Random):
     def choice(self, seq, generator=0):
         return self._generators[generator].choice(seq)
 
+    def choices(self, sequence, weights=None, cum_weights=None, k=1, generator=0):
+        return self._generators[generator].choices(sequence, weights=weights, cum_weights=cum_weights, k=k)
+
     def shuffle(self, x, generator=0):
         return self._generators[generator].shuffle(x)
 
@@ -148,3 +151,17 @@ def get_metrics(metric, df):
         final["percentiles"] = quantiles_df.to_dict()
 
     return final
+
+
+def time_unit_factor(unit):
+
+    if unit == "s":
+        return 1
+    elif unit == "ms":
+        return 1e3
+    elif unit == "us":
+        return 1e6
+    elif unit == "ns":
+        return 1e9
+    else:
+        raise ValueError("Invalid time unit")

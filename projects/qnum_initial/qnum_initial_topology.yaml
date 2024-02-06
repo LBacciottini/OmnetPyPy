@@ -6,7 +6,7 @@ simple:
   - name: "RequestGenerator"
     package: "qnum_initial"
 
-network: # RG -> QN0 -> LC -> QN1 -> LC -> QN2
+network: # QN0 -> LC -> QN1 -> LC -> QN2  ((( RG (broadcast)
   - name: "QuantumNetwork"
     submodules:
       - type: "RequestGenerator"
@@ -14,12 +14,13 @@ network: # RG -> QN0 -> LC -> QN1 -> LC -> QN2
         parameters:
           flow_descriptors:
             - flow_id: 0
-              start_time: 0
-              end_time: 10000
               flow_type: "default"
               source: "qn0"
               destination: "qn2"
               flow_priority: 0
+              success_probs: # success probability of LLE attempts on each link, due to pump power
+                - 0.4
+                - 0.4
               average_rate: 20
       - type: "QuantumNode"
         name: "qn0"
@@ -32,11 +33,18 @@ network: # RG -> QN0 -> LC -> QN1 -> LC -> QN2
       - type: "QuantumNode"
         name: "qn2"
     connections:
-      - source: "rg.rg0"
-        target: "qn0.rg0"
-        channel: "default"
-        parameters:
-          delay: 0
+      - for i in 0 to 2:
+          source: "rg.rg0"
+          target: "qn{i}.rg0"
+          type: "subscribed"
+          parameters:
+            delay: 0
+      - for i in 0 to 1:
+          source: "rg.rg0"
+          target: "lc{i}.rg0"
+          type: "subscribed"
+          parameters:
+            delay: 0
       - for i in 0 to 1:
           source: "qn{i}.q1"
           target: "lc{i}.lc0"
@@ -48,4 +56,4 @@ network: # RG -> QN0 -> LC -> QN1 -> LC -> QN2
           target: "qn{i+1}.q0"
           channel: "default"
           parameters:
-              delay: 10
+            delay: 10

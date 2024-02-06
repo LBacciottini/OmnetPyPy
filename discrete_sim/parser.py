@@ -149,6 +149,9 @@ def parse_connection(connection_data, compound_module, channel_classes, next_cha
     elif "type" in connection_data and connection_data["type"] == "forward output":
         source_module.ports[source_port].forward_output(target_module.ports[target_port])
 
+    elif "type" in connection_data and connection_data["type"] == "subscribed":
+        target_module.ports[target_port].subscribe_to(source_module.ports[source_port])
+
     elif "type" not in connection_data and "channel" not in connection_data:
         channel = None
         source_module.connect(local_port=source_port, remote_entity=target_module, remote_port=target_port,

@@ -16,12 +16,13 @@ class Simulation:
     It represents a simulation configuration, and it can be used to store the configuration of a repetition
     """
 
-    def __init__(self, engine, seed_set, repetition, metrics, yaml_path, until, log_level):
+    def __init__(self, engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit):
         self.engine = engine
         self.seed_set = seed_set
         self.repetition_idx = repetition
         self.until = until
         self.log_level = log_level
+        self.time_unit = time_unit
 
         self.rng = utilities.MultiRandom(seeds=seed_set)
         self.connector = None
@@ -65,6 +66,19 @@ class Simulation:
         """
         return self.connector.get_time()
 
+    @property
+    def time_unit_factor(self):
+        """
+        Return the factor to convert the time unit to seconds.
+
+        Returns
+        -------
+        int or float
+            The factor to convert the time unit to seconds.
+
+        """
+        return utilities.time_unit_factor(self.time_unit)
+
 
 class Experiment:
     """
@@ -90,6 +104,7 @@ class Experiment:
         rngs_per_rep = self.config.get("num_rngs", 1)
         until = self.config.get("simulate_until", None)
         log_level = self.config.get("log_level", "info")
+        time_unit = self.config.get("time_unit", "us")
 
         # set log level
         sim_log.log_to_console(level=log_level)
@@ -124,7 +139,7 @@ class Experiment:
 
             metrics.append(utilities.FutureMetric(**params))
 
-        self.simulations_params = [(engine, self.seed_sets[i], i, metrics, yaml_path, until, log_level)
+        self.simulations_params = [(engine, self.seed_sets[i], i, metrics, yaml_path, until, log_level, time_unit)
                                    for i in range(repetitions)]
 
     def run_simulations(self):

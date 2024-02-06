@@ -4,6 +4,7 @@ simulate_until: 100000
 topology_file: "network_mock.yaml"
 output_dir: "out"
 engine: "simpy"
+time_unit: "us"
 
 metrics:
   - name: "Throughput"

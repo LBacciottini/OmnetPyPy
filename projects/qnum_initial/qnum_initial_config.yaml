@@ -1,9 +1,10 @@
 repetitions: 1
-num_rngs: 1
+num_rngs: 2
 simulate_until: 800
 topology_file: "qnum_initial_topology.yaml"
 output_dir: "out"
 engine: "simpy"
+time_unit: "us"
 
 metrics:
   - name: "Fidelity"
