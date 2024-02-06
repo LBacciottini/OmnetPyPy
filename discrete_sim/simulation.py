@@ -193,6 +193,6 @@ class Experiment:
 
 def _start_sim(sim_params):
     # defined here to be picklable
-    engine, seed_set, repetition, metrics, yaml_path, until, log_level = sim_params
-    sim = Simulation(engine, seed_set, repetition, metrics, yaml_path, until, log_level)
+    engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit = sim_params
+    sim = Simulation(engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit)
     return sim.start()
