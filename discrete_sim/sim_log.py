@@ -140,6 +140,7 @@ def sanitize_log_level(level):
 
     return level
 
+
 def debug(message, module_id=None, time=None):
     """Log a message with level DEBUG on the logger.
 
@@ -155,7 +156,10 @@ def debug(message, module_id=None, time=None):
     """
     log_message = ""
     if time is not None:
-        log_message = f"[{time}]::"
+        if int(time) == time:
+            log_message = f"[{int(time)}]::"
+        else:
+            log_message = f"[{time:.3f}]::"
 
     log_message += "DEBUG::"
     if module_id is not None:

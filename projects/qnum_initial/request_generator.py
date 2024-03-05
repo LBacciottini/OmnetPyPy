@@ -13,15 +13,24 @@ class RequestGenerator(SimpleModule):
         self.flow_descriptors = self._sanitize_flow_descriptors(flow_descriptors)
         # dict of flow descriptors, indexed by flow_id, each one containing the following fields (for now):
         # - flow_id
-        # - source_id
-        # - destination_id
-        # - path (list of node identifiers)
+        # - source
+        # - destination
+        # - path (list of node names, including source and destination)
         # - success_probs (list of success probabilities for each link in the path)
         # - request_rate (average, Poisson process)
+        # - direction (upstream or downstream)
 
         self.memos = {}  # dictionary of self messages, one for each flow
 
         self.generators = {}  # dictionary of independent RNGs, one for each flow
+
+        self.next_req_ids = {}  # dictionary of next request ids, one for each flow
+        for flow_id in self.flow_descriptors:
+            self.next_req_ids[flow_id] = 0
+
+        self.increase_msg = Message(["increase"], header="increase")
+        self.increase_period = 0.02  # seconds
+        self.increase_value = 50000  # Hz
 
         super().__init__(name, identifier, port_names)
 
@@ -66,10 +75,16 @@ class RequestGenerator(SimpleModule):
         elif step == 3:
             # here we are sure that all modules have been initialized
             # we can now send the flows information
-            flow_desc_cpy = [flow_desc.__copy__() for flow_desc in self.flow_descriptors.values()]
+            flow_desc_cpy = [flow_desc.copy() for flow_desc in self.flow_descriptors.values()]
             message = FlowsInformationPacket(flows=flow_desc_cpy)
             self.send(message, port_name="rg0")
+            sim_log.debug(f"Here Request Generator. Sent flows information {message}",
+                          time=self.sim_context.time())
             # all subscribed ports will receive a copy of the message
+
+            # schedule the increase of the request rate
+            self.schedule_message(message=self.increase_msg,
+                                  delay=self.increase_period*self.sim_context.time_unit_factor)
 
     def _get_self_message(self, flow_id):
         """
@@ -83,18 +98,40 @@ class RequestGenerator(SimpleModule):
         """
         flow_descriptor = self.flow_descriptors[flow_id]
         generator = self.generators[flow_id]
-        average_time = self.sim_context.time_unit_factor / flow_descriptor['request_rate']
-        return self.sim_context.rng.expovariate(lambd=average_time, generator=generator)
+        average_rate = flow_descriptor['request_rate']/self.sim_context.time_unit_factor
+
+        ret = self.sim_context.rng.expovariate(lambd=average_rate, generator=generator)
+        return ret
 
     def handle_message(self, message, port_name):
 
         if port_name is None:  # self message, we need to generate a request for the flow
-            flow_id = message.header
 
+            if "header" not in message.meta:
+                raise ValueError("Unknown self message received")
+
+            if message.meta["header"] == "increase":
+                # increase the request rate
+                for flow_id in self.flow_descriptors:
+                    self.flow_descriptors[flow_id]['request_rate'] += self.increase_value
+                    sim_log.debug(f"Request rate increased to {self.flow_descriptors[flow_id]['request_rate']}",
+                                  time=self.sim_context.time())
+                # schedule the next increase
+                self.schedule_message(message=self.increase_msg,
+                                      delay=self.increase_period*self.sim_context.time_unit_factor)
+                return
+
+            flow_id = message.meta["header"]
+
+            """
             sim_log.debug(f"Request generated for flow {flow_id}", time=self.sim_context.time())
+            """
             destination = self.flow_descriptors[flow_id]['path'][0]  # we assume to be attached
             # to the first node on the path
-            request_pkt = EntanglementRequestPacket(destination=destination, flow_id=flow_id)
+            req_id = self.next_req_ids[flow_id]
+            self.next_req_ids[flow_id] += 1
+            request_pkt = EntanglementRequestPacket(destination=destination, flow_id=flow_id, req_id=req_id,
+                                                    lle_id=None)
             self.send(message=request_pkt, port_name="rg0")
 
             # schedule the next request arrival

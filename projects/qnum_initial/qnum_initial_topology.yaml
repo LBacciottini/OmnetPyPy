@@ -1,10 +1,10 @@
 simple:
   - name: "QuantumNode"
-    package: "qnum_initial"
+    package: "quantum_node"
   - name: "LinkController"
-    package: "qnum_initial"
+    package: "link_controller"
   - name: "RequestGenerator"
-    package: "qnum_initial"
+    package: "request_generator"
 
 network: # QN0 -> LC -> QN1 -> LC -> QN2  ((( RG (broadcast)
   - name: "QuantumNetwork"
@@ -21,15 +21,26 @@ network: # QN0 -> LC -> QN1 -> LC -> QN2  ((( RG (broadcast)
               success_probs: # success probability of LLE attempts on each link, due to pump power
                 - 0.4
                 - 0.4
-              average_rate: 20
+              request_rate: 50000 # 1/s
+              path:
+                - "qn0"
+                - "lc0"
+                - "qn1"
+                - "lc1"
+                - "qn2"
+              direction: "upstream"  # useful for nodes to infer the output port of messages (no routing for now)
       - type: "QuantumNode"
         name: "qn0"
       - type: "LinkController"
         name: "lc0"
+        parameters:
+          t_clock: 0.1 # us
       - type: "QuantumNode"
         name: "qn1"
       - type: "LinkController"
         name: "lc1"
+        parameters:
+          t_clock: 1.
       - type: "QuantumNode"
         name: "qn2"
     connections:

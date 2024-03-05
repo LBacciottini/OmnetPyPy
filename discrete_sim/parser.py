@@ -89,31 +89,32 @@ def parse_compound_modules(compound_data, module_classes, channel_classes):
                     # iterate over the range
                     for i in range(bottom, top + 1):
                         # format conn_data['source'] and conn_data['target'] by replacing the variable name
-                        new_data = {}
-                        for k, v in conn_data.items():
-                            new_data[k] = v.replace("{"+var_name+"}", str(i))
+                        new_data = conn_data.copy()
+                        for k, v in new_data.items():
+                            if k == "source" or k == "target":
+                                new_data[k] = v.replace("{"+var_name+"}", str(i))
 
-                            # there might also occur "{i+l}" or "{i-l}" in the string
-                            # we have to replace these as well using pattern matching
-                            # we can use the re module for this
-                            # we have to import the re module
-                            import re
-                            # we have to find all occurences of "{i+l}" and "{i-l}" in the string, for any l
-                            # we can use the findall method of the re module
-                            # we have to define the pattern first
-                            pattern = r"{i[+-]\d+}"
-                            # then we can use the findall method
-                            matches = re.findall(pattern, new_data[k])
-                            # we have to iterate over the matches and replace them in the string
-                            for match in matches:
-                                # we have to extract the number and the operator from the match
-                                operator = match[2]
-                                number = int(match[3:])
-                                # we have to replace the match in the string
-                                if operator == "+":
-                                    new_data[k] = new_data[k].replace(match, str(i+number))
-                                else:
-                                    new_data[k] = new_data[k].replace(match, str(i-number))
+                                # there might also occur "{i+l}" or "{i-l}" in the string
+                                # we have to replace these as well using pattern matching
+                                # we can use the re module for this
+                                # we have to import the re module
+                                import re
+                                # we have to find all occurences of "{i+l}" and "{i-l}" in the string, for any l
+                                # we can use the findall method of the re module
+                                # we have to define the pattern first
+                                pattern = r"{i[+-]\d+}"
+                                # then we can use the findall method
+                                matches = re.findall(pattern, new_data[k])
+                                # we have to iterate over the matches and replace them in the string
+                                for match in matches:
+                                    # we have to extract the number and the operator from the match
+                                    operator = match[2]
+                                    number = int(match[3:-1])
+                                    # we have to replace the match in the string
+                                    if operator == "+":
+                                        new_data[k] = new_data[k].replace(match, str(i+number))
+                                    else:
+                                        new_data[k] = new_data[k].replace(match, str(i-number))
 
                         # parse the connection
                         next_channel_id = parse_connection(new_data, compound_module, channel_classes,
@@ -160,7 +161,7 @@ def parse_connection(connection_data, compound_module, channel_classes, next_cha
     elif "type" not in connection_data and "channel" in connection_data:
         if connection_data["channel"] == "default":
             # in this case we gather the parameters and instantiate a default channel
-            parameters = connection_data.get("parameters", {})
+            parameters = connection_data.get("parameters", {}).copy()
             parameters["name"] = "channel_" + str(next_channel_id)
             parameters["identifier"] = next_channel_id
             next_channel_id += 1

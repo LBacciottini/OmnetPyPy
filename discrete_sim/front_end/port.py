@@ -34,7 +34,7 @@ class Port:
         if port.connected_port is not None:
             raise ValueError("Cannot subscribe to a port that is already connected")
 
-        port.subscribed_ports.append(port)
+        port.subscribed_ports.append(self)
         self.is_subscribed = True
 
     def disconnect(self, port):

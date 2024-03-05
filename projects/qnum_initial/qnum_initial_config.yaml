@@ -1,14 +1,16 @@
 repetitions: 1
 num_rngs: 2
-simulate_until: 800
+simulate_until: 200000
 topology_file: "qnum_initial_topology.yaml"
 output_dir: "out"
 engine: "simpy"
 time_unit: "us"
 
 metrics:
-  - name: "Fidelity"
+  - name: "queuing_time"
     type: ["vector", "mean", "percentiles"]
+  - name: "throughput"
+    type: ["vector"]
 
 max_processes: 8
-log_level: "info"
+log_level: "debug"
