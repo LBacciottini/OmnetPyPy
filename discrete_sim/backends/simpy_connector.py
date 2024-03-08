@@ -5,8 +5,8 @@ import simpy
 
 class SimPyConnector(Connector):
 
-    def __init__(self, simulation, metrics=None):
-        super().__init__(simulation, metrics)
+    def __init__(self, simulation, metrics=None, output_dir=None, repetition=0):
+        super().__init__(simulation, metrics, output_dir, repetition)
         self.env = simpy.Environment()
         self.entities = {}
         self._wrappers = {}
@@ -93,6 +93,10 @@ def schedule_message(message, wrapper, at=None, delay=None):
         elif delay:
             yield wrapper.env.timeout(delay)
         wrapper.put(message=message, port_name=None)
+        # remove the message from the scheduled messages list
+        for m, p in wrapper.scheduled_messages:
+            if m == message:
+                wrapper.scheduled_messages.remove((m, p))
     except simpy.Interrupt:
         pass
 

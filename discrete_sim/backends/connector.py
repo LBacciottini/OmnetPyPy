@@ -20,13 +20,16 @@ class Connector(abc.ABC):
         The simulation object that describes the simulation configuration.
     """
 
-    def __init__(self, simulation, metrics=None):
+    def __init__(self, simulation, metrics=None, output_dir=None, repetition=0):
         self.simulation = simulation
         self.metrics = metrics
+        self.output_dir = output_dir
+        self.repetition = repetition
 
         # allocate a dict of numpy dataframes indexed by metric name
         if metrics is not None:
             self.metrics_data = {metric.name: pd.DataFrame(columns=["sample", "timestamp"]) for metric in metrics}
+            self.metrics_headers = {metric.name: False for metric in metrics}
         else:
             self.metrics_data = {}
 
@@ -92,6 +95,30 @@ class Connector(abc.ABC):
                 self.metrics_data[metric].loc[len(self.metrics_data[metric].index)] = [value, self.get_time()]
             # otherwise we ignore the emitted metric
 
+                # append the metrics to the output file if the dataframes are too big
+                if len(self.metrics_data[metric].index) > 1000:
+                    self.dump_metric(metric)
+
+        else:
+            raise Exception("No metrics have been defined for this simulation")
+
+    def dump_metric(self, metric):
+        """
+        Dump the metric data to a file.
+
+        Parameters
+        ----------
+        metric : str
+            The name of the metric to be dumped.
+        """
+        if self.metrics is not None:
+            if metric in self.metrics_data:
+                if not self.metrics_headers[metric]:
+                    self.metrics_data[metric].to_csv(f"{self.output_dir}/.{metric}_vector_rep{self.repetition}.csv", mode="w", header=True, index=False)
+                    self.metrics_headers[metric] = True
+                else:
+                    self.metrics_data[metric].to_csv(f"{self.output_dir}/.{metric}_vector_rep{self.repetition}.csv", mode="a", header=False, index=False)
+                self.metrics_data[metric] = pd.DataFrame(columns=["sample", "timestamp"])
         else:
             raise Exception("No metrics have been defined for this simulation")
 

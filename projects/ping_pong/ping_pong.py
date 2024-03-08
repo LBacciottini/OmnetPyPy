@@ -27,4 +27,3 @@ class PingPongModule(SimpleModule):
             sim_log.info(message=f"{self.name}: Received the Message: {message.fields[0]}", time=self.sim_context.time())
             self.send(message, port_name="in_out")
             self.emit_metric("Throughput", 1)
-

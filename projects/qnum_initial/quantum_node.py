@@ -5,7 +5,7 @@ from projects.qnum_initial.queues import RequestQueue, LLEManager
 
 class QuantumNode(SimpleModule):
     """
-    This class models a Quantum Router along a repeater chain
+    This class models a Quantum Repeater along a repeater chain
     """
 
     def __init__(self, name, identifier):
@@ -113,7 +113,7 @@ class QuantumNode(SimpleModule):
             self.req_queue.add_request(message, self.sim_context.time())
             return
 
-        # there is at least an lle for this flow that can be swapped with the request
+        # there is at least a lle for this flow that can be swapped with the request
         # pop the lle for the request
         lle, lle_time = self.lle_manager.pop_from_req(request=message, raise_error=True)
         # pop the youngest suitable lle
@@ -168,6 +168,8 @@ class QuantumNode(SimpleModule):
         # we have to check whether there is a request to be swapped with this lle
         # if so, we swap, update the message information and forward the request to the next node
 
+        # self._check_queues_size()
+
         if self.req_queue.is_empty(flow_id=flow_id):  # no requests for this flow :(
             # append
             self.lle_manager.add_lle(message, port_name, self.sim_context.time())
@@ -211,3 +213,10 @@ class QuantumNode(SimpleModule):
         # emit queueing time for the request (only intermediate repeater)
         if self.name == "qn1":
             self.emit_metric("queuing_time", self.sim_context.time() - request_time)
+
+    def _check_queues_size(self):
+        # check if the queues are too big, for debugging purposes
+        if len(self.req_queue) > 10000:
+            sim_log.warning(f"Request queue size: {len(self.req_queue)}", time=self.sim_context.time())
+        if len(self.lle_manager) > 10000:
+            sim_log.warning(f"LLEs size: {len(self.lle_manager)}", time=self.sim_context.time())

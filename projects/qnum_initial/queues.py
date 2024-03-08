@@ -252,3 +252,9 @@ class LLEManager:
             return len([lle for lle in self._lles[port_name] if lle[0].flow_id == flow_id]) == 0
         else:
             return len(self._lles[port_name]) == 0
+
+    def __len__(self):
+        tot_len = 0
+        for lles in self._lles.values():
+            tot_len += len(lles)
+        return tot_len
