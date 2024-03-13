@@ -16,7 +16,8 @@ class Simulation:
     It represents a simulation configuration, and it can be used to store the configuration of a repetition
     """
 
-    def __init__(self, engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir):
+    def __init__(self, engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir,
+                 global_params):
         self.engine = engine
         self.seed_set = seed_set
         self.repetition_idx = repetition
@@ -24,6 +25,9 @@ class Simulation:
         self.log_level = log_level
         self.time_unit = time_unit
         self.output_dir = output_dir
+
+        self.global_params = global_params.copy()
+        # dictionary of global parameters
 
         self.rng = utilities.MultiRandom(seeds=seed_set)
         self.connector = None
@@ -108,6 +112,8 @@ class Experiment:
         log_level = self.config.get("log_level", "info")
         time_unit = self.config.get("time_unit", "us")
 
+        global_params = self.config.get("global_params", {})
+
         # set log level
         sim_log.log_to_console(level=log_level)
 
@@ -144,7 +150,7 @@ class Experiment:
         output_dir = self.config.get("output_dir", "output")
 
         self.simulations_params = [(engine, self.seed_sets[i], i, metrics, yaml_path,
-                                    until, log_level, time_unit, output_dir)
+                                    until, log_level, time_unit, output_dir, global_params)
                                    for i in range(repetitions)]
 
     def run_simulations(self):
@@ -217,6 +223,6 @@ class Experiment:
 
 def _start_sim(sim_params):
     # defined here to be picklable
-    engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir = sim_params
-    sim = Simulation(engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir)
+    engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir, global_params = sim_params
+    sim = Simulation(engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir, global_params)
     return sim.start()

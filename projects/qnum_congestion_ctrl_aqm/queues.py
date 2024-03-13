@@ -63,6 +63,38 @@ class RequestQueue:
                     return queue.pop(-i - 1)
         return None, None
 
+    def pop_from_lle(self, lle, raise_error=False):
+        """
+        Remove and return the request in the queue associated with the LLE
+
+        Parameters
+        ----------
+        lle : EntanglementGenPacket
+            The LLE to satisfy
+        raise_error : bool, optional
+            Whether to raise an error if no request is found. Default is False.
+
+        Returns
+        -------
+        tuple
+            A tuple with the request and the time it was added to the queue, or (None, None) if no request was found
+            and raise_error is False
+        """
+        flow_id = lle.flow_id
+        if flow_id not in self._requests:
+            if raise_error:
+                raise ValueError("No request found for the given LLE")
+            return None, None
+
+        queue = self._requests[flow_id]
+        for i, (req, time) in enumerate(queue):
+            if req.lle_id == lle.lle_id:
+                return queue.pop(i)
+
+        if raise_error:
+            raise ValueError("No request found for the given LLE")
+        return None, None
+
     def peek_request(self, flow_id, policy=OLDEST):
         """
         Return the first request in the queue without removing it
@@ -126,6 +158,40 @@ class RequestQueue:
             tot_len += len(queue)
         return tot_len
 
+    def length(self, flow_id):
+        """
+        Return the total number of requests in the queue for a given flow id
+
+        Returns
+        -------
+        int
+            The total number of requests in the queue for the given flow id
+        """
+        return len(self._requests[flow_id])
+
+    def weighted_length(self, direction):
+        """
+        Get the total number of requests belonging to any flow with the specified direction.
+        The weight of each request is 1/success_prob.
+
+        Parameters
+        ----------
+        direction : string
+            The direction of the flow. Either "upstream" or "downstream".
+
+        Returns
+        -------
+        float
+            The weighted queue length for the given direction
+        """
+        tot_len = 0.
+        for flow_id, queue in self._requests.items():
+            for req, time in queue:
+                if req.meta["direction"] == direction:
+                    tot_len += 1/req.meta["success_probs"][0]
+                else:  # all requests for the flow will have the same direction
+                    break
+        return tot_len
 
 class LLEManager:
     """
@@ -175,6 +241,30 @@ class LLEManager:
             for i, (lle, time) in enumerate(lles):
                 if lle.flow_id == request.flow_id and lle.lle_id == request.lle_id:
                     return self._lles[port_name].pop(i)
+        if raise_error:
+            raise ValueError("No LLE found for the given request")
+        return None, None
+
+    def peek_from_req(self, request, raise_error=True):
+        """
+        Return the LLE in the manager associated with the request
+
+        Parameters
+        ----------
+        request : EntanglementRequestPacket
+            The request to satisfy
+        raise_error : bool, optional
+            Whether to raise an error if no LLE is found. Default is True.
+
+        Returns
+        -------
+        tuple
+            A tuple with the LLE and the time it was added to the manager, or (None, None) if no LLE was found
+        """
+        for port_name, lles in self._lles.items():
+            for lle, time in lles:
+                if lle.flow_id == request.flow_id and lle.lle_id == request.lle_id:
+                    return lle, time
         if raise_error:
             raise ValueError("No LLE found for the given request")
         return None, None
@@ -282,3 +372,14 @@ class LLEManager:
         for lles in self._lles.values():
             tot_len += len(lles)
         return tot_len
+
+    def length(self, port_name):
+        """
+        Return the total number of LLEs in the manager for a given port
+
+        Returns
+        -------
+        int
+            The total number of LLEs in the manager for the given port
+        """
+        return len(self._lles[port_name])

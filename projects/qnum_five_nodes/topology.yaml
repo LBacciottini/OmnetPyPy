@@ -1,0 +1,107 @@
+simple:
+  - name: "QuantumNode"
+    package: "quantum_node"
+  - name: "LinkController"
+    package: "link_controller"
+  - name: "RequestGenerator"
+    package: "request_generator"
+
+network: # QN0 -> LC -> QN1 -> LC -> QN2 -> LC -> QN3 -> LC -> QN4  ((( RG (broadcast)
+  - name: "QuantumNetwork"
+    submodules:
+      - type: "RequestGenerator"
+        name: "rg"
+        parameters:
+          flow_descriptors:
+            - flow_id: 0
+              flow_type: "default"
+              source: "qn0"
+              destination: "qn4"
+              flow_priority: 0
+              success_probs: # success probability of LLE attempts on each link, due to pump power
+                - 0.4
+                - 0.4
+                - 0.4
+                - 0.4
+              request_rate: 50000 # 1/s
+              path:
+                - "qn0"
+                - "lc0"
+                - "qn1"
+                - "lc1"
+                - "qn2"
+                - "lc2"
+                - "qn3"
+                - "lc3"
+                - "qn4"
+              direction: "upstream"  # useful for nodes to infer the output port of messages (no routing for now)
+            - flow_id: 1
+              flow_type: "default"
+              source: "qn3"
+              destination: "qn0"
+              flow_priority: 0
+              success_probs: # success probability of LLE attempts on each link, due to pump power
+                - 0.4
+                - 0.4
+                - 0.4
+              request_rate: 50000 # 1/s
+              path:
+                - "qn3"
+                - "lc2"
+                - "qn2"
+                - "lc1"
+                - "qn1"
+                - "lc0"
+                - "qn0"
+              direction: "downstream"  # useful for nodes to infer the output port of messages (no routing for now)
+      - type: "QuantumNode"
+        name: "qn0"
+      - type: "LinkController"
+        name: "lc0"
+        parameters:
+          t_clock: 1. # us
+      - type: "QuantumNode"
+        name: "qn1"
+      - type: "LinkController"
+        name: "lc1"
+        parameters:
+          t_clock: 1.  # us
+      - type: "QuantumNode"
+        name: "qn2"
+      - type: "LinkController"
+        name: "lc2"
+        parameters:
+          t_clock: 1. # us
+      - type: "QuantumNode"
+        name: "qn3"
+      - type: "LinkController"
+        name: "lc3"
+        parameters:
+          t_clock: 1. # us
+      - type: "QuantumNode"
+        name: "qn4"
+    connections:
+      - for i in 0 to 4:
+          source: "rg.rg0"
+          target: "qn{i}.rg0"
+          type: "subscribed"
+          parameters:
+            delay: 0
+      - for i in 0 to 3:
+          source: "rg.rg0"
+          target: "lc{i}.rg0"
+          type: "subscribed"
+          parameters:
+            delay: 0
+      - for i in 0 to 3:
+          source: "qn{i}.q1"
+          target: "lc{i}.lc0"
+          channel: "default"
+          parameters:
+            delay: 10
+      - for i in 0 to 3:
+          source: "lc{i}.lc1"
+          target: "qn{i+1}.q0"
+          channel: "default"
+          parameters:
+            delay: 10

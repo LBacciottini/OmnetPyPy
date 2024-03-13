@@ -1,5 +1,5 @@
 repetitions: 1
-num_rngs: 2
+num_rngs: 5
 simulate_until: 200000
 topology_file: "topology.yaml"
 output_dir: "out"
