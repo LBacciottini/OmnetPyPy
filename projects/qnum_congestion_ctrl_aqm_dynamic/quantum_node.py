@@ -1,9 +1,10 @@
 from discrete_sim import SimpleModule, sim_log, Message
-import projects.qnum_congestion_ctrl_aqm.messages as messages
-from projects.qnum_congestion_ctrl_aqm.aqm_controller import PIController
-from projects.qnum_congestion_ctrl_aqm.congestion_controller import CongestionController
-from projects.qnum_congestion_ctrl_aqm.queues import RequestQueue, LLEManager
-from projects.qnum_congestion_ctrl_aqm.utility import sanitize_flow_descriptors
+import projects.qnum_congestion_ctrl_aqm_dynamic.messages as messages
+from projects.qnum_congestion_ctrl_aqm_dynamic.aqm_controller import PIController
+from projects.qnum_congestion_ctrl_aqm_dynamic.congestion_controller import WindowCongestionController, \
+    RateCongestionController
+from projects.qnum_congestion_ctrl_aqm_dynamic.queues import RequestQueue, LLEManager
+from projects.qnum_congestion_ctrl_aqm_dynamic.utility import sanitize_flow_descriptors
 
 
 class QuantumNode(SimpleModule):
@@ -36,7 +37,7 @@ class QuantumNode(SimpleModule):
         ################################
         # CONGESTION CONTROL VARIABLES #
         ################################
-        self.congestion_controller = CongestionController()
+        self.congestion_controller = RateCongestionController()
 
         self.cur_req_ids = {}  # dictionary of current request ids, one for each flow, indexed by flow_id, used to
         # keep track of which id assign to the next generated request for each flow
@@ -57,6 +58,24 @@ class QuantumNode(SimpleModule):
         # END OF AQM VARIABLES         #
         ################################
 
+        ################################
+        # NEW FLOW GENERATION          #
+        ################################
+        self.new_flow_trigger_msg = Message(["new flow trigger"], header="new flow trigger")
+        self.new_flow_trigger_period = 8000000  # us
+        ################################
+        # END OF NEW FLOW GENERATION    #
+        ################################
+
+        ################################
+        # NEW REQUEST GENERATION       #
+        ################################
+        self.new_request_trigger_msgs = {}
+        self.increase_request_rate_trigger_msgs = {}
+        ################################
+        # END OF NEW REQUEST GENERATION #
+        ################################
+
     def initialize(self, step=0):
         if step == 0:
             # usually you can retrieve parameters by looking at self.parent attributes (parent is the compound module
@@ -73,7 +92,7 @@ class QuantumNode(SimpleModule):
             # - success_probs (list of success probabilities for each link in the path)
             # - direction (upstream or downstream)
 
-            message = messages.FlowsInformationPacket(flows=flow_descriptors)
+            message = messages.FlowsInformationPacket(destination=self.name, flows=flow_descriptors)
             self._handle_flows_information(message)
 
             self.schedule_message(self.timeout_trigger_msg, delay=self.timeout_trigger_period)
@@ -95,6 +114,8 @@ class QuantumNode(SimpleModule):
             for direction in ["upstream", "downstream"]:
                 self._schedule_aqm_update(direction)
 
+            self.schedule_message(self.new_flow_trigger_msg, delay=self.new_flow_trigger_period)
+
     def _schedule_aqm_update(self, direction):
         """
         Schedule the next AQM update for the given direction
@@ -103,7 +124,7 @@ class QuantumNode(SimpleModule):
 
     def handle_message(self, message, port_name):
 
-        if isinstance(message, messages.FlowsInformationPacket):
+        if isinstance(message, messages.FlowsInformationPacket) and message.destination == self.name:
             self._handle_flows_information(message)
             return
 
@@ -111,7 +132,39 @@ class QuantumNode(SimpleModule):
             # we generate the first requests for each flow for which we are the source
             for flow_id in self.flows_info:
                 if self.name == self.flows_info[flow_id]["source"]:
-                    self.generate_request(flow_id)
+                    if not isinstance(self.congestion_controller, RateCongestionController):
+                        self.generate_request(flow_id)
+                    else:
+                        # schedule the next request generation
+                        self.schedule_message(self.new_request_trigger_msgs[flow_id],
+                                              delay=self.congestion_controller.get_inter_request_gap(flow_id=flow_id))
+                        # schedule the next increase in the flow rate
+                        self.schedule_message(self.increase_request_rate_trigger_msgs[flow_id],
+                                              delay=self.congestion_controller.estimated_rtt[flow_id])
+            return
+
+        if "header" in message.meta and message.meta["header"] == "new flow trigger":
+            self._generate_new_flow()
+            self.schedule_message(self.new_flow_trigger_msg, delay=self.new_flow_trigger_period)
+            return
+
+        if "header" in message.meta and message.meta["header"] == "new requests trigger":
+            self.generate_request(flow_id=message.fields[0])
+            delay = self.congestion_controller.get_inter_request_gap(flow_id=message.fields[0])
+            self.schedule_message(message, delay=delay)
+            return
+
+        if "header" in message.meta and message.meta["header"] == "increase flow rate trigger":
+            if not isinstance(self.congestion_controller, RateCongestionController):
+                raise ValueError("The global rate increase period is set but the congestion controller"
+                                 "is not a RateCongestionController")
+            flow_id = message.fields[0]
+            self.congestion_controller.increase_congestion_knob(flow_id=message.fields[0],
+                                                                current_time=self.sim_context.time())
+            # get estimated rtt
+            rtt = self.congestion_controller.estimated_rtt[flow_id]
+            # schedule the next increase for the estimated rtt
+            self.schedule_message(message, delay=rtt)
             return
 
         if port_name is None and message.meta["header"].startswith("update AQM"):
@@ -161,8 +214,10 @@ class QuantumNode(SimpleModule):
             flow = relevant_flows[flow_id]
             next_port = "q0" if flow["direction"] == "downstream" else "q1"
             if self.name == flow["source"]:
-                self.congestion_controller.setup_congestion_control(flow)
+                self.congestion_controller.setup_congestion_control(flow, current_time=self.sim_context.time())
                 self.cur_req_ids[flow_id] = 0
+                self.new_request_trigger_msgs[flow_id] = Message([flow_id], header="new requests trigger")
+                self.increase_request_rate_trigger_msgs[flow_id] = Message([flow_id], header="increase flow rate trigger")
             if self.name != flow["destination"]:
                 next_hop = flow["path"][flow["path"].index(self.name) + 2]
             else:
@@ -175,17 +230,36 @@ class QuantumNode(SimpleModule):
                 "destination": flow["destination"],
                 "next_hop": next_hop,
                 "success_probs": flow["success_probs"],
-                "direction": flow["direction"]
+                "direction": flow["direction"],
+                "path": flow["path"]
             }
 
-        self.flows_info = flow_info
+        was_init = False
+        if self.flows_info is None:
+            self.flows_info = flow_info
+            was_init = True
+        else:
+            self.flows_info.update(flow_info)
 
         sim_log.debug(f"{self.name} received flows information with {len(relevant_flows)} relevant flows.",
                       time=self.sim_context.time())
 
         # we generate the first requests for each flow for which we are the source
         # but we wait for a little time to let the other nodes initialize
-        self.schedule_message(Message(["initialize requests"], header="initialize requests"), delay=10)
+        if was_init:
+            self.schedule_message(Message(["initialize requests"], header="initialize requests"), delay=10)
+        else:
+            for flow_id in flow_info:
+                if self.name == flow_info[flow_id]["source"]:
+                    if not isinstance(self.congestion_controller, RateCongestionController):
+                        self.generate_request(flow_id)
+                    else:
+                        # schedule the next request generation
+                        self.schedule_message(self.new_request_trigger_msgs[flow_id],
+                                              delay=self.congestion_controller.get_inter_request_gap(flow_id=flow_id))
+                        # schedule the next increase in the flow rate
+                        self.schedule_message(self.increase_request_rate_trigger_msgs[flow_id],
+                                              delay=self.congestion_controller.estimated_rtt[flow_id])
 
     def generate_request(self, flow_id):
         """
@@ -209,6 +283,36 @@ class QuantumNode(SimpleModule):
         self.congestion_controller.handle_new_request_in_flight(req_id=req_id, flow_id=flow_id,
                                                                 current_time=self.sim_context.time())
 
+    def _generate_all_requests(self):
+        # this function is called only if the congestion controller is a RateCongestionController
+
+        for flow_id in self.flows_info:
+            if self.name == self.flows_info[flow_id]["source"]:
+                # get the generation probability for the flow
+                p_gen = self.congestion_controller.get_new_request_probability(flow_id=flow_id)
+                if self.sim_context.rng.random(generator=flow_id) < p_gen:
+                    self.generate_request(flow_id)
+
+        if self.sim_context.time() - self.last_global_rate_increase_time >= self.global_rate_increase_period:
+            if not isinstance(self.congestion_controller, RateCongestionController):
+                raise ValueError("The global rate increase period is set but the congestion controller"
+                                 "is not a RateCongestionController")
+
+            """
+            # we update the global rate increase period to the current estimated RTT
+            first_flow_id = 0
+            for flow_id in self.flows_info:
+                if self.name == self.flows_info[flow_id]["source"]:
+                    first_flow_id = flow_id
+                    break
+            if first_flow_id in self.congestion_controller.estimated_rtt:
+                self.global_rate_increase_period = self.congestion_controller.estimated_rtt[first_flow_id]
+            """
+
+            self.congestion_controller.increase_all_knobs(current_time=self.sim_context.time())
+            self.last_global_rate_increase_time = self.sim_context.time()
+
+
     def collect_timeouts(self):
         """
         Collect the timeouts for the requests in flight and update the congestion windows for the involved flows
@@ -220,6 +324,54 @@ class QuantumNode(SimpleModule):
             self.last_update_time = self.sim_context.time()
             # log some simulation updates for the user
             sim_log.debug(f"Node {self.name} has currently {len(self.req_queue)} requests in queue and {len(self.lle_manager)} LLEs",
+                          time=self.sim_context.time())
+            # for all flows of which we are the source, we log the current generation probability
+            for flow_id in self.flows_info:
+                if self.name == self.flows_info[flow_id]["source"] and isinstance(self.congestion_controller, RateCongestionController):
+                    p_gen = self.congestion_controller.get_inter_request_gap(flow_id=flow_id)
+                    sim_log.debug(f"Node {self.name} has an IRG = {p_gen} us for flow {flow_id}",
+                                  time=self.sim_context.time())
+
+    def _generate_new_flow(self, num_flows=3):
+        """
+        Generate a new flow by copying the first one of which this node is the source
+        """
+
+        # we just copy the first flow for which we are the source
+        flow_id = None
+        for f_id in self.flows_info:
+            if self.name == self.flows_info[f_id]["source"]:
+                flow_id = f_id
+                break
+
+        if flow_id is None:
+            return
+
+        flow = self.flows_info[flow_id]
+
+        for _ in range(num_flows):
+            new_flow = flow.copy()
+            if new_flow["direction"] == "upstream":
+                new_flow["flow_id"] = len(self.flows_info)
+            else:
+                new_flow["flow_id"] = len(self.flows_info) + num_flows
+            self.flows_info[new_flow["flow_id"]] = new_flow
+
+            # send the new flow information to the other nodes
+            for destination in new_flow["path"]:
+                new_flow_info = messages.FlowsInformationPacket(destination=destination, flows=[new_flow])
+
+                if destination == self.name:
+                    self._handle_flows_information(new_flow_info)
+                    continue
+
+                # it will be routed to the destination node
+                if new_flow["direction"] == "upstream":
+                    self.send(new_flow_info, port_name="q1")
+                else:
+                    self.send(new_flow_info, port_name="q0")
+
+            sim_log.debug(f"Node {self.name} generated a new flow {new_flow['flow_id']}",
                           time=self.sim_context.time())
 
     def _handle_entanglement_request(self, message, port_name):
@@ -259,10 +411,9 @@ class QuantumNode(SimpleModule):
             # use the i-th random number generator offered by the sim_context
             # to check whether the request should be marked as congested
 
-            """
+
             if self.sim_context.rng.random(generator=flow_id) < marking_prob:
                 message.mark_congested()
-            """
 
 
 
@@ -338,10 +489,9 @@ class QuantumNode(SimpleModule):
             marking_prob = aqm.get_marking_probability()
             # use the i-th random number generator offered by the sim_context
             # to check whether the request should be marked as congested
-            """
+
             if self.sim_context.rng.random(generator=flow_id) < marking_prob:
                 message.mark_congested()
-            """
 
 
 
@@ -471,8 +621,11 @@ class QuantumNode(SimpleModule):
                                                                  time_sent=message.gen_time)
 
         # emit the congestion window for flow 0
-        if flow_id == 0:
+        if flow_id == 0 and isinstance(self.congestion_controller, WindowCongestionController):
             self.emit_metric("congestion_window", self.congestion_controller.get_congestion_window(flow_id))
+
+        elif flow_id == 0 and isinstance(self.congestion_controller, RateCongestionController):
+            self.emit_metric("IRG", self.congestion_controller.get_inter_request_gap(flow_id))
 
         # we generate new requests for the flow
         for _ in range(num_new_requests):

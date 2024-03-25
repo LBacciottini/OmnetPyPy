@@ -1,6 +1,6 @@
 repetitions: 1
-num_rngs: 5
-simulate_until: 4000000
+num_rngs: 50
+simulate_until: 24000000
 topology_file: "topology.yaml"
 output_dir: "out"
 engine: "simpy"
@@ -11,7 +11,7 @@ metrics:
     type: ["vector", "mean", "percentiles"]
   - name: "throughput"
     type: ["vector"]
-  - name: "congestion_window"
+  - name: "IRG"
     type: ["vector"]
   - name: "latency"
     type: ["vector"]
@@ -25,10 +25,10 @@ log_level: "debug"
 # The following parameters are accessible to all modules in the simulation
 global_params:
   aqm_params:
-    R_plus: 0.001
+    R_plus: 0.01
     C: 100000
-    N_minus: 1
-    q_ref: 15
+    N_minus: 4
+    q_ref: 250
   flow_descriptors:
     - flow_id: 0
       flow_type: "default"
@@ -36,10 +36,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
-        - 0.4
-        - 0.4
-        - 0.4
-        - 0.4
+        - 0.04
+        - 0.04
+        - 0.04
+        - 0.04
       path:
         - "qn0"
         - "lc0"
@@ -53,14 +53,17 @@ global_params:
       direction: "upstream"  # useful for nodes to infer the output port of messages (no routing for now)
     - flow_id: 1
       flow_type: "default"
-      source: "qn3"
+      source: "qn4"
       destination: "qn0"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
-        - 0.4
-        - 0.4
-        - 0.4
+        - 0.04
+        - 0.04
+        - 0.04
+        - 0.04
       path:
+        - "qn4"
+        - "lc3"
         - "qn3"
         - "lc2"
         - "qn2"
@@ -75,10 +78,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
-        - 0.4
-        - 0.4
-        - 0.4
-        - 0.4
+        - 0.04
+        - 0.04
+        - 0.04
+        - 0.04
       path:
         - "qn0"
         - "lc0"
@@ -96,10 +99,10 @@ global_params:
       destination: "qn0"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
-        - 0.4
-        - 0.4
-        - 0.4
-        - 0.4
+        - 0.04
+        - 0.04
+        - 0.04
+        - 0.04
       path:
         - "qn4"
         - "lc3"
