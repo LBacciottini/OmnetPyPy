@@ -1,10 +1,13 @@
+from bell_diag_api.decoherence import depolarize_rate
+from bell_diag_api.swapping import swap
+from bell_diag_api.utility import epr_pair, get_werner_state
 from discrete_sim import SimpleModule, sim_log, Message
-import projects.qnum_congestion_ctrl_aqm_dynamic.messages as messages
-from projects.qnum_congestion_ctrl_aqm_dynamic.aqm_controller import PIController
-from projects.qnum_congestion_ctrl_aqm_dynamic.congestion_controller import WindowCongestionController, \
+import projects.qnum_congestion_ctrl_aqm_fidelity.messages as messages
+from projects.qnum_congestion_ctrl_aqm_fidelity.aqm_controller import PIController
+from projects.qnum_congestion_ctrl_aqm_fidelity.congestion_controller import WindowCongestionController, \
     RateCongestionController
-from projects.qnum_congestion_ctrl_aqm_dynamic.queues import RequestQueue, LLEManager
-from projects.qnum_congestion_ctrl_aqm_dynamic.utility import sanitize_flow_descriptors
+from projects.qnum_congestion_ctrl_aqm_fidelity.queues import RequestQueue, LLEManager
+from projects.qnum_congestion_ctrl_aqm_fidelity.utility import sanitize_flow_descriptors
 
 
 class QuantumNode(SimpleModule):
@@ -22,7 +25,7 @@ class QuantumNode(SimpleModule):
         capacity. Default is None.
     """
 
-    def __init__(self, name, identifier, storage_qbits_per_port=None):
+    def __init__(self, name, identifier, storage_qbits_per_port=None, decoherence_rate=0.):
 
         port_names = ["q0", "q1"]
         # first dilemma: do we use separate channels for classical packets  (c0, c1 ports) ?
@@ -33,6 +36,7 @@ class QuantumNode(SimpleModule):
         self.lle_manager = LLEManager(port_names=["q0", "q1"])
         self.req_queue = RequestQueue()
         self.storage_qbits_per_port = storage_qbits_per_port
+        self.decoherence_rate = decoherence_rate
 
         ################################
         # CONGESTION CONTROL VARIABLES #
@@ -442,7 +446,10 @@ class QuantumNode(SimpleModule):
 
         # emit the queue size metric
         if self.name == "qn2":
-            self.emit_metric("queue_size", self.req_queue.weighted_length(direction="upstream"))
+            self.emit_metric("queue_size", self.req_queue.weighted_length(direction="downstream"))
+
+        elif self.name == "qn3":
+            self.emit_metric("queue_size_free", self.req_queue.weighted_length(direction="downstream"))
 
         # now let's check whether we should mark the request as congested
         if not message.is_congested():
@@ -465,6 +472,12 @@ class QuantumNode(SimpleModule):
             self.emit_metric(name="throughput", value=1)
 
             self.emit_metric("latency", self.sim_context.time() - message.gen_time)
+
+            # emit fidelity metric
+            fidelity = message.meta["qstate"].a
+            self.emit_metric("fidelity", fidelity)
+            """sim_log.warning(f"Request {message.req_id} satisfied for flow {flow_id} with fidelity {fidelity}. Here is node {self.name}",
+                          time=self.sim_context.time())"""
 
             # generate and send the acknowledgement
             destination = self.flows_info[flow_id]["source"]
@@ -504,6 +517,10 @@ class QuantumNode(SimpleModule):
         wait_time = self.sim_context.time() - other_lle_time
         message.update_request(lle_id=other_lle.lle_id, wait_time=wait_time,
                                destination=self.flows_info[flow_id]["next_hop"])
+
+        # decohere the quantum state described within the request
+        self._decohere_state(message, wait_time)
+
         # send the message
         self.send(message, port_name=next_port)
 
@@ -511,12 +528,28 @@ class QuantumNode(SimpleModule):
         if self.name == "qn1":
             self.emit_metric("queuing_time", 0.0)
 
+    def _decohere_state(self, message, wait_time):
+        # decohere the quantum state described within the request
+        wait_time_seconds = wait_time / self.sim_context.time_unit_factor
+        rate = message.meta["src_decoherence_rate"] + self.decoherence_rate
+        new_state = depolarize_rate(message.meta["qstate"], rate, wait_time_seconds)
+        other_pair = get_werner_state(fidelity=1.)
+        new_state = swap(new_state, other_pair, eta=1., p_2=1.)
+        message.meta["qstate"] = new_state
+
+
     def _handle_new_request(self, message):
         flow_id = message.flow_id
 
         # if we are not the source we ignore the request
         if flow_id not in self.flows_info or self.name != self.flows_info[flow_id]["source"]:
             raise ValueError(f"New request for which we are not the source: {message} at node {self.name}")
+
+
+        # initialize the epr pair state that will be tracked and updated after every swap
+        epr_pair_initial = get_werner_state(fidelity=1.)
+        message.meta["qstate"] = epr_pair_initial
+        message.meta["src_decoherence_rate"] = self.decoherence_rate
 
         """
         sim_log.debug(f"Request generated for flow {flow_id}. Here is node {self.name} with a queue empty? {self.req_queue.is_empty()}",
@@ -541,6 +574,12 @@ class QuantumNode(SimpleModule):
         next_port = self.flows_info[flow_id]["next_port"]
         if self.lle_manager.is_empty(port_name=next_port, flow_id=flow_id):
             # just append the request to the corresponding queue
+
+            # check that the number of requests in queue in this direction is less than 100
+            if self.req_queue.weighted_length(direction=self.flows_info[flow_id]["direction"]) >= 2*self.storage_qbits_per_port:
+                # drop the request
+                return
+
             self.req_queue.add_request(message, self.sim_context.time())
             return
 
@@ -551,6 +590,7 @@ class QuantumNode(SimpleModule):
         # update request
         message.update_request(lle_id=lle.lle_id, wait_time=None,
                                destination=self.flows_info[flow_id]["next_hop"])
+
         # send the message
         self.send(message, port_name=next_port)
 
@@ -618,6 +658,9 @@ class QuantumNode(SimpleModule):
         request.update_request(lle_id=message.lle_id, wait_time=wait_time,
                                destination=self.flows_info[flow_id]["next_hop"])
 
+        # decohere the quantum state described within the request
+        self._decohere_state(request, wait_time)
+
         # send the message
         self.send(request, port_name=next_port)
 
@@ -655,6 +698,10 @@ class QuantumNode(SimpleModule):
                 # now we have to check whether the popped lle is associated with a request
                 # if so, we have to drop the request
                 request, _ = self.req_queue.pop_from_lle(lle_to_pop, raise_error=False)
+                if request is not None:
+                    # the request has been dropped
+                    sim_log.warning(f"Request {request.req_id} dropped at node {self.name} due to storage qubit shortage",
+                                    time=self.sim_context.time())
                 self.lle_manager.add_lle(lle, port_name, self.sim_context.time())
                 return
 

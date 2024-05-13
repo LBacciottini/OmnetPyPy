@@ -318,7 +318,7 @@ class RateCongestionController(AIMDCongestionController):
         self.last_halved[flow_id] = current_time
         self.is_slow_start[flow_id] = True
 
-        sim_log.info(f"Flow {flow_id} congestion knob halved to {self.congestion_knobs[flow_id]}")
+        sim_log.info(f"Flow {flow_id} congestion knob halved to {self.congestion_knobs[flow_id]} with ss thresh {self.ssthresh[flow_id]}")
         if current_time is None:
             raise ValueError("Current time must be provided with the rate based controller")
 

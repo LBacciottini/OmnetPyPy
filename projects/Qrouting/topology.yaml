@@ -1,0 +1,112 @@
+simple:
+  - name: "QuantumNode"
+    package: "quantum_node"
+  - name: "LinkController"
+    package: "link_controller"
+
+network:
+  - name: "QuantumNetwork"
+    submodules:
+      - type: "QuantumNode"
+        name: "qn0"
+        parameters:
+          decoherence_rate: 27
+          num_ports: 1
+      - type: "QuantumNode"
+        name: "qn1"
+        parameters:
+          decoherence_rate: 27
+          num_ports: 3
+      - type: "QuantumNode"
+        name: "qn2"
+        parameters:
+          decoherence_rate: 27
+          num_ports: 2
+      - type: "QuantumNode"
+        name: "qn3"
+        parameters:
+          decoherence_rate: 27
+          num_ports: 2
+      - type: "QuantumNode"
+        name: "qn4"
+        parameters:
+          decoherence_rate: 27
+          num_ports: 3
+      - type: "QuantumNode"
+        name: "qn5"
+        parameters:
+          decoherence_rate: 27
+          num_ports: 2
+      - type: "LinkController"
+        name: "lc0-1"
+      - type: "LinkController"
+        name: "lc1-2"
+      - type: "LinkController"
+        name: "lc1-4"
+      - type: "LinkController"
+        name: "lc2-5"
+      - type: "LinkController"
+        name: "lc3-4"
+      - type: "LinkController"
+        name: "lc4-5"
+    connections:
+      - source: "qn0.q0"
+        target: "lc0-1.lc0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "lc0-1.lc1"
+        target: "qn1.q0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "qn1.q1"
+        target: "lc1-2.lc0"
+        channel: "default"
+        parameters:
+            delay: 9
+      - source: "lc1-2.lc1"
+        target: "qn2.q0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "qn1.q2"
+        target: "lc1-4.lc0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "lc1-4.lc1"
+        target: "qn4.q0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "qn2.q1"
+        target: "lc2-5.lc0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "lc2-5.lc1"
+        target: "qn5.q0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "qn3.q1"
+        target: "lc3-4.lc0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "lc3-4.lc1"
+        target: "qn4.q1"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "qn4.q2"
+        target: "lc4-5.lc0"
+        channel: "default"
+        parameters:
+          delay: 9
+      - source: "lc4-5.lc1"
+        target: "qn5.q1"
+        channel: "default"
+        parameters:
+          delay: 9

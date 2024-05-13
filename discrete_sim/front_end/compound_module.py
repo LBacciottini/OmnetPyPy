@@ -21,6 +21,10 @@ class CompoundModule(SimulatedEntity):
         self.sub_entities[module.name] = module
         module.parent = self
 
+    def get_sub_entity(self, name):
+        # SHOULD NEVER BE USED IN A SIMULATION
+        return self.sub_entities[name]
+
     def forward_input(self, port_container, port_submodule):
         self.ports[port_container].forward_input(port_submodule)
 

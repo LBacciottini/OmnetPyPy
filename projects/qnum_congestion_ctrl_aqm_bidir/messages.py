@@ -184,9 +184,9 @@ class EntanglementGenPacket(Message):
 
     HEADER = "ENTANGLEMENT GENERATION"
 
-    def __init__(self, flow_id, lle_id, sender_name, **meta):
+    def __init__(self, flow_id, lle_id, sender_name, owner=False, **meta):
         meta["header"] = EntanglementGenPacket.HEADER
-        fields = [flow_id, lle_id, sender_name]
+        fields = [flow_id, lle_id, sender_name, owner]
         super().__init__(fields, **meta)
 
     @property
@@ -200,6 +200,10 @@ class EntanglementGenPacket(Message):
     @property
     def sender_name(self):
         return self.fields[2]
+
+    @property
+    def is_owner(self):
+        return self.fields[3]
 
 
 class EntanglementGenAcknowledgement(RoutablePacket):

@@ -33,7 +33,7 @@ class RequestQueue:
 
         self._requests[request.flow_id].append((request, time))
 
-    def pop_request(self, flow_id, policy=OLDEST):
+    def pop_request(self, flow_id, policy=OLDEST, direction="any"):
         """
         Remove and return the first request in the queue
 
@@ -43,6 +43,8 @@ class RequestQueue:
             The flow id of the request to pop
         policy : int
             The policy to use when popping the request. It can be either OLDEST (0) or YOUNGEST (1)
+        direction : str
+            The direction of the request to pop. It can be either "upstream", "downstream" or "any"
 
         Returns
         -------
@@ -54,12 +56,12 @@ class RequestQueue:
         if policy == self.OLDEST:
             # pop the oldest request
             for i, (req, time) in enumerate(queue):
-                if req.flow_id == flow_id:
+                if req.flow_id == flow_id and (direction == "any" or req.direction == direction):
                     return queue.pop(i)
         else:
             # pop the youngest request
             for i, (req, time) in enumerate(queue[::-1]):
-                if req.flow_id == flow_id:
+                if req.flow_id == flow_id and (direction == "any" or req.direction == direction):
                     return queue.pop(-i - 1)
         return None, None
 

@@ -1,8 +1,8 @@
 from discrete_sim import SimpleModule, Message, sim_log
-from projects.qnum_congestion_ctrl_aqm_dynamic import messages
-from projects.qnum_congestion_ctrl_aqm_dynamic.messages import RoutablePacket, EntanglementGenPacket, \
+from projects.qnum_congestion_ctrl_aqm_bidir import messages
+from projects.qnum_congestion_ctrl_aqm_bidir.messages import RoutablePacket, EntanglementGenPacket, \
     FlowsInformationPacket, FlowDeletionPacket
-from projects.qnum_congestion_ctrl_aqm_dynamic.utility import sanitize_flow_descriptors
+from projects.qnum_congestion_ctrl_aqm_bidir.utility import sanitize_flow_descriptors
 
 
 class LinkController(SimpleModule):
@@ -127,8 +127,10 @@ class LinkController(SimpleModule):
             # debug: check that the request we picked is indeed the oldest in the queue for that port name
             # print(f"Here {self.name} for {lle_id} : Request {req} is the oldest ({oldest_time}) in the queue on port q{1 - queue}")
             # print(queues_info[queue]._requests)
-            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name), "lc0")
-            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name), "lc1")
+            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name, owner=(queue == 0)),
+                      "lc0")
+            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name, owner=(queue == 1)),
+                      "lc1")
             self._cur_lle_id += 1
 
         # we schedule the next attempt

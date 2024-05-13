@@ -1,10 +1,10 @@
 from discrete_sim import SimpleModule, sim_log, Message
-import projects.qnum_congestion_ctrl_aqm_dynamic.messages as messages
-from projects.qnum_congestion_ctrl_aqm_dynamic.aqm_controller import PIController
-from projects.qnum_congestion_ctrl_aqm_dynamic.congestion_controller import WindowCongestionController, \
+import projects.qnum_congestion_ctrl_aqm_bidir.messages as messages
+from projects.qnum_congestion_ctrl_aqm_bidir.aqm_controller import PIController
+from projects.qnum_congestion_ctrl_aqm_bidir.congestion_controller import WindowCongestionController, \
     RateCongestionController
-from projects.qnum_congestion_ctrl_aqm_dynamic.queues import RequestQueue, LLEManager
-from projects.qnum_congestion_ctrl_aqm_dynamic.utility import sanitize_flow_descriptors
+from projects.qnum_congestion_ctrl_aqm_bidir.queues import RequestQueue, LLEManager
+from projects.qnum_congestion_ctrl_aqm_bidir.utility import sanitize_flow_descriptors
 
 
 class QuantumNode(SimpleModule):
@@ -231,13 +231,11 @@ class QuantumNode(SimpleModule):
         for flow_id in relevant_flows:
             flow = relevant_flows[flow_id]
             next_port = "q0" if flow["direction"] == "downstream" else "q1"
-            if self.name == flow["source"]:
+            if self.name == flow["source"] or self.name == flow["destination"]:
                 self.congestion_controller.setup_congestion_control(flow, current_time=self.sim_context.time())
-                self.cur_req_ids[flow_id] = 0
+                self.cur_req_ids[flow_id] = 0 if self.name == flow["source"] else 100000  # avoid conflicts
                 self.new_request_trigger_msgs[flow_id] = Message([flow_id], header="new requests trigger")
                 self.increase_request_rate_trigger_msgs[flow_id] = Message([flow_id], header="increase flow rate trigger")
-            if self.name != flow["destination"]:
-                next_hop = flow["path"][flow["path"].index(self.name) + 2]
             else:
                 next_hop = None
             # next hop in the path, +2 because the path includes the link controllers
@@ -246,7 +244,6 @@ class QuantumNode(SimpleModule):
                 "next_port": next_port,
                 "source": flow["source"],
                 "destination": flow["destination"],
-                "next_hop": next_hop,
                 "success_probs": flow["success_probs"],
                 "direction": flow["direction"],
                 "path": flow["path"]
@@ -268,7 +265,7 @@ class QuantumNode(SimpleModule):
             self.schedule_message(Message(["initialize requests"], header="initialize requests"), delay=10)
         else:
             for flow_id in flow_info:
-                if self.name == flow_info[flow_id]["source"]:
+                if self.name == flow_info[flow_id]["source"] or self.name == flow_info[flow_id]["destination"]:
                     if not isinstance(self.congestion_controller, RateCongestionController):
                         self.generate_request(flow_id)
                     else:
@@ -310,15 +307,24 @@ class QuantumNode(SimpleModule):
         # generate a new request
         req_id = self.cur_req_ids[flow_id]
         self.cur_req_ids[flow_id] += 1
-        destination = self.flows_info[flow_id]["next_hop"]
+
+        # check whether we are the source or the destination of the flow
+        if self.name == self.flows_info[flow_id]["source"]:
+            direction = "upstream"
+        else:
+            direction = "downstream"
+
+        destination = self._next_hop(flow_id=flow_id, direction=direction)
+        assert destination is not None, "Destination not found"
         request_pkt = messages.EntanglementRequestPacket(destination=destination, flow_id=flow_id, req_id=req_id,
                                                          lle_id=None, gen_time=self.sim_context.time())
 
         # set the success probabilities as a meta field
         request_pkt.meta["success_probs"] = self.flows_info[flow_id]["success_probs"][:]
-        request_pkt.meta["direction"] = self.flows_info[flow_id]["direction"]
 
-        # send the request to ourself
+        request_pkt.meta["direction"] = direction
+
+        # send the request to ourselves
         self._handle_new_request(request_pkt)
 
         # let the congestion controller know that a new request has been generated
@@ -538,7 +544,8 @@ class QuantumNode(SimpleModule):
 
         # we are the source, we have to check whether we have a lle to associate with the request
         # if so, we associate the lle and send the request to the next node
-        next_port = self.flows_info[flow_id]["next_port"]
+        next_port = "q1" if message["direction"] == "upstream" else "q0"
+
         if self.lle_manager.is_empty(port_name=next_port, flow_id=flow_id):
             # just append the request to the corresponding queue
             self.req_queue.add_request(message, self.sim_context.time())
@@ -569,7 +576,7 @@ class QuantumNode(SimpleModule):
             # do nothing
             return
 
-        if self.req_queue.is_empty(flow_id=flow_id):  # no requests for this flow :(
+        if (not message.is_owner) or self.req_queue.is_empty(flow_id=flow_id):  # no requests for this flow :(
             # append
             self.add_lle(message, port_name)
             """# if flow is upstream and port_name is q1 we raise an error
@@ -691,3 +698,14 @@ class QuantumNode(SimpleModule):
         # we generate new requests for the flow
         for _ in range(num_new_requests):
             self.generate_request(flow_id)
+
+    def _next_hop(self, flow_id, direction):
+        """
+        Return the next hop for the given flow and direction
+        """
+        if direction == "upstream" and self.name != self.flows_info[flow_id]["destination"]:
+            return self.flows_info[flow_id]["path"][self.flows_info[flow_id]["path"].index(self.name) + 1]
+        elif direction == "downstream" and self.name != self.flows_info[flow_id]["source"]:
+            return self.flows_info[flow_id]["path"][self.flows_info[flow_id]["path"].index(self.name) - 1]
+        else:
+            return None

@@ -253,7 +253,8 @@ class RequestQueue:
         for flow_id, queue in self._requests.items():
             for req, time in queue:
                 if req.meta["direction"] == direction:
-                    tot_len += 1/req.meta["success_probs"][0]
+                    # tot_len += 1/req.meta["success_probs"][0]
+                    tot_len += 1
                     tot_len_unweighted += 1
                 else:  # all requests for the flow will have the same direction
                     break

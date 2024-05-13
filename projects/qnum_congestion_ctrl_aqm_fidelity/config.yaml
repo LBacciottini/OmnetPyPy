@@ -17,6 +17,10 @@ metrics:
     type: ["vector"]
   - name: "queue_size"
     type: ["vector"]
+  - name: "queue_size_free"
+    type: [ "vector" ]
+  - name: "fidelity"
+    type: ["vector"]
 
 max_processes: 8
 log_level: "debug"
@@ -25,10 +29,10 @@ log_level: "debug"
 # The following parameters are accessible to all modules in the simulation
 global_params:
   aqm_params:
-    R_plus: 0.01
-    C: 100000
+    R_plus: 0.05
+    C: 4000
     N_minus: 4
-    q_ref: 250
+    q_ref: 5
   flow_descriptors:
     - flow_id: 0
       flow_type: "default"

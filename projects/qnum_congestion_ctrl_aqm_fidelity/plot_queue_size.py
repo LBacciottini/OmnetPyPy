@@ -15,7 +15,7 @@ if __name__ == "__main__":
     ax2.set_xlabel("Time (ms)")
 
     # now we want to plot as a sliding window average
-    window_size_time_units = 1000000
+    window_size_time_units = 10000
     # every point in the plot is the average of all samples in the window
     # we can't use directly group by because the same sample may be in multiple adjacent windows
     # so, for every row in df, we compute the average of all samples in the window
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     df["timestamp"] = df["timestamp"] / 1e3  # convert to ms
 
     # multiply the sample column by 0.04
-    sw_avg *= 0.04
+    # sw_avg *= 0.04
 
     ax.plot(df["timestamp"], sw_avg, label="queue size", color="purple")
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # also plot a horizontal green dashed line at the reference queue size set to 20
     ax.axhline(y=10, color='magenta', linestyle='--', label="reference queue size")
 
-    cur_flows = 4
+    """cur_flows = 4
     delete_phase = False
     # create a colormap for the background
     colors = {4: "blue", 10: "yellow", 16: "red"}
@@ -55,11 +55,11 @@ if __name__ == "__main__":
         if delete_phase:
             cur_flows -= 6
         else:
-            cur_flows += 6
+            cur_flows += 6"""
 
     # read the IRG file and plot the Inter-Request Gap (IRG) on the same plot but on a different axis
     df_irg = pd.read_csv("./out/IRG_vector.csv")
-    window_size_time_units = 5000000
+    window_size_time_units = 50000
     sw_avg_irg = pd.Series([df_irg[(df_irg["timestamp"] >= t - window_size_time_units) & (df_irg["timestamp"] < t)]["sample"].mean() for t in df_irg["timestamp"]])
 
     df_irg["timestamp"] /= 1e3
@@ -72,14 +72,14 @@ if __name__ == "__main__":
     ax2.set_ylabel("Inter-Request Gap (ms)", color="green")
 
     # set the maximum value for the y-axis
-    ax2.set_ylim(0, 16)
+    # ax2.set_ylim(0, 16)
 
-    ax.set_title("Varying load: Queue size and IRG (flow 0)")
+    ax.set_title("Queue size and IRG (flow 0)")
 
     lines, labels = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
 
-    ax.legend(lines, labels, loc="lower right")
+    ax.legend(lines, labels, loc="upper right")
     # ax2.legend(lines2, labels2, loc="lower right")
 
     plt.tight_layout()

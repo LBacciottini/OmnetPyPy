@@ -1,8 +1,8 @@
 from discrete_sim import SimpleModule, Message, sim_log
-from projects.qnum_congestion_ctrl_aqm_dynamic import messages
-from projects.qnum_congestion_ctrl_aqm_dynamic.messages import RoutablePacket, EntanglementGenPacket, \
+from projects.qnum_congestion_ctrl_aqm_fidelity import messages
+from projects.qnum_congestion_ctrl_aqm_fidelity.messages import RoutablePacket, EntanglementGenPacket, \
     FlowsInformationPacket, FlowDeletionPacket
-from projects.qnum_congestion_ctrl_aqm_dynamic.utility import sanitize_flow_descriptors
+from projects.qnum_congestion_ctrl_aqm_fidelity.utility import sanitize_flow_descriptors
 
 
 class LinkController(SimpleModule):
