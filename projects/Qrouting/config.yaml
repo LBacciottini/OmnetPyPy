@@ -1,6 +1,6 @@
 repetitions: 1
 num_rngs: 15
-simulate_until: 48000000
+simulate_until: 4800000
 topology_file: "topology.yaml"
 output_dir: "out"
 engine: "simpy"

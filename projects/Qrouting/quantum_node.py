@@ -227,14 +227,14 @@ class QuantumNode(SimpleModule):
                                                      gen_time=self.sim_context.time()
                                                      )
 
+        message.meta["qstate"] = epr_pair_initial
+        message.meta["src_decoherence_rate"] = self.decoherence_rate
+
         # we are the source, we have to check whether we have a lle to associate with the request
         # if so, we associate the lle and send the request to the next node
         next_port, next_hop = self.route_request(request=message)
 
         message.update_request(next_hop=next_hop)
-
-        message.meta["qstate"] = epr_pair_initial
-        message.meta["src_decoherence_rate"] = self.decoherence_rate
 
         message.meta["is_new_request"] = True
 
@@ -363,7 +363,7 @@ class QuantumNode(SimpleModule):
         """
         neighbor = self._get_neighbor(port_name)
         # Here we do a trick and we access the neighbor from the simualtion context
-        return self.sim_context.nodes.network.get_sub_entity(neighbor).req_queue
+        return self.sim_context.network.get_sub_entity(neighbor).req_queue
 
     def peek_neighbor_distance(self, port_name, destination):
         """
@@ -382,7 +382,7 @@ class QuantumNode(SimpleModule):
             The distance to the neighbor connected to the given port
         """
         neighbor = self._get_neighbor(port_name)
-        neighbor_entity = self.sim_context.nodes.network.get_sub_entity(neighbor)
+        neighbor_entity = self.sim_context.network.get_sub_entity(neighbor)
         return neighbor_entity.distance_to_destination(destination)
 
     def distance_to_destination(self, destination):
@@ -399,9 +399,14 @@ class QuantumNode(SimpleModule):
         int
             The distance to the destination
         """
+        if destination is None:
+            raise ValueError("Destination cannot be None")
+        elif destination == self.name:
+            return 0
         for distance_dict in self.distance_vector:
             if distance_dict["node"] == destination:
                 return distance_dict["distance"]
+        raise ValueError(f"Destination {destination} not found in the distance vector")
 
 
     def _build_input_features(self, request):
@@ -431,7 +436,7 @@ class QuantumNode(SimpleModule):
         for port_name in self.ports:
             port_idx = int(port_name[1:])
             for rout_dict in self.routing_table:
-                if rout_dict["port"] == port_idx and destination in rout_dict["dest"]:
+                if rout_dict["port"] == port_idx and (rout_dict["dest"] == "default" or destination in rout_dict["dest"]):
                     candidate_neighbors.append(self._get_neighbor(port_name))
                     candidate_ports.append(port_name)
                     break
@@ -490,6 +495,10 @@ class QuantumNode(SimpleModule):
         if self.should_use_agent:
             return self._route_request_with_agent(request=request)
         else:
+            # build the input features
+            features = self._build_input_features(request)
+            # emit features
+            self.emit_metric("features", features)
             return self._route_shortest_path(request.final_destination)
 
 
