@@ -27,7 +27,8 @@ class PIController:
         return self.p
 
     def get_marking_probability(self):
-        return self.p
+        # return self.p
+        return 0.
 
     def set_parameters(self, R_plus, C, N_minus, q_ref):
         """
@@ -58,7 +59,7 @@ class PIController:
 
         K_PI = (complex(0, omega_g)/p_queue + 1)/((R_plus*C)**3/(2*N_minus)**2)
         # turn K_PI into a real number by taking the module
-        K_PI = abs(K_PI)*omega_g*50  # TODO: remove the *10
+        K_PI = abs(K_PI)*omega_g*100  # TODO: remove the *10
 
         assert 1-omega_g*T > 0, "The PI controller could not be stable"
         self.alpha = K_PI/omega_g

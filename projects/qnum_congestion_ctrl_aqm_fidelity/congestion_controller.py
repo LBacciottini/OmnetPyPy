@@ -282,14 +282,15 @@ class RateCongestionController(AIMDCongestionController):
     Multiplicative Decrease: halve the rate when a congestion event is detected
     """
 
-    def __init__(self, C=5000000):
+    def __init__(self, C=50000000):
         self.congestion_knobs = {}  # dictionary of congestion knobs, one for each flow, indexed by flow_id
         self.ssthresh = {}  # dictionary of slow start thresholds, one for each flow, indexed by flow_id
         self.is_slow_start = {}  # dictionary of flags indicating if the flow is in slow start, indexed by flow_id
         self.last_update = {}  # dictionary of last update times, one for each flow, indexed by flow_id
         self.last_halved = {}  # dictionary of last halved times, one for each flow, indexed by flow_id
         self.other_ends = {}  # dictionary of other end identifiers, one for each flow, indexed by flow_id
-        self.C = C
+        self.C = {}  # dictionary of C values, one for each flow, indexed by flow_id
+        self.default_C = C  # default C value
 
         self.initial_congestion_knob = 48000  # initial congestion knob (IRG), (us)
         self.max_ssthresh = 1024000  # maximum slow start threshold
@@ -306,14 +307,14 @@ class RateCongestionController(AIMDCongestionController):
         Halve the congestion knob (rate in this case) for the given flow
         """
 
-        # if last half was less than RTT ago, do not halve again
-        if current_time - self.last_halved[flow_id] < self.estimated_rtt[flow_id]:
+        # if last half was less than 3RTT ago, do not halve again
+        if current_time - self.last_halved[flow_id] < 3*self.estimated_rtt[flow_id]:
             sim_log.debug(f"Flow {flow_id} congestion knob halved ({current_time - self.last_update[flow_id]}) less than an RTT ({self.estimated_rtt[flow_id]}) ago ), not halving again")
             return
 
-        self.ssthresh[flow_id] = min(self.congestion_knobs[flow_id] * 2, self.max_ssthresh)
+        self.ssthresh[flow_id] = min(self.congestion_knobs[flow_id] * 4, self.max_ssthresh)
         self.congestion_knobs[flow_id] = max(self.initial_congestion_knob,
-                                             self.ssthresh[flow_id] * 2)
+                                             self.ssthresh[flow_id] * 4)
         self.last_update[flow_id] = current_time
         self.last_halved[flow_id] = current_time
         self.is_slow_start[flow_id] = True
@@ -332,10 +333,10 @@ class RateCongestionController(AIMDCongestionController):
         if flow_id not in self.is_slow_start:
             raise ValueError(f"Flow {flow_id} not in the congestion controller")
         if not self.is_slow_start[flow_id]:
-            new_IRG = (self.C * self.congestion_knobs[flow_id]) / (self.C + self.congestion_knobs[flow_id])
+            new_IRG = (self.C[flow_id] * self.congestion_knobs[flow_id]) / (self.C[flow_id] + self.congestion_knobs[flow_id])
             self.congestion_knobs[flow_id] = new_IRG
         else:
-            new_IRG = self.congestion_knobs[flow_id] / 1.5
+            new_IRG = self.congestion_knobs[flow_id] / 1.1
             self.congestion_knobs[flow_id] = new_IRG
             if new_IRG <= self.ssthresh[flow_id]:
                 # print(self.ssthresh[flow_id])
@@ -362,6 +363,7 @@ class RateCongestionController(AIMDCongestionController):
         self.estimated_rtt[flow["flow_id"]] = 300 * (len(flow["path"]) - 1) * 10  # 3000 us per hop is the initial value
         self.dev_rtt[flow["flow_id"]] = 0.05 * self.estimated_rtt[flow["flow_id"]]  # 5% of the estimated RTT
         self.requests_in_flight[flow["flow_id"]] = []
+        self.C[flow["flow_id"]] = self.default_C
 
     def delete_flow(self, flow_id):
         """
@@ -429,7 +431,7 @@ class RateCongestionController(AIMDCongestionController):
         sample_rtt = current_time - time_sent
         self.estimated_rtt[flow_id] = 0.875 * self.estimated_rtt[flow_id] + 0.125 * sample_rtt
         self.dev_rtt[flow_id] = 0.75 * self.dev_rtt[flow_id] + 0.25 * abs(sample_rtt - self.estimated_rtt[flow_id])
-        self.C = self.estimated_rtt[flow_id]*100
+        self.C[flow_id] = self.estimated_rtt[flow_id]*4000
         # print(f"Estimated RTT for flow {flow_id} is {self.estimated_rtt[flow_id]}, dev RTT is {self.dev_rtt[flow_id]}, C is {self.C}")
 
         for req, time_sent, timeout in self.requests_in_flight[flow_id]:

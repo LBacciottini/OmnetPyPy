@@ -103,15 +103,15 @@ class LinkController(SimpleModule):
         # flip a coin to decide which queue to peek
         if rng.random(generator=0) < 0.5:
             queue = 0
-            req, oldest_time = queues_info[0].peek_request(port_name="q1", policy="OLDEST")
+            req, oldest_time = queues_info[0].peek_request(out_port="q1", policy="OLDEST")
         else:
             queue = 1
-            req, oldest_time = queues_info[1].peek_request(port_name="q0", policy="OLDEST")
+            req, oldest_time = queues_info[1].peek_request(out_port="q0", policy="OLDEST")
 
         if req is None:
             # try the other queue
             queue = 1 - queue
-            req, oldest_time = queues_info[queue].peek_request(port_name="q0" if queue == 1 else "q1", policy="OLDEST")
+            req, oldest_time = queues_info[queue].peek_request(out_port="q0" if queue == 1 else "q1", policy="OLDEST")
 
         if req is None:
             self.schedule_message(self._trigger_msg, delay=self.t_clock)

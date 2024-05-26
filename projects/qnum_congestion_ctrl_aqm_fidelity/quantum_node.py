@@ -153,8 +153,8 @@ class QuantumNode(SimpleModule):
             return
 
         if "header" in message.meta and message.meta["header"] == "new flow trigger":
-            self._generate_new_flow()
-            self.schedule_message(self.new_flow_trigger_msg, delay=self.new_flow_trigger_period)
+            """self._generate_new_flow()
+            self.schedule_message(self.new_flow_trigger_msg, delay=self.new_flow_trigger_period)"""
             return
 
         if "header" in message.meta and message.meta["header"] == "new requests trigger":

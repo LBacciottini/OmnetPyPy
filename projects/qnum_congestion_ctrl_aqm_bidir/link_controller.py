@@ -66,7 +66,6 @@ class LinkController(SimpleModule):
 
         rng = self.sim_context.rng
 
-
         """# first we pick a flow to attempt entanglement for using the flow probabilities
 
         # now we get the flows for which queues are not empty
@@ -103,15 +102,15 @@ class LinkController(SimpleModule):
         # flip a coin to decide which queue to peek
         if rng.random(generator=0) < 0.5:
             queue = 0
-            req, oldest_time = queues_info[0].peek_request(port_name="q1", policy="OLDEST")
+            req, oldest_time = queues_info[0].peek_request(out_port="q1", policy="OLDEST")
         else:
             queue = 1
-            req, oldest_time = queues_info[1].peek_request(port_name="q0", policy="OLDEST")
+            req, oldest_time = queues_info[1].peek_request(out_port="q0", policy="OLDEST")
 
         if req is None:
             # try the other queue
             queue = 1 - queue
-            req, oldest_time = queues_info[queue].peek_request(port_name="q0" if queue == 1 else "q1", policy="OLDEST")
+            req, oldest_time = queues_info[queue].peek_request(out_port="q0" if queue == 1 else "q1", policy="OLDEST")
 
         if req is None:
             self.schedule_message(self._trigger_msg, delay=self.t_clock)
@@ -127,10 +126,8 @@ class LinkController(SimpleModule):
             # debug: check that the request we picked is indeed the oldest in the queue for that port name
             # print(f"Here {self.name} for {lle_id} : Request {req} is the oldest ({oldest_time}) in the queue on port q{1 - queue}")
             # print(queues_info[queue]._requests)
-            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name, owner=(queue == 0)),
-                      "lc0")
-            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name, owner=(queue == 1)),
-                      "lc1")
+            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name), "lc0")
+            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name), "lc1")
             self._cur_lle_id += 1
 
         # we schedule the next attempt

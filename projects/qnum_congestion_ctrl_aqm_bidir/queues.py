@@ -17,7 +17,7 @@ class RequestQueue:
     def __init__(self):
         self._requests = {}
 
-    def add_request(self, request, time):
+    def add_request(self, request, out_port, time):
         """
         Add a request to the queue
 
@@ -25,15 +25,50 @@ class RequestQueue:
         ----------
         request : EntanglementRequestPacket
             The request to add
+        out_port : str
+            The name of the port where the request is to be forwarded
         time : float
             The simulation time the request was added to the queue
         """
-        if request.flow_id not in self._requests:
-            self._requests[request.flow_id] = []
+        if out_port not in self._requests:
+            self._requests[out_port] = []
 
-        self._requests[request.flow_id].append((request, time))
+        self._requests[out_port].append((request, time))
 
-    def pop_request(self, flow_id, policy=OLDEST, direction="any"):
+    def _merged_requests(self):
+        # merge all queues into a single one ordered by time
+        queue = None
+
+        """for q in self._requests.values():  # simple merge but not computationally efficient (O(nlogn))
+            queue.extend(q)
+        queue = sorted(queue, key=lambda x: x[1])"""
+
+        # implement a sorted merge (O(n))
+        for port, q in self._requests.items():
+            if queue is None:
+                queue = [(elem[0], elem[1], port) for elem in q]
+            else:
+                i = 0
+                j = 0
+                merged = []
+                while i < len(queue) and j < len(q):
+                    if queue[i][1] < q[j][1]:
+                        merged.append((queue[i][0], queue[i][1], queue[i][2]))
+                        i += 1
+                    else:
+                        merged.append((q[j][0], q[j][1], port))
+                        j += 1
+                if i < len(queue):
+                    rest = [(elem[0], elem[1], elem[2]) for elem in queue[i:]]
+                    merged.extend(rest)
+                if j < len(q):
+                    rest = [(elem[0], elem[1], port) for elem in q[j:]]
+                    merged.extend(rest)
+                queue = merged
+
+        return queue
+
+    def pop_request(self, flow_id, out_port=None, policy=OLDEST):
         """
         Remove and return the first request in the queue
 
@@ -41,10 +76,10 @@ class RequestQueue:
         ----------
         flow_id : int
             The flow id of the request to pop
-        policy : int
-            The policy to use when popping the request. It can be either OLDEST (0) or YOUNGEST (1)
-        direction : str
-            The direction of the request to pop. It can be either "upstream", "downstream" or "any"
+        out_port : str or None, optional
+            The name of the port to pop the request from. If None, any port will be considered. Default is None.
+        policy : int or None, optional
+            The policy to use when popping the request. It can be either OLDEST (0) or YOUNGEST (1). Default is OLDEST.
 
         Returns
         -------
@@ -52,20 +87,35 @@ class RequestQueue:
             A tuple with the request and the time it was added to the queue, or (None, None) if no request for that flow
             id was found
         """
-        queue = self._requests[flow_id]
+        queue = None
+        call_again = False
+        if out_port is not None:
+            queue = self._requests[out_port]
+        else:
+            queue = self._merged_requests()
+            call_again = True
+
+        ret = None
         if policy == self.OLDEST:
             # pop the oldest request
-            for i, (req, time) in enumerate(queue):
-                if req.flow_id == flow_id and (direction == "any" or req.direction == direction):
-                    return queue.pop(i)
+            for i, entry in enumerate(queue):
+                if entry[0].flow_id == flow_id:
+                    ret = queue.pop(i)
+                    break
         else:
             # pop the youngest request
-            for i, (req, time) in enumerate(queue[::-1]):
-                if req.flow_id == flow_id and (direction == "any" or req.direction == direction):
-                    return queue.pop(-i - 1)
+            for i, entry in enumerate(queue[::-1]):
+                if entry[0].flow_id == flow_id:
+                    ret = queue.pop(-i - 1)
+                    break
+
+        if call_again and ret is not None:
+            return self.pop_request(flow_id, out_port=ret[2], policy=policy)
+        elif ret is not None:
+            return ret
         return None, None
 
-    def pop_from_lle(self, lle, raise_error=False):
+    def pop_from_lle(self, lle, out_port=None, raise_error=False):
         """
         Remove and return the request in the queue associated with the LLE
 
@@ -73,6 +123,8 @@ class RequestQueue:
         ----------
         lle : EntanglementGenPacket
             The LLE to satisfy
+        out_port : str or None, optional
+            The name of the port to pop the request from. If None, any port will be considered. Default is None.
         raise_error : bool, optional
             Whether to raise an error if no request is found. Default is False.
 
@@ -82,22 +134,27 @@ class RequestQueue:
             A tuple with the request and the time it was added to the queue, or (None, None) if no request was found
             and raise_error is False
         """
-        flow_id = lle.flow_id
-        if flow_id not in self._requests:
-            if raise_error:
-                raise ValueError("No request found for the given LLE")
-            return None, None
+        call_again = False
+        if out_port is not None:
+            queue = self._requests[out_port]
+        else:
+            queue = self._merged_requests()
+            call_again = True
+        target = None
+        for i, entry in enumerate(queue):
+            if entry[0].lle_id == lle.lle_id:
+                target = queue.pop(i)
+                break
 
-        queue = self._requests[flow_id]
-        for i, (req, time) in enumerate(queue):
-            if req.lle_id == lle.lle_id:
-                return queue.pop(i)
-
-        if raise_error:
+        if call_again and target is not None:
+            return self.pop_from_lle(target[0], out_port=target[2], raise_error=raise_error)
+        elif target is not None:
+            return target
+        elif raise_error:
             raise ValueError("No request found for the given LLE")
         return None, None
 
-    def peek_request(self, flow_id=None, port_name=None, policy=OLDEST):
+    def peek_request(self, flow_id=None, out_port=None, policy=OLDEST):
         """
         Return the first request in the queue without removing it
 
@@ -105,7 +162,7 @@ class RequestQueue:
         ----------
         flow_id : int
             The flow id of the request to peek. If None, any flow id will be considered. Default is None.
-        port_name : str
+        out_port : str
             The name of the port to peek the request from. If None, any port will be considered. Default is None.
         policy : int
             The policy to use when peeking the request. It can be either OLDEST (0) or YOUNGEST (1)
@@ -116,47 +173,33 @@ class RequestQueue:
             A tuple with the request and the time it was added to the queue, or (None, None) if no request for that flow
             id was found
         """
-        if flow_id is not None:
-            queue = self._requests[flow_id]
+        queue = None
+        call_again = False
+        if out_port is not None:
+            if out_port not in self._requests:
+                return None, None
+            queue = self._requests[out_port]
         else:
-            queue = []
-            for q in self._requests.values():
-                queue.extend(q)
-        if policy == self.OLDEST or policy == "OLDEST":
-            # peek the oldest request
-            oldest = float("inf")
-            oldest_req = None
-            for req, time in queue:
-                if port_name is not None and ((req.direction == "upstream" and port_name == "q1") or
-                                              (req.direction == "downstream" and port_name == "q0")):
-                    if time < oldest:
-                        oldest = time
-                        oldest_req = req
-                elif port_name is None:
-                    if time < oldest:
-                        oldest = time
-                        oldest_req = req
-            if oldest_req is not None:
+            queue = self._merged_requests()
+            call_again = True
 
-                return oldest_req, oldest
-        elif policy == self.YOUNGEST or policy == "YOUNGEST":
-            # peek the youngest request
-            youngest = 0
-            youngest_req = None
-            for req, time in queue[::-1]:
-                if port_name is not None and ((req.direction == "upstream" and port_name == "q1") or
-                                              (req.direction == "downstream" and port_name == "q0")):
-                    if time > youngest:
-                        youngest = time
-                        youngest_req = req
-                elif port_name is None:
-                    if time > youngest:
-                        youngest = time
-                        youngest_req = req
-            if youngest_req is not None:
-                return youngest_req, youngest
+        ret = None
+        if policy == self.OLDEST:
+            # pop the oldest request
+            for i, entry in enumerate(queue):
+                if flow_id is None or entry[0].flow_id == flow_id:
+                    ret = queue[i]
+                    break
         else:
-            raise ValueError("Invalid policy")
+            # pop the youngest request
+            for i, entry in enumerate(queue[::-1]):
+                if flow_id is None or entry[0].flow_id == flow_id:
+                    ret = queue[-i - 1]
+                    break
+
+        if ret is not None:
+            return ret[0], ret[1]
+
         return None, None
 
     def delete_requests(self, flow_id):
@@ -169,8 +212,8 @@ class RequestQueue:
             The flow id of the requests to delete
         """
 
-        if flow_id in self._requests:
-            del self._requests[flow_id]
+        for port_name in self._requests.keys():
+            self._requests[port_name] = [req for req in self._requests[port_name] if req[0].flow_id != flow_id]
 
     def is_empty(self, flow_id=None):
         """
@@ -188,9 +231,12 @@ class RequestQueue:
             there are no requests in the queue, False otherwise.
         """
         if flow_id is not None:
-            if flow_id not in self._requests:
-                return True
-            return len(self._requests[flow_id]) == 0
+            for queue in self._requests.values():
+                if len(queue) > 0:
+                    for req, time in queue:
+                        if req.flow_id == flow_id:
+                            return False
+            return True
         else:
             for queue in self._requests.values():
                 if len(queue) > 0:
@@ -203,7 +249,7 @@ class RequestQueue:
             tot_len += len(queue)
         return tot_len
 
-    def length(self, flow_id=None, port_name=None):
+    def length(self, flow_id=None, out_port=None):
         """
         Return the total number of requests in the queue for a given flow id and/or port name
 
@@ -211,7 +257,7 @@ class RequestQueue:
         ----------
         flow_id : int or None, optional
             The flow id of the requests to count. If None, all requests will be counted. Default is None.
-        port_name : str or None, optional
+        out_port : str or None, optional
             The name of the port to count the requests from. If None, all ports will be considered. Default is None.
 
         Returns
@@ -220,46 +266,44 @@ class RequestQueue:
             The total number of requests in the queue for the given flow id
         """
 
-        if flow_id is not None:
-            if flow_id not in self._requests:
+        if out_port is not None:
+            if out_port not in self._requests:
                 return 0
-            return len(self._requests[flow_id])
-        elif port_name is not None:
-            tot_len = 0
-            for queue in self._requests.values():
-                for req, time in queue:
-                    if (req.direction == "upstream" and port_name == "q1" or
-                            req.direction == "downstream" and port_name == "q0"):
-                        tot_len += 1
-            return tot_len
+
+            if flow_id is not None:
+                return len([req for req in self._requests[out_port] if req[0].flow_id == flow_id])
+
+            return len(self._requests[out_port])
         else:
+            if flow_id is not None:
+                return len([req for queue in self._requests.values() for req in queue if req[0].flow_id == flow_id])
+
             return len(self)
 
-    def weighted_length(self, direction):
+    def weighted_length(self, out_port):
         """
         Get the total number of requests belonging to any flow with the specified direction.
         The weight of each request is 1/success_prob.
 
         Parameters
         ----------
-        direction : string
-            The direction of the flow. Either "upstream" or "downstream".
+        out_port : string
+            The output port to consider
 
         Returns
         -------
         float
-            The weighted queue length for the given direction
+            The weighted queue length for the given output port
         """
         tot_len = 0.
         tot_len_unweighted = 0
-        for flow_id, queue in self._requests.items():
-            for req, time in queue:
-                if req.meta["direction"] == direction:
-                    tot_len += 1/req.meta["success_probs"][0]
-                    tot_len_unweighted += 1
-                else:  # all requests for the flow will have the same direction
-                    break
-        return tot_len
+        if out_port not in self._requests:
+            return 0.
+        for req, time in self._requests[out_port]:
+            success_prob = 1 if "success_prob" not in req.meta else req.meta["success_prob"]
+            tot_len += 1. / success_prob
+            tot_len_unweighted += 1
+        return tot_len_unweighted
 
 class LLEManager:
     """

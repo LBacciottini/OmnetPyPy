@@ -26,7 +26,8 @@ if __name__ == "__main__":
     ax2.set_xlabel("Time (ms)")
     # ax.set_ylabel("Congestion Window Size")
     ax.set_ylabel("Latency (ms)", color="red")
-    ax.set_title("Varying load: Throughput and Latency")
+    ax.set_title("Latency and Throughput")
+    ax.set_ylim(0, 40)
 
     # make the y-axis labels be at the same x position
     ax.yaxis.set_label_coords(x=-0.06, y=0.5)
@@ -36,7 +37,7 @@ if __name__ == "__main__":
     df_lat = pd.read_csv("./out/latency_vector.csv")
 
     # Compute the sliding window average
-    window_size_time_units = 100000
+    window_size_time_units = 40000
 
     # create a new column with the sliding window index
     df_lat["sw_index"] = df_lat["timestamp"] // window_size_time_units
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     ax.plot(sw_avg["timestamp"], sw_avg["sample"], color="red", label="latency")
     # ax.set_ylabel("Latency (ms)")
 
-    cur_flows = 4
+    """cur_flows = 4
     delete_phase = False
     # create a colormap for the background
     colors = {4: "blue", 10: "yellow", 16: "red"}
@@ -73,12 +74,12 @@ if __name__ == "__main__":
         if delete_phase:
             cur_flows -= 6
         else:
-            cur_flows += 6
+            cur_flows += 6"""
 
 
     # read the IRG file and plot the Inter-Request Gap (IRG) on the same plot but on a different axis
     df_irg = pd.read_csv("./out/throughput_vector.csv")
-    window_size_time_units *= 50
+    window_size_time_units *= 5
     # sw_avg_irg = pd.Series([df_irg[(df_irg["timestamp"] >= t - window_size_time_units) & (df_irg["timestamp"] < t)]["sample"].mean() for t in df_irg["timestamp"]])
     sw_avg_irg = pd.Series([df_irg[(df_irg["timestamp"] >= t - window_size_time_units) & (df_irg["timestamp"] < t)]["sample"].count() for t in df_irg["timestamp"]])
     sw_avg_irg /= window_size_time_units # pairs per us
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     ax2.plot(df_irg["timestamp"], sw_avg_irg, color="blue", label="E2E Throughput")
     # ax2.set_ylabel("Inter-Request Gap (IRG) (ms)", color="blue")
     ax2.set_ylabel("Throughput (pairs/ms)", color="blue")
-    ax2.set_ylim(0, 4)
+    # ax2.set_ylim(0, 4)
 
     """
     # we add a third axis to plot the throughput, again as a moving average

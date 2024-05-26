@@ -44,7 +44,7 @@ if __name__ == "__main__":
     ax.plot(sw_avg["timestamp"], sw_avg["sample"], color="red", label="E2E Fidelity")
     # ax.set_ylabel("Latency (ms)")
 
-    """cur_flows = 4
+    cur_flows = 4
     delete_phase = False
     # create a colormap for the background
     colors = {4: "blue", 10: "yellow", 16: "red"}
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         ax.axvline(x=i, color='black', linestyle=':', alpha=0.5)
         ax2.axvline(x=i, color='black', linestyle=':', alpha=0.5)
         # add some text next to the line saying "2 flows added" at the top
-        ax.text(i + 1000, 95, f"{cur_flows} flows", rotation=0, fontsize=10)
+        ax.text(i + 1000, 0.5, f"{cur_flows} flows", rotation=0, fontsize=10)
 
         # add a colored background
         ax.axvspan(i, i + 8000, color=colors[cur_flows], alpha=0.1)
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         if delete_phase:
             cur_flows -= 6
         else:
-            cur_flows += 6"""
+            cur_flows += 6
 
     # we obtain the secret key rate from df_fid by computing the secret key fraction for each sample
     # the secret key fraction is 1 - 2h(2(1-f)/3), where h is the binary entropy function and f is the fidelity
@@ -93,9 +93,6 @@ if __name__ == "__main__":
     # ax2.set_ylabel("Inter-Request Gap (IRG) (ms)", color="blue")
     ax2.set_ylabel("E2E Secret Key Rate (bits/ms)", color="blue")
     # ax2.set_ylim(0, 2)
-
-    # still on ax2 print the average secret key rate for the second half of the simulation
-    ax2.axhline(y=sw_avg_skr[sw_avg_skr.size//2:].mean(), color='blue', linestyle='--', label="AVG E2E SKR at steady state")
 
     # print the legends within the axis
 

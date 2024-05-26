@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # also plot a horizontal green dashed line at the reference queue size set to 20
     ax.axhline(y=10, color='magenta', linestyle='--', label="reference queue size")
 
-    """cur_flows = 4
+    cur_flows = 4
     delete_phase = False
     # create a colormap for the background
     colors = {4: "blue", 10: "yellow", 16: "red"}
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         ax.axvline(x=i, color='black', linestyle=':', alpha=0.5)
         ax2.axvline(x=i, color='black', linestyle=':', alpha=0.5)
         # add some text next to the line saying "2 flows added" at the top
-        ax.text(i + 1000, 12, f"{cur_flows} flows", rotation=0, fontsize=10)
+        ax.text(i + 1000, 45, f"{cur_flows} flows", rotation=0, fontsize=10)
 
         # add a colored background
         ax.axvspan(i, i + 8000, color=colors[cur_flows], alpha=0.1)
@@ -55,7 +55,7 @@ if __name__ == "__main__":
         if delete_phase:
             cur_flows -= 6
         else:
-            cur_flows += 6"""
+            cur_flows += 6
 
     # read the IRG file and plot the Inter-Request Gap (IRG) on the same plot but on a different axis
     df_irg = pd.read_csv("./out/IRG_vector.csv")
