@@ -11,7 +11,7 @@ network: # QN0 -> LC -> QN1 -> LC -> QN2 -> LC -> QN3 -> LC -> QN4
         name: "qn0"
         parameters:
           storage_qbits_per_port: 50
-          decoherence_rate: 5
+          decoherence_rate: 10
       - type: "LinkController"
         name: "lc0"
         parameters:
@@ -20,7 +20,7 @@ network: # QN0 -> LC -> QN1 -> LC -> QN2 -> LC -> QN3 -> LC -> QN4
         name: "qn1"
         parameters:
           storage_qbits_per_port: 50
-          decoherence_rate: 5
+          decoherence_rate: 10
       - type: "LinkController"
         name: "lc1"
         parameters:
@@ -29,7 +29,7 @@ network: # QN0 -> LC -> QN1 -> LC -> QN2 -> LC -> QN3 -> LC -> QN4
         name: "qn2"
         parameters:
           storage_qbits_per_port: 50
-          decoherence_rate: 5
+          decoherence_rate: 10
       - type: "LinkController"
         name: "lc2"
         parameters:
@@ -38,7 +38,7 @@ network: # QN0 -> LC -> QN1 -> LC -> QN2 -> LC -> QN3 -> LC -> QN4
         name: "qn3"
         parameters:
           storage_qbits_per_port: 50
-          decoherence_rate: 5
+          decoherence_rate: 10
       - type: "LinkController"
         name: "lc3"
         parameters:
@@ -47,7 +47,7 @@ network: # QN0 -> LC -> QN1 -> LC -> QN2 -> LC -> QN3 -> LC -> QN4
         name: "qn4"
         parameters:
           storage_qbits_per_port: 50
-          decoherence_rate: 5
+          decoherence_rate: 10
     connections:
       - for i in 0 to 3:
           source: "qn{i}.q1"

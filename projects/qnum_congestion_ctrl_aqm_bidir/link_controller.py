@@ -100,9 +100,11 @@ class LinkController(SimpleModule):
                               generator=0)[0]"""
 
         # flip a coin to decide which queue to peek
+        left_is_owner = False
         if rng.random(generator=0) < 0.5:
             queue = 0
             req, oldest_time = queues_info[0].peek_request(out_port="q1", policy="OLDEST")
+            left_is_owner = True
         else:
             queue = 1
             req, oldest_time = queues_info[1].peek_request(out_port="q0", policy="OLDEST")
@@ -111,26 +113,38 @@ class LinkController(SimpleModule):
             # try the other queue
             queue = 1 - queue
             req, oldest_time = queues_info[queue].peek_request(out_port="q0" if queue == 1 else "q1", policy="OLDEST")
+            left_is_owner = not left_is_owner
 
         if req is None:
             self.schedule_message(self._trigger_msg, delay=self.t_clock)
             return
         flow_id = req.flow_id
 
-        # now we flip a coin to decide if the entanglement attempt is successful
-        success = rng.random(generator=0) < self._flow_attempt_probabilities[flow_id]
+        # use a geometric distribution to determine the number of attempts needed
+        attempts = rng.geometric(p=self._flow_attempt_probabilities[flow_id], generator=0)
 
-        # if the attempt is successful, we send an entanglement generation message to the nodes on the other side
-        if success:
-            lle_id = self.name + "-" + str(self._cur_lle_id)
-            # debug: check that the request we picked is indeed the oldest in the queue for that port name
-            # print(f"Here {self.name} for {lle_id} : Request {req} is the oldest ({oldest_time}) in the queue on port q{1 - queue}")
-            # print(queues_info[queue]._requests)
-            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name), "lc0")
-            self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name), "lc1")
-            self._cur_lle_id += 1
+        # create a self message
+        self_msg = Message([flow_id, left_is_owner], header="entanglement ready")
+        # wait for the number of attempts
+        self.schedule_message(self_msg, delay=(attempts-1) * self.t_clock)
+
+    def _handle_successful_entanglement(self, message):
+
+        flow_id = message.fields[0]
+        left_is_owner = message.fields[1]
+
+        lle_id = self.name + "-" + str(self._cur_lle_id)
+        # debug: check that the request we picked is indeed the oldest in the queue for that port name
+        # print(f"Here {self.name} for {lle_id} : Request {req} is the oldest ({oldest_time}) in the queue on port q{1 - queue}")
+        # print(queues_info[queue]._requests)
+        self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name,
+                                        owner=left_is_owner), "lc0")
+        self.send(EntanglementGenPacket(flow_id=flow_id, lle_id=lle_id, sender_name=self.name,
+                                        owner=not left_is_owner), "lc1")
+        self._cur_lle_id += 1
 
         # we schedule the next attempt
+
         self.schedule_message(self._trigger_msg, delay=self.t_clock)
 
     def _get_queues_info(self):
@@ -180,9 +194,12 @@ class LinkController(SimpleModule):
                 return
 
         elif port_name is None:  # self message, we need to attempt entanglement
-            if "header" not in message.meta or message.meta["header"] != self._trigger_msg.meta["header"]:
+            if "header" in message.meta and message.meta["header"] == self._trigger_msg.meta["header"]:
+                self._attempt_entanglement()
+            elif "header" in message.meta or message.meta["header"] == "entanglement ready":
+                self._handle_successful_entanglement(message)
+            else:
                 raise ValueError("Unknown self message received")
-            self._attempt_entanglement()
 
     def _handle_flows_information(self, message):
         for flow in message.flows:

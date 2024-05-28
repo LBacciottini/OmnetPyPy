@@ -44,6 +44,10 @@ if __name__ == "__main__":
     ax.plot(sw_avg["timestamp"], sw_avg["sample"], color="red", label="E2E Fidelity")
     # ax.set_ylabel("Latency (ms)")
 
+    # still on ax2 print the average secret key rate for the second half of the simulation
+    ax.axhline(y=sw_avg[sw_avg.size // 2:].mean(), color='red', linestyle='--',
+                label="AVG E2E FID at steady state")
+
     """cur_flows = 4
     delete_phase = False
     # create a colormap for the background

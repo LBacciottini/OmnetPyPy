@@ -3,6 +3,7 @@ A set of utility classes and functions that are used across the package.
 """
 
 import random
+from numpy.random import default_rng
 
 __all__ = ['MultiRandom', 'FutureMetric']
 
@@ -29,6 +30,7 @@ class MultiRandom(random.Random):
             self._generators = [self]
         else:
             self._generators = [random.Random() for _ in seeds]
+            self.numpy_generators = [default_rng(seed=seed) for seed in seeds]
             for g, s in zip(self._generators, seeds):
                 g.seed(s)
 
@@ -55,6 +57,9 @@ class MultiRandom(random.Random):
 
     def uniform(self, a, b, generator=0):
         return self._generators[generator].uniform(a, b)
+
+    def geometric(self, p, size=None, generator=0):
+        return self.numpy_generators[generator].geometric(p, size)
 
     def triangular(self, low=0.0, high=0.0, mode=None, generator=0):
         return self._generators[generator].triangular(low, high, mode)

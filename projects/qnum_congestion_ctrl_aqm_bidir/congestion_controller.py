@@ -347,7 +347,7 @@ class RateCongestionController(AIMDCongestionController):
         # print(f"Flow {flow_id} congestion knob increased to {self.congestion_knobs[flow_id]}")
         # print(f"Flow {flow_id} congestion knob increased by {increase}")
 
-    def setup_congestion_control(self, flow, current_time=None):
+    def setup_congestion_control(self, flow, current_time=None, is_source=True):
         """
         Setup the congestion control variables for the given flow
         """
@@ -356,7 +356,7 @@ class RateCongestionController(AIMDCongestionController):
         self.congestion_knobs[flow["flow_id"]] = self.initial_congestion_knob  # initial congestion knob (IPG), (us)
         self.last_update[flow["flow_id"]] = current_time
         self.last_halved[flow["flow_id"]] = current_time
-        self.other_ends[flow["flow_id"]] = flow["destination"]
+        self.other_ends[flow["flow_id"]] = flow["destination"] if is_source else flow["source"]
         self.ssthresh[flow["flow_id"]] = 1200.  # initial slow start threshold
         self.is_slow_start[flow["flow_id"]] = True
 
@@ -459,9 +459,10 @@ class RateCongestionController(AIMDCongestionController):
             sim_log.warning(f"Flow {flow_id} marked as congested")
             self.halve_congestion_knob(flow_id, current_time)
 
-        elif num_skipped > 0:
+        # TODO: find another way to detect drops, e.g., timeouts
+        """elif num_skipped > 0:
             sim_log.error(f"Flow {flow_id} marked as congested due to losses")
-            self.halve_congestion_knob(flow_id, current_time)
+            self.halve_congestion_knob(flow_id, current_time)"""
 
         # return the number of new requests to generate. 0 with a rate-based controller
         return 0

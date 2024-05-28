@@ -37,7 +37,7 @@ class RequestQueue:
 
     def _merged_requests(self):
         # merge all queues into a single one ordered by time
-        queue = None
+        queue = []
 
         """for q in self._requests.values():  # simple merge but not computationally efficient (O(nlogn))
             queue.extend(q)
@@ -45,7 +45,7 @@ class RequestQueue:
 
         # implement a sorted merge (O(n))
         for port, q in self._requests.items():
-            if queue is None:
+            if len(queue) == 0:
                 queue = [(elem[0], elem[1], port) for elem in q]
             else:
                 i = 0
@@ -65,7 +65,6 @@ class RequestQueue:
                     rest = [(elem[0], elem[1], port) for elem in q[j:]]
                     merged.extend(rest)
                 queue = merged
-
         return queue
 
     def pop_request(self, flow_id, out_port=None, policy=OLDEST):
@@ -90,6 +89,8 @@ class RequestQueue:
         queue = None
         call_again = False
         if out_port is not None:
+            if out_port not in self._requests:
+                return None, None
             queue = self._requests[out_port]
         else:
             queue = self._merged_requests()
@@ -381,7 +382,7 @@ class LLEManager:
             raise ValueError("No LLE found for the given request")
         return None, None
 
-    def pop_lle(self, port_name, flow_id=None, policy=OLDEST):
+    def pop_lle(self, port_name, flow_id=None, owner=False, policy=OLDEST):
         r"""
         Pop an LLE from the manager available on the given port, according to the given policy
 
@@ -392,6 +393,9 @@ class LLEManager:
         flow_id : int or None, optional
             The flow id of the LLE to pop. If None, the method will pop the first LLE available on the port. Default is
             None.
+        owner : bool, optional
+            Whether the LLE should be owned by the QuantumNode that pops it. Default is False. If False, the LLE can either
+            be owned by the QuantumNode or not.
         policy : int
             The policy to use when popping the LLE. It can be either OLDEST (0) or YOUNGEST (1)
 
@@ -405,17 +409,19 @@ class LLEManager:
         if policy == self.OLDEST:
             for i, (lle, time) in enumerate(self._lles[port_name]):
                 if flow_id is None or lle.flow_id == flow_id:
-                    return self._lles[port_name].pop(i)
+                    if (not owner) or (owner and lle.meta["owner"]):
+                        return self._lles[port_name].pop(i)
         elif policy == self.YOUNGEST:
             for i, (lle, time) in enumerate(self._lles[port_name][::-1]):
                 if flow_id is None or lle.flow_id == flow_id:
-                    return self._lles[port_name].pop(-i - 1)
+                    if (not owner) or (owner and lle.meta["owner"]):
+                        return self._lles[port_name].pop(-i - 1)
         else:
             raise ValueError("Invalid policy")
 
         return None, None
 
-    def peek_lle(self, port_name, flow_id=None, policy=OLDEST):
+    def peek_lle(self, port_name, flow_id=None, owner=False, policy=OLDEST):
         """
         Peek at an LLE from the manager available on the given port, according to the given policy
 
@@ -426,6 +432,9 @@ class LLEManager:
         flow_id : int or None, optional
             The flow id of the LLE to pop. If None, the method will pop the first LLE available on the port. Default is
             None.
+        owner : bool, optional
+            Whether the LLE should be owned by the QuantumNode that pops it. Default is False. If False, the LLE can either
+            be owned by the QuantumNode or not.
         policy : int
             The policy to use when popping the LLE. It can be either OLDEST (0) or YOUNGEST (1)
 
@@ -439,11 +448,13 @@ class LLEManager:
         if policy == self.OLDEST:
             for lle, time in self._lles[port_name]:
                 if flow_id is None or lle.flow_id == flow_id:
-                    return lle, time
+                    if (not owner) or (owner and lle.meta["owner"]):
+                        return lle, time
         elif policy == self.YOUNGEST:
             for lle, time in self._lles[port_name][::-1]:
                 if flow_id is None or lle.flow_id == flow_id:
-                    return lle, time
+                    if (not owner) or (owner and lle.meta["owner"]):
+                        return lle, time
         else:
             raise ValueError("Invalid policy")
 

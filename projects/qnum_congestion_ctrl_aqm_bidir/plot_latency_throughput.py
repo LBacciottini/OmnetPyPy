@@ -53,6 +53,10 @@ if __name__ == "__main__":
     ax.plot(sw_avg["timestamp"], sw_avg["sample"], color="red", label="latency")
     # ax.set_ylabel("Latency (ms)")
 
+    # still on ax2 print the average secret key rate for the second half of the simulation
+    ax.axhline(y=sw_avg[sw_avg.size // 2:].mean(), color='red', linestyle='--',
+                label="AVG latency at steady state")
+
     """cur_flows = 4
     delete_phase = False
     # create a colormap for the background
@@ -91,6 +95,10 @@ if __name__ == "__main__":
     # ax2.set_ylabel("Inter-Request Gap (IRG) (ms)", color="blue")
     ax2.set_ylabel("Throughput (pairs/ms)", color="blue")
     # ax2.set_ylim(0, 4)
+
+    # still on ax2 print the average secret key rate for the second half of the simulation
+    ax2.axhline(y=sw_avg_irg[sw_avg_irg.size // 2:].mean(), color='blue', linestyle='--',
+                label="AVG E2E SKR at steady state")
 
     """
     # we add a third axis to plot the throughput, again as a moving average
