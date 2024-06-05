@@ -445,13 +445,21 @@ class QuantumNode(SimpleModule):
         """
         candidate_neighbors = []
         candidate_ports = []
-        for port_name in self.ports:
+
+        # DISABLE LOOPS VERSION: UNCOMMENT THE FOLLOWING CODE AND COMMENT THE CODE BELOW
+        """for port_name in self.ports:
             port_idx = int(port_name[1:])
             for rout_dict in self.routing_table:
                 if rout_dict["port"] == port_idx and (rout_dict["dest"] == "default" or destination in rout_dict["dest"]):
                     candidate_neighbors.append(self._get_neighbor(port_name))
                     candidate_ports.append(port_name)
-                    break
+                    break"""
+
+        # ENABLE LOOPS VERSION: COMMENT THE ABOVE CODE AND UNCOMMENT THE FOLLOWING
+        for port_name in self.ports:
+            candidate_neighbors.append(self._get_neighbor(port_name))
+            candidate_ports.append(port_name)
+
         return candidate_neighbors, candidate_ports
 
     def _build_input_features(self, request):
