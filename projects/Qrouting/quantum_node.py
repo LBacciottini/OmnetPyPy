@@ -385,6 +385,26 @@ class QuantumNode(SimpleModule):
         neighbor_entity = self.sim_context.network.get_sub_entity(neighbor)
         return neighbor_entity.distance_to_destination(destination)
 
+    def peek_neighbor_input_features(self, port_name, request):
+        """
+        Peek the input features for the neighbor connected to the given port
+
+        Parameters
+        ----------
+        port_name : str
+            The name of the port
+        request : EntanglementRequestPacket
+            The request for which the features have to be built
+
+        Returns
+        -------
+        dict
+            The input features for the neighbor connected to the given port
+        """
+        neighbor = self._get_neighbor(port_name)
+        neighbor_entity = self.sim_context.network.get_sub_entity(neighbor)
+        return neighbor_entity._build_input_features(request)
+
     def distance_to_destination(self, destination):
         """
         Get the distance to the given destination
@@ -409,6 +429,31 @@ class QuantumNode(SimpleModule):
         raise ValueError(f"Destination {destination} not found in the distance vector")
 
 
+    def _get_candidate_neighbors_ports(self, destination):
+        """
+        Get the candidate neighbors and ports to consider for the action
+
+        Parameters
+        ----------
+        destination : str
+            The destination
+
+        Returns
+        -------
+        tuple
+            The list of candidate neighbors and the list of candidate ports
+        """
+        candidate_neighbors = []
+        candidate_ports = []
+        for port_name in self.ports:
+            port_idx = int(port_name[1:])
+            for rout_dict in self.routing_table:
+                if rout_dict["port"] == port_idx and (rout_dict["dest"] == "default" or destination in rout_dict["dest"]):
+                    candidate_neighbors.append(self._get_neighbor(port_name))
+                    candidate_ports.append(port_name)
+                    break
+        return candidate_neighbors, candidate_ports
+
     def _build_input_features(self, request):
         """
         Build the input features for the Q-routing algorithm
@@ -431,15 +476,7 @@ class QuantumNode(SimpleModule):
         distance = self.distance_to_destination(destination)
 
         # check if the final destination is reachable through the neighbors
-        candidate_neighbors = []
-        candidate_ports = []
-        for port_name in self.ports:
-            port_idx = int(port_name[1:])
-            for rout_dict in self.routing_table:
-                if rout_dict["port"] == port_idx and (rout_dict["dest"] == "default" or destination in rout_dict["dest"]):
-                    candidate_neighbors.append(self._get_neighbor(port_name))
-                    candidate_ports.append(port_name)
-                    break
+        candidate_neighbors, candidate_ports = self._get_candidate_neighbors_ports(destination)
 
         # get the neighbor queue info
         neighbor_queues = [self.peek_neighbor_queue(port_name) for port_name in candidate_ports]
@@ -472,16 +509,55 @@ class QuantumNode(SimpleModule):
             "NEIGHBOR_MEAN_DISTANCE": neighbor_mean_distance
         }
 
-    def _route_request_with_agent(self, request):
+    def build_output_features(self, request, neighbor_name):
+        """
+        Build the output features for the Q-routing algorithm
+
+        Parameters
+        ----------
+        request : EntanglementRequestPacket
+            The request for which the features have to be built
+        neighbor_name : str
+            The name of the neighbor node to consider for the action
+
+        Returns
+        -------
+        dict
+            The output features for the Q-routing algorithm
+        """
+
+        # peek at the neighbor's name input features
+        features = self.peek_neighbor_input_features(neighbor_name, request)
+        output_features = {
+            "ACTION_NODE_ID": neighbor_name,
+            "ACTION_DISTANCE": features["DISTANCE"],
+            "ACTION_MIN_Q_LENGTH": features["NEIGHBOR_MIN_Q_LENGTH"],
+            "ACTION_MAX_Q_LENGTH": features["NEIGHBOR_MAX_Q_LENGTH"],
+            "ACTION_MEAN_Q_LENGTH": features["NEIGHBOR_MEAN_Q_LENGTH"],
+            "ACTION_MIN_DISTANCE": features["NEIGHBOR_MIN_DISTANCE"],
+            "ACTION_MAX_DISTANCE": features["NEIGHBOR_MAX_DISTANCE"],
+            "ACTION_MEAN_DISTANCE": features["NEIGHBOR_MEAN_DISTANCE"]
+        }
+        return output_features
+
+
+    def _route_request_with_agent(self, request, neighbors_to_consider=None):
 
         # build the input features
         features = self._build_input_features(request)
+
+        output_features_list = []
+        if neighbors_to_consider is None:
+            neighbors_to_consider, _ = self._get_candidate_neighbors_ports(request.final_destination)
+
+        for neighbor_name in neighbors_to_consider:
+            output_features_list.append(self.build_output_features(request, neighbor_name))
 
         # import routing function from routing_agent
         from projects.Qrouting.routing_agent import route
 
         # get the action (next hop)
-        action = route(features, self.name)
+        action = route(features, output_features_list, self.name)
 
         # emit features
         self.emit_metric("features", features)
@@ -491,9 +567,9 @@ class QuantumNode(SimpleModule):
 
         return out_port, next_hop
 
-    def route_request(self, request):
+    def route_request(self, request, neighbors_to_consider=None):
         if self.should_use_agent:
-            return self._route_request_with_agent(request=request)
+            return self._route_request_with_agent(request=request, neighbors_to_consider=neighbors_to_consider)
         else:
             # build the input features
             features = self._build_input_features(request)
