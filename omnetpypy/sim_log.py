@@ -50,7 +50,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def log_to_console(level=logging.DEBUG):
-    """Activate log output to the stdout console.
+    r"""Activate log output to the stdout console.
 
     Parameters
     ----------
@@ -72,7 +72,7 @@ def log_to_console(level=logging.DEBUG):
 
 
 def log_to_file(filename, level=logging.DEBUG):
-    """Activate log output to the specified file.
+    r"""Activate log output to the specified file.
 
     Parameters
     ----------
@@ -83,7 +83,7 @@ def log_to_file(filename, level=logging.DEBUG):
 
     Returns
     -------
-    logging.FileHandler
+    :class:`logging.FileHandler`
         The handler of the log output.
     """
     fh = logging.FileHandler(filename=filename)
@@ -95,12 +95,17 @@ def log_to_file(filename, level=logging.DEBUG):
 
 
 def set_log_level(level):
-    """Set the log level on all outputs.
+    r"""Set the log level on all outputs.
 
     Parameters
     ----------
     level : int
-        The new log level.
+        The new log level. Can be one of the following:
+        - logging.DEBUG === "DEBUG" === 0
+        - logging.INFO === "INFO" === 1 
+        - logging.WARNING === "WARNING" === 2
+        - logging.ERROR === "ERROR" === 3
+        - logging.CRITICAL === "CRITICAL" === 4
     """
 
     level = sanitize_log_level(level)
@@ -142,7 +147,7 @@ def sanitize_log_level(level):
 
 
 def debug(message, module_id=None, time=None):
-    """Log a message with level DEBUG on the logger.
+    r"""Log a message with level DEBUG on the logger.
 
     Parameters
     ----------
@@ -150,9 +155,9 @@ def debug(message, module_id=None, time=None):
         The message to be logged. It should not contain the current simulation time because it is already
         present in the log format.
     module_id : int or str or None optional
-        If not None, an additional string is added to the log entry, containing the module identifier.
+        If not ``None``, an additional string is added to the log entry, containing the module identifier (or its name).
     time : int or float or None, optional
-        If not None, an additional string is added to the log entry, containing the current simulation time.
+        If not ``None``, an additional string is added to the log entry, containing the current simulation time.
     """
     log_message = ""
     if time is not None:
@@ -169,7 +174,7 @@ def debug(message, module_id=None, time=None):
 
 
 def info(message, module_id=None, time=None):
-    """Log a message with level INFO on the logger.
+    r"""Log a message with level INFO on the logger.
 
     Parameters
     ----------
@@ -177,9 +182,9 @@ def info(message, module_id=None, time=None):
         The message to be logged. It should not contain the current simulation time because it is already
         present in the log format.
     module_id : int or str or None optional
-        If not None, an additional string is added to the log entry, containing the module identifier.
+        If not ``None``, an additional string is added to the log entry, containing the module identifier (or its name).
     time : int or float or None, optional
-        If not None, an additional string is added to the log entry, containing the current simulation time.
+        If not ``None``, an additional string is added to the log entry, containing the current simulation time.
     """
     log_message = ""
     if time is not None:
@@ -193,7 +198,7 @@ def info(message, module_id=None, time=None):
 
 
 def warning(message, module_id=None, time=None):
-    """Log a message with level WARNING on the logger.
+    r"""Log a message with level WARNING on the logger.
 
     Parameters
     ----------
@@ -201,9 +206,9 @@ def warning(message, module_id=None, time=None):
         The message to be logged. It should not contain the current simulation time because it is already
         present in the log format.
     module_id : int or str or None optional
-        If not None, an additional string is added to the log entry, containing the module identifier.
+        If not ``None``, an additional string is added to the log entry, containing the module identifier (or its name).
     time : int or float or None, optional
-        If not None, an additional string is added to the log entry, containing the current simulation time.
+        If not ``None``, an additional string is added to the log entry, containing the current simulation time.
     """
     log_message = ""
     if time is not None:
@@ -225,9 +230,9 @@ def error(message, module_id=None, time=None):
         The message to be logged. It should not contain the current simulation time because it is already
         present in the log format.
     module_id : int or str or None optional
-        If not None, an additional string is added to the log entry, containing the module identifier.
+        If not ``None``, an additional string is added to the log entry, containing the module identifier (or its name).
     time : int or float or None, optional
-        If not None, an additional string is added to the log entry, containing the current simulation time.
+        If not ``None``, an additional string is added to the log entry, containing the current simulation time.
     """
     log_message = ""
     if time is not None:
@@ -249,9 +254,9 @@ def critical(message, module_id=None, time=None):
         The message to be logged. It should not contain the current simulation time because it is already
         present in the log format.
     module_id : int or str or None optional
-        If not None, an additional string is added to the log entry, containing the module identifier.
+        If not ``None``, an additional string is added to the log entry, containing the module identifier (or its name).
     time : int or float or None, optional
-        If not None, an additional string is added to the log entry, containing the current simulation time.
+        If not ``None``, an additional string is added to the log entry, containing the current simulation time.
     """
     log_message = ""
     if time is not None:

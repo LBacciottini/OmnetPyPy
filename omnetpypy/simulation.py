@@ -14,6 +14,30 @@ class Simulation:
     """
     This class is a container for the simulation configuration parameters.
     It represents a simulation configuration, and it can be used to store the configuration of a repetition
+    The attributes of this class match the parameters of the constructor.
+
+    Parameters
+    ----------
+    engine : str
+        The simulation engine to use. Only "simpy" is implemented at the moment.
+    seed_set : list of int
+        The seed set for the repetition.
+    repetition : int
+        The repetition index.
+    metrics : list of :class:`omnetpypy.utilities.FutureMetric`
+        The list of metrics to collect.
+    yaml_path : str
+        The path to the topology YAML file.
+    until : int or float
+        The time until which the simulation will run.
+    log_level : str
+        The log level for the simulation. See :func:`omnetpypy.sim_log.log_to_console`.
+    time_unit : str
+        The time unit for the simulation. See :func:`omnetpypy.utilities.time_unit_factor`.
+    output_dir : str
+        The output directory for the simulation.
+    global_params : dict
+        A dictionary of global parameters. These parameters are available to all the entities in the simulation.
     """
 
     def __init__(self, engine, seed_set, repetition, metrics, yaml_path, until, log_level, time_unit, output_dir,
@@ -47,6 +71,14 @@ class Simulation:
         self.network = parser.parse_topology(yaml_path, self)
 
     def start(self):
+        r"""
+        start the simulation and collect the metrics.
+
+        Returns
+        -------
+        dict
+            A dictionary of dictionaries with the collected metrics.
+        """
         self.connector.start_simulation(until=self.until)
         collected_data = {}
         # collect metrics
@@ -74,8 +106,12 @@ class Simulation:
 
     @property
     def time_unit_factor(self):
-        """
-        Return the factor to convert the time unit to seconds.
+        r"""
+        The factor to convert the simulation time unit to seconds.
+
+        See Also
+        --------
+        :func:`omnetpypy.utilities.time_unit_factor`
 
         Returns
         -------
@@ -91,6 +127,38 @@ class Experiment:
     This class is a container for the experiment configuration parameters.
     It represents an experiment configuration, and it can be used to store the configuration of a set of
     simulated repetitions
+
+    Parameters
+    ----------
+    config_file : str
+        The path to the configuration file. The configuration file is a YAML file with a rigid structure.
+
+    Attributes
+    ----------
+    seed_sets : list of lists of int
+        The seed sets for each repetition. Each repetition has a seed set of length "rngs_per_rep"
+        from the configuration file.
+    config : dict
+        The configuration dictionary, directly parsed from the YAML configuration file.
+    simulations_params : list of tuples
+        The list of simulation parameters for each repetition. Each element of the list is a tuple with the
+        following parameters:
+        <ul>
+        <li> engine (str):
+            The simulation engine to use. Only "simpy" is supported at the moment.</li>
+        <li> seed_set (list of int):
+            The seed set for the repetition.</li>
+        <li> repetition (int):
+            The repetition index.</li>
+        <li> metrics (list of :class:`omnetpypy.utilities.FutureMetric`):
+            The list of metrics to collect.</li>
+        <li> yaml_path (str):
+            The path to the topology YAML file.</li>
+        <li> until (int or float):
+            The time until which the simulation will run.</li>
+        <li> log_level (str):
+            The log level for the simulation. See :func:``</li>
+        </ul>
     """
 
     def __init__(self, config_file):
@@ -120,7 +188,7 @@ class Experiment:
         # so we iterate over the first rngs_per_rep * repetitions seeds
         # and we store them in a list of lists, where each list of seeds
         # is the seed set for a repetition
-        seeds_path = pkg_resources.resource_filename(__name__, 'seeds.csv')
+        seeds_path = pkg_resources.resource_filename('omnetpypy', 'data/seeds.csv')
 
         with open(seeds_path, "r") as f:
             reader = csv.reader(f)
@@ -154,6 +222,9 @@ class Experiment:
                                    for i in range(repetitions)]
 
     def run_simulations(self):
+        r"""
+        Run the simulations.
+        """
 
         import multiprocessing
 
@@ -162,9 +233,16 @@ class Experiment:
         if max_processes > 1:
             max_processes = min(multiprocessing.cpu_count(), max_processes)
 
+        # if max_processes is 1, we just run the simulations sequentially
+        if max_processes == 1:
+            collected = []
+            for sim_params in self.simulations_params:
+                collected.append(_start_sim(sim_params))
+
         # run the simulations in parallel with a ProcessPoolExecutor
-        with multiprocessing.Pool(max_processes) as pool:
-            collected = pool.map(_start_sim, self.simulations_params)
+        else:
+            with multiprocessing.Pool(max_processes) as pool:
+                collected = pool.map(_start_sim, self.simulations_params)
 
             # every element of collected is a dictionary of dictionaries with the same keys.
             # we want to merge them into a single dictionary, where the values

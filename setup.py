@@ -2,12 +2,16 @@ from setuptools import setup, find_packages
 
 setup(
     name='omnetpypy',
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(),
     install_requires=[
         # Add your dependencies here
     ],
     entry_points={},
+    package_data={
+        'omnetpypy': ['data/seeds.csv'],
+    },
+    include_package_data=True,
     url='https://github.com/LBacciottini/OmnetPyPy',
     author='Leonardo Bacciottini',
     author_email='baccio.leonardo@gmail.com',

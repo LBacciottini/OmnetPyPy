@@ -4,6 +4,7 @@ simulate_until: 8000
 topology_file: "ping_pong_net.yaml"
 output_dir: "out"
 engine: "simpy"
+time_unit: "s"
 
 metrics:
   - name: "Throughput"

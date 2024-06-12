@@ -1,5 +1,6 @@
 """
-This module implements the Message class, representing a message in the simulation.
+This module implements the :class:`~omnetpypy.front_end.message.Message` class,
+representing a message in the simulation.
 """
 
 __all__ = ['Message']
@@ -7,7 +8,21 @@ __all__ = ['Message']
 
 class Message:
     r"""
-    This class represents the messages exchanged between modules in a simulation.
+    This class is a wrapper for messages exchanged between entities in a simulation.
+
+    Parameters
+    ----------
+    fields : list
+        The fields of the message.
+    meta : dict, optional
+        Additional metadata to be stored with the message. A typical use case is to store a "header".
+
+    Attributes
+    ----------
+    fields : list
+        The fields of the message.
+    meta : dict
+        Additional, editable metadata stored with the message.
     """
 
     def __init__(self, fields, **meta):
@@ -20,5 +35,8 @@ class Message:
         return f"Message(fields={self.fields}, meta={self.meta})"
 
     def __copy__(self):
+        """
+        Return a shallow copy of the message.
+        """
         new_meta = self.meta.copy()
         return Message(fields=self.fields[:], **new_meta)

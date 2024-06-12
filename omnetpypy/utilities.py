@@ -11,15 +11,16 @@ from collections import namedtuple
 
 
 class MultiRandom(random.Random):
-    """
-    This class is a wrapper around the standard library random.Random class,
+    r"""
+    This class is a wrapper around the standard library :class:`random.Random` class,
     that allows to use multiple random number generators with different seeds.
 
     Parameters
     ----------
     seeds : list or int
         A list of seeds for the random number generators.
-        The length of the list determines the number of generators.
+        The length of the list determines the number of generators. If a single integer is provided,
+        a single generator is created.
     """
 
     def __init__(self, seeds=44):
@@ -38,80 +39,477 @@ class MultiRandom(random.Random):
         return len(self._generators)
 
     def random(self, generator=0):
+        r"""
+        Return the next random floating point number uniformly distributed in the range [0.0, 1.0).
+        
+        Parameters
+        ----------
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+        
+        Returns
+        -------
+        float
+            The next random floating point number.
+        
+        See Also
+        --------
+        :meth:`random.Random.random`
+        """
         return self._generators[generator].random()
 
     def randint(self, a, b, generator=0):
+        r"""
+        Return the next random integer N such that a <= N <= b.
+
+        Parameters
+        ----------
+        a : int
+            The lower bound of the random integer.
+        b : int
+            The upper bound of the random integer.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        int
+            The next random integer.
+
+        See Also
+        --------
+        :meth:`random.Random.randint`
+        """
         return self._generators[generator].randint(a, b)
 
     def choice(self, seq, generator=0):
+        r"""
+        Return a random element from the non-empty sequence ``seq``.
+
+        Parameters
+        ----------
+        seq : iterable
+            A non-empty sequence.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        object
+            A random element from the sequence.
+
+        See Also
+        --------
+        :meth:`random.Random.choice`
+        """
         return self._generators[generator].choice(seq)
 
     def choices(self, sequence, weights=None, cum_weights=None, k=1, generator=0):
+        r"""
+        Return a k sized list of elements chosen from the population with replacement.
+
+        Parameters
+        ----------
+        sequence : iterable
+            A non-empty sequence.
+        weights : list, optional
+            A list of weights to be used in the selection. If ``None``, the weights are assumed to be equal.
+            The relative weights determine the probability of selecting each element.
+        cum_weights : list, optional
+            A list of cumulative weights to be used in the selection. If ``None``, the weights are assumed to be equal.
+            The relative weights determine the probability of selecting each element.
+        k : int, optional
+            The number of elements to choose. Defaults to 1.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        list
+            A list of k elements chosen from the population.
+
+        See Also
+        --------
+        :meth:`random.Random.choices`
+        """
         return self._generators[generator].choices(sequence, weights=weights, cum_weights=cum_weights, k=k)
 
     def shuffle(self, x, generator=0):
+        r"""
+        Shuffle the sequence x in place.
+
+        Parameters
+        ----------
+        x : iterable
+            The sequence to shuffle.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        See Also
+        --------
+        :meth:`random.Random.shuffle`
+        """
         return self._generators[generator].shuffle(x)
 
     def sample(self, population, k, generator=0):
+        r"""
+        Return a k length list of unique elements chosen from the population sequence or set.
+
+        Parameters
+        ----------
+        population : iterable
+            A non-empty sequence or set.
+        k : int
+            The number of unique elements to choose.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+
+        Returns
+        -------
+        list
+            A list of unique elements chosen from the population.
+
+
+        See Also
+        --------
+        :meth:`random.Random.sample`
+        """
         return self._generators[generator].sample(population, k)
 
     def uniform(self, a, b, generator=0):
+        r"""
+        Return a random floating point number N such that a <= N <= b for a <= b and b <= N <= a for b < a.
+
+        Parameters
+        ----------
+        a : float
+            The lower bound of the random number.
+        b : float
+            The upper bound of the random number.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+
+        See Also
+        --------
+        :meth:`random.Random.uniform`
+
+        """
         return self._generators[generator].uniform(a, b)
 
     def geometric(self, p, size=None, generator=0):
+        r"""
+        Return a random integer N from a geometric distribution.
+
+        This is the only method that uses the numpy random number generator (:class:`numpy.random.Generator`) instead
+        of the standard library random number generator (:class:`random.Random`).
+
+        Parameters
+        ----------
+        p : float
+            The probability of success.
+        size : int or tuple of ints or None, optional
+            The shape of the output. If None, a single value is returned.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+
+        See Also
+        --------
+        :meth:`numpy.random.Generator.geometric`
+        """
         return self.numpy_generators[generator].geometric(p, size)
 
     def triangular(self, low=0.0, high=0.0, mode=None, generator=0):
+        r"""
+        Return a random floating point number N such that low <= N <= high and with the specified mode between bounds.
+
+        Parameters
+        ----------
+        low : float
+            The lower bound of the random number.
+        high : float
+            The upper bound of the random number.
+        mode : float or None, optional
+            The mode of the distribution. If None, the mode is the midpoint between the bounds.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        See Also
+        --------
+        :meth:`random.Random.triangular`
+        
+        """
         return self._generators[generator].triangular(low, high, mode)
 
     def normalvariate(self, mu=0.0, sigma=1.0, generator=0):
+        r"""
+        Return a random floating point number N from a normal (Gaussian) distribution.
+
+        Parameters
+        ----------
+        mu : float
+            The mean of the distribution.
+        sigma : float
+            The standard deviation of the distribution.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.normalvariate`
+        """
         return self._generators[generator].normalvariate(mu, sigma)
 
     def lognormvariate(self, mu=0.0, sigma=1.0, generator=0):
+        r"""
+        Return a random floating point number N from a lognormal distribution.
+
+        Parameters
+        ----------
+        mu : float
+            The mean of the distribution.
+        sigma : float
+            The standard deviation of the distribution.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.lognormvariate`
+        """
         return self._generators[generator].lognormvariate(mu, sigma)
 
     def gauss(self, mu=0.0, sigma=1.0, generator=0):
+        r"""
+        Return a random floating point number N from a normal (Gaussian) distribution.
+
+        Parameters
+        ----------
+        mu : float
+            The mean of the distribution.
+        sigma : float
+            The standard deviation of the distribution.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.gauss`
+        """
         return self._generators[generator].gauss(mu, sigma)
 
     def expovariate(self, lambd=1.0, generator=0):
+        r"""
+        Return a random floating point number N from a normal (Gaussian) distribution.
+
+        Parameters
+        ----------
+        lambd : float
+            The rate of the exponential distribution.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.expovariate`
+        """
         return self._generators[generator].expovariate(lambd)
 
     def vonmisesvariate(self, mu, kappa, generator=0):
+        r"""
+        Return a random floating point number N from a von Mises distribution.
+
+        Parameters
+        ----------
+        mu : float
+            The mean of the distribution.
+        kappa : float
+            The concentration of the distribution.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.vonmisesvariate`
+        """
         return self._generators[generator].vonmisesvariate(mu, kappa)
 
     def gammavariate(self, alpha, beta, generator=0):
+        r"""
+        Return a random floating point number N from a gamma distribution.
+
+        Parameters
+        ----------
+        alpha : float
+            The shape of the distribution. Can be any positive number.
+        beta : float
+            The scale of the distribution. Can be any positive number.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.gammavariate`
+        """
         return self._generators[generator].gammavariate(alpha, beta)
 
     def betavariate(self, alpha, beta, generator=0):
+        r"""
+        Return a random floating point number N from a beta distribution.
+
+        Parameters
+        ----------
+        alpha : float
+            The first shape parameter of the distribution. Can be any positive number.
+        beta : float
+            The second shape parameter of the distribution. Can be any positive number.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.betavariate`
+        """
         return self._generators[generator].betavariate(alpha, beta)
 
     def paretovariate(self, alpha, generator=0):
+        r"""
+        Return a random floating point number N from a Pareto distribution.
+
+        Parameters
+        ----------
+        alpha : float
+            The shape of the distribution. Can be any positive number.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.parentovariate`
+        """
         return self._generators[generator].paretovariate(alpha)
 
     def weibullvariate(self, alpha, beta, generator=0):
+        r"""
+        Return a random floating point number N from a Weibull distribution.
+
+        Parameters
+        ----------
+        alpha : float
+            The shape of the distribution. Can be any positive number.
+        beta : float
+            The scale of the distribution. Can be any positive number.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        Returns
+        -------
+        float
+            The next random floating point number.
+
+        See Also
+        --------
+        :meth:`random.Random.weibullvariate`
+        """
         return self._generators[generator].weibullvariate(alpha, beta)
 
     def getstate(self, generator=0):
+        r"""
+        Return the internal state of the random number generator.
+
+        Parameters
+        ----------
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        See Also
+        --------
+        :meth:`random.Random.getstate`
+        """
         return self._generators[generator].getstate()
 
     def setstate(self, state, generator=0):
+        r"""
+        Set the internal state of the random number generator.
+
+        Parameters
+        ----------
+        state : tuple
+            The internal state of the random number generator.
+        generator : int, optional
+            The index of the generator to use. Defaults to 0.
+
+        See Also
+        --------
+        :meth:`random.Random.setstate`
+
+        """
         self._generators[generator].setstate(state)
 
 
 FutureMetric = namedtuple("FutureMetric", ["name", "vector", "mean", "median", "std", "var", "min", "max",
                                "count", "percentiles"])
-"""
-A type that describes one of the metrics to collect during simulations. The fields, apart from the name, are booleans
+r"""
+A type that describes the metrics to collect during simulations. The fields, apart from the name, are booleans
 indicating the statistics to collect for the metric. Such fields are:
-- vector: the list of values of the metric
-- mean: the mean of the values
-- median: the median of the values
-- std: the standard deviation of the values
-- var: the variance of the values
-- min: the minimum value
-- max: the maximum value
-- count: the number of samples
-- percentiles: the percentiles of the values (1, 5, 25, 75, 95, 99)
+<ul>
+<li> vector: the complete list of samples of the metric </li>
+<li> mean: the mean of the values </li>
+<li> median: the median of the values </li>
+<li> std: the standard deviation of the values </li>
+<li> var: the variance of the values </li>
+<li> min: the minimum value </li>
+<li> max: the maximum value </li>
+<li> count: the number of samples </li>
+<li> percentiles: the percentiles of the values (1, 5, 25, 75, 95, 99) </li>
+</ul>
 """
 
 
@@ -160,7 +558,7 @@ def get_metrics(metric, df):
 
 
 def get_metrics_from_csv(metric, filename):
-    """
+    r"""
     Compute the statistics for a metric and return them as a dictionary.
 
     Parameters
@@ -271,6 +669,20 @@ def get_metrics_from_csv(metric, filename):
 
 
 def time_unit_factor(unit):
+    r"""
+    Return the factor to convert a time unit to seconds. For example, if the unit is "ms", the factor is 1e-3.
+
+    Parameters
+    ----------
+    unit : str
+        The time unit to convert. Can be one of the following:
+        <ul>
+        <li> "s" for seconds </li>
+        <li> "ms" for milliseconds </li>
+        <li> "us" for microseconds </li>
+        <li> "ns" for nanoseconds </li>
+        </ul>
+    """
 
     if unit == "s":
         return 1

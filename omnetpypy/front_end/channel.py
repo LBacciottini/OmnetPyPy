@@ -1,11 +1,44 @@
-"""
-This module implements the Channel class, which implements advanced connectivity between modules in the simulation.
+r"""
+This module implements the :meth:`~omnetpypy.front_end.channel.Channel` class,
+which implements advanced connectivity between ports in the simulation.
 """
 from omnetpypy.front_end import Message
 from omnetpypy.front_end.sim_entity import SimulatedEntity
 
 
 class Channel(SimulatedEntity):
+    r"""
+    Channels are used to apply operations on messages travelling between connected ports.
+    They can apply noise, delays, losses, and other custom operations to the messages.
+
+    Channels always have two ports, named "A" and "B". The channel forwards messages
+    from port "A" to port "B", and vice versa, after applying the specified delay and loss probability.
+
+    Subclasses can override the methods :meth:`~omnetpypy.front_end.channel.Channel.process_message` to apply more
+    complex and asymmetric operations on the messages passing through the channel.
+
+    Parameters
+    ----------
+    name : str
+        The name of the channel. This name should be unique within the simulation.
+    identifier : int or None, optional
+        The identifier of the channel. This identifier should be unique within the simulation.
+        If ``None``, the identifier will be automatically generated.
+    delay : float or None, optional
+        The delay to be applied to the messages passing through the channel. If ``None``, no delay is applied.
+    loss_prob : float or None, optional
+        The probability of loss to be applied to the messages passing through the channel.
+        If ``None``, no loss is applied.
+
+    Attributes
+    ----------
+    delay : float or None
+        The delay to be applied to the messages passing through the channel.
+        If ``None``, no delay is applied.
+    loss_prob : float or None
+        The probability of loss to be applied to the messages passing through the channel.
+        If ``None``, no loss is applied.
+    """
 
     def __init__(self, name, identifier=None, delay=None, loss_prob=None):
         super().__init__(name, identifier, port_names=["A", "B"])
@@ -14,9 +47,10 @@ class Channel(SimulatedEntity):
         self.loss_prob = loss_prob
 
     def handle_message(self, message, port_name):
-        """
-        Process a message received from a port. First, it processes the message, then it applies
-        optional delay, and finally it sends the message out of the other port.
+        r"""
+        Handle a message received from a port. First, it processes the message  by calling the method
+        :meth:`~omnetpypy.front_end.channel.Channel.process_message`, then it applies the
+        optional delay and loss probability, and finally it sends the message out of the other port (if not lost).
 
         Parameters
         ----------
@@ -43,20 +77,22 @@ class Channel(SimulatedEntity):
             self.schedule_message(post_processed_message, delay=self.generate_delay(message, port_name))
 
     def process_message(self, message, port_name):
-        """
-        Process a message received from a port.
+        r"""
+        Process a message received from a port. By default, this method does nothing and returns the message as is.
+        Subclasses can override this method to apply more complex operations on the messages passing through the
+        channel.
 
         Parameters
         ----------
-        message : Message
+        message : :meth:`~omnetpypy.front_end.message.Message`
             The message to be processed.
         port_name : str
             The port from which the message was received.
 
         Returns
         -------
-        Message or None
-            The message to be sent to the connected port, or None if the message should be dropped for any reason.
+        :meth:`~omnetpypy.front_end.message.Message` or None
+            The message to be sent to the connected port, or ``None`` if the message should be dropped.
         """
 
         # default behavior

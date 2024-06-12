@@ -1,5 +1,5 @@
 """
-Main test file
+Main file for the ping pong simulation example.
 """
 
 from omnetpypy import Experiment

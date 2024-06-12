@@ -3,6 +3,19 @@ from omnetpypy import sim_log
 
 
 class PingPongModule(SimpleModule):
+    """
+    The Ping Pong Module. The behavior between the Ping and Pong modules is the same except for
+    who sends the first message (Ping). This differentiation is handled in the initialize method through the name.
+
+    Parameters
+    ----------
+    name : str
+        The name of the module. Either "ping" or "pong".
+    identifier : int
+        The identifier of the module. This identifier should be unique within the simulation.
+    delay : int, optional
+        The delay in seconds between receiving and sending a message. The default is 5s.
+    """
 
     def __init__(self, name, identifier, delay=5):
         port_names = ["in_out"]

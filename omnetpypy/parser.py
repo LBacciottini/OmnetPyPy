@@ -1,6 +1,5 @@
 """
-This module is responsible for parsing the YAML configuration file and returning
-the compound module containing the whole simulation topology.
+This module provides the tools to parse the YAML configuration and topology files
 """
 import importlib
 
@@ -11,6 +10,19 @@ from omnetpypy.front_end.channel import Channel
 
 
 def parse_simple_modules(simple_data):
+    r"""
+    Parse the simple modules from raw parsed data
+
+    Parameters
+    ----------
+    simple_data : list
+        A list of dictionaries containing the simple modules' data
+
+    Returns
+    -------
+    list of :class:`~omnetpypy.front_end.simple_module.SimpleModule`
+        A list of the simple module classes
+    """
     module_classes = []
     for module_data in simple_data:
         name = module_data['name']
@@ -25,6 +37,19 @@ def parse_simple_modules(simple_data):
 
 
 def parse_channels(channel_data):
+    r"""
+    Parse the channels from raw parsed data
+
+    Parameters
+    ----------
+    channel_data : list
+        A list of dictionaries containing the channel data
+
+    Returns
+    -------
+    list of :class:`~omnetpypy.front_end.channel.Channel`
+        A list of the channel classes
+    """
     channel_classes = []
     for channel_data in channel_data:
         name = channel_data['name']
@@ -37,6 +62,23 @@ def parse_channels(channel_data):
 
 
 def parse_compound_modules(compound_data, module_classes, channel_classes):
+    r"""
+    Parse the compound modules from raw parsed data and entity classes
+
+    Parameters
+    ----------
+    compound_data : list
+        A list of dictionaries containing the compound modules' data
+    module_classes : list
+        A list of the simple module classes, already imported
+    channel_classes : list
+        A list of the channel classes, already imported
+
+    Returns
+    -------
+    list of :class:`~omnetpypy.front_end.compound_module.CompoundModule`
+        A list of the compound module classes
+    """
     compound_modules = []
     next_simple_id = 10100
     next_compound_id = 1111100000
@@ -68,7 +110,7 @@ def parse_compound_modules(compound_data, module_classes, channel_classes):
             parameters['identifier'] = next_simple_id
             next_simple_id += 1
             submodule_instance = submodule_class(**parameters)
-            compound_module.add_sub_entity(submodule_instance)
+            compound_module.add_sub_module(submodule_instance)
             submodules.append(sub_name)
 
         for connection_data in compound_mod.get('connections', []):
@@ -129,6 +171,30 @@ def parse_compound_modules(compound_data, module_classes, channel_classes):
 
 
 def parse_connection(connection_data, compound_module, channel_classes, next_channel_id):
+    r"""
+    Parse a connection from raw parsed data and entity classes within a compound module
+
+    Parameters
+    ----------
+    connection_data : dict
+        A dictionary containing the connection data
+    compound_module : :class:`~omnetpypy.front_end.compound_module.CompoundModule`
+        The compound module instance
+    channel_classes : list
+        A list of the channel classes, already imported
+    next_channel_id : int
+        The current next channel identifier, used to generate unique identifiers for channels
+
+    Returns
+    -------
+    int
+        The new next channel identifier
+
+    Raises
+    ------
+    Exception
+        If the connection data is invalid
+    """
     source = connection_data['source']
     target = connection_data['target']
     source_module, source_port = source.split('.')
@@ -136,11 +202,11 @@ def parse_connection(connection_data, compound_module, channel_classes, next_cha
     if source_module == "self":
         source_module = compound_module
     else:
-        source_module = compound_module.sub_entities[source_module]
+        source_module = compound_module.sub_modules[source_module]
     if target_module == "self":
         target_module = compound_module
     else:
-        target_module = compound_module.sub_entities[target_module]
+        target_module = compound_module.sub_modules[target_module]
 
     # check if the "type" field is present
 
@@ -182,7 +248,7 @@ def parse_connection(connection_data, compound_module, channel_classes, next_cha
             channel = channel_class(**parameters)
 
         # the channel is added to the compound module as a sub entity
-        compound_module.add_sub_entity(channel)
+        compound_module.add_sub_module(channel)
 
         source_module.connect(local_port=source_port, remote_entity=target_module, remote_port=target_port,
                               channel=channel)
@@ -193,8 +259,23 @@ def parse_connection(connection_data, compound_module, channel_classes, next_cha
 
 
 # Parse the YAML configuration
-def parse_topology(config_file, sim_context):
-    with open(config_file, 'r') as file:
+def parse_topology(topo_file, sim_context):
+    r"""
+    Parse the YAML topology file.
+
+    Parameters
+    ----------
+    topo_file : str
+        The path to the YAML topology file
+    sim_context : :class:`~omnetpypy.simulation.Simulation`
+        The simulation with its context
+
+    Returns
+    -------
+    :class:`~omnetpypy.front_end.compound_module.CompoundModule`
+        The top level compound module instance, corresponding to the simulated network
+    """
+    with open(topo_file, 'r') as file:
         config = yaml.safe_load(file)
         simple_modules = parse_simple_modules(config.get('simple', []))
         channels = parse_channels(config.get('channels', []))
@@ -207,6 +288,19 @@ def parse_topology(config_file, sim_context):
 
 
 def parse_config(config_file):
+    r"""
+    Parse the YAML configuration file.
+
+    Parameters
+    ----------
+    config_file : str
+        The path to the YAML configuration file
+
+    Returns
+    -------
+    dict
+        The parsed configuration, as a dictionary directly loaded from the YAML file
+    """
     with open(config_file, 'r') as file:
         config = yaml.safe_load(file)
     return config

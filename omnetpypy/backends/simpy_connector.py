@@ -2,8 +2,17 @@
 from omnetpypy.backends.connector import Connector
 import simpy
 
+__all__ = ["SimPyConnector"]
+
 
 class SimPyConnector(Connector):
+    r"""
+    This class is a connector to the SimPy simulation engine.
+
+    See Also
+    --------
+    :class:`~omnetpypy.backends.connector.Connector`
+    """
 
     def __init__(self, simulation, metrics=None, output_dir=None, repetition=0):
         super().__init__(simulation, metrics, output_dir, repetition)
@@ -12,6 +21,11 @@ class SimPyConnector(Connector):
         self._wrappers = {}
 
     def start_simulation(self, until=None):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.start_simulation`
+        """
         # we load a process that calls initialize for each entity
         self.env.process(initialize_entity(self.simulation.network))
         if until:
@@ -20,6 +34,11 @@ class SimPyConnector(Connector):
             self.env.run()
 
     def add_entity(self, entity):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.add_entity`
+        """
         # entity is a simple module
         # we need to implement the module as a process
         # and add it to the environment
@@ -31,13 +50,28 @@ class SimPyConnector(Connector):
             self._wrappers[entity.identifier] = ModuleProcessWrapper(entity, self.env)
 
     def get_time(self):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.get_time`
+        """
         return self.env.now
 
     def schedule_port_input(self, port, message):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.schedule_port_input`
+        """
         # put the message in the store of the module wrapper
         self._wrappers[port.parent.identifier].put(message, port.name)
 
     def schedule_self_message(self, message, entity, at=None, delay=None):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.schedule_self_message`
+        """
         if not entity.is_listening:
             raise Exception(f"Entity {entity} is not listening. Cannot schedule a self message.")
         # create a process using the schedule_message function
@@ -46,6 +80,11 @@ class SimPyConnector(Connector):
         self._wrappers[entity.identifier].scheduled_messages.append((message, process))
 
     def is_scheduled(self, message, entity):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.is_scheduled`
+        """
         # check if the message is in the scheduled messages list
         for m, p in self._wrappers[entity.identifier].scheduled_messages:
             if m == message:
@@ -53,6 +92,11 @@ class SimPyConnector(Connector):
         return False
 
     def cancel_scheduled(self, message, entity):
+        r"""
+        See Also
+        --------
+        :meth:`~omnetpypy.backends.connector.Connector.cancel_scheduled`
+        """
         # cancel the scheduled message
         for m, p in self._wrappers[entity.identifier].scheduled_messages:
             if m == message:
@@ -110,5 +154,5 @@ def initialize_entity(entity):
 def initialize_entity_with_step(entity, step):
     entity.initialize(step)
     if hasattr(entity, "sub_entities"):
-        for sub_entity in entity.sub_entities.values():
+        for sub_entity in entity.sub_modules.values():
             initialize_entity_with_step(sub_entity, step)
