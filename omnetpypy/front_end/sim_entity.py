@@ -1,4 +1,4 @@
-from discrete_sim.front_end.port import Port
+from omnetpypy.front_end.port import Port
 
 
 class SimulatedEntity:

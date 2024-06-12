@@ -1,5 +1,5 @@
-from discrete_sim import SimpleModule, Message
-from discrete_sim import sim_log
+from omnetpypy import SimpleModule, Message
+from omnetpypy import sim_log
 
 
 class PingPongModule(SimpleModule):

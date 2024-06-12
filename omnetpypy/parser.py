@@ -6,8 +6,8 @@ import importlib
 
 import yaml
 
-from discrete_sim.front_end import CompoundModule
-from discrete_sim.front_end.channel import Channel
+from omnetpypy.front_end import CompoundModule
+from omnetpypy.front_end.channel import Channel
 
 
 def parse_simple_modules(simple_data):

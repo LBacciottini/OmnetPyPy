@@ -1,8 +1,8 @@
 """
 This module implements the Channel class, which implements advanced connectivity between modules in the simulation.
 """
-from discrete_sim.front_end import Message
-from discrete_sim.front_end.sim_entity import SimulatedEntity
+from omnetpypy.front_end import Message
+from omnetpypy.front_end.sim_entity import SimulatedEntity
 
 
 class Channel(SimulatedEntity):

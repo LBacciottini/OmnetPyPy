@@ -2,7 +2,7 @@
 Main test file
 """
 
-from discrete_sim import Experiment
+from omnetpypy import Experiment
 
 if __name__ == '__main__':
 

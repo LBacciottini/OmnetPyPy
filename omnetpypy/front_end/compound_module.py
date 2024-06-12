@@ -1,7 +1,7 @@
 """
 This module implements the CompoundModule class, with the same semantic as in omnet++
 """
-from discrete_sim.front_end.sim_entity import SimulatedEntity
+from omnetpypy.front_end.sim_entity import SimulatedEntity
 
 
 class CompoundModule(SimulatedEntity):

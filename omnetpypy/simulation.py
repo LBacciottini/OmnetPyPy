@@ -6,8 +6,8 @@ import csv
 import pandas as pd
 import pkg_resources
 
-from discrete_sim import utilities, sim_log, parser
-from discrete_sim.backends.simpy_connector import SimPyConnector
+from omnetpypy import utilities, sim_log, parser
+from omnetpypy.backends.simpy_connector import SimPyConnector
 
 
 class Simulation:

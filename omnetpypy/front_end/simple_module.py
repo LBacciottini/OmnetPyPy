@@ -3,7 +3,7 @@ This class implements the SimpleModule class, with the same semantic as in omnet
 """
 from abc import abstractmethod
 
-from discrete_sim.front_end.sim_entity import SimulatedEntity
+from omnetpypy.front_end.sim_entity import SimulatedEntity
 
 
 class SimpleModule(SimulatedEntity):

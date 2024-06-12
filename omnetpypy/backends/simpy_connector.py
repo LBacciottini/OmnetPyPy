@@ -1,5 +1,5 @@
 """This module implements the connector to the SimPy simulation engine."""
-from discrete_sim.backends.connector import Connector
+from omnetpypy.backends.connector import Connector
 import simpy
 
 
