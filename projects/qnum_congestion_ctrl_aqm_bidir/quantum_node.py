@@ -517,6 +517,11 @@ class QuantumNode(SimpleModule):
             """sim_log.warning(f"Request {message.req_id} satisfied for flow {flow_id} with fidelity {fidelity}. Here is node {self.name}",
                           time=self.sim_context.time())"""
 
+            # get the wait time of the lle
+            wait_time = self.sim_context.time() - lle_time
+            # decohere the state
+            self._decohere_state(message, wait_time, get_werner_state(fidelity=1.))
+
             # generate and send the acknowledgement
             destination = self.flows_info[flow_id]["source"] if direction == "upstream" else self.flows_info[flow_id]["destination"]
             ack = messages.EntanglementGenAcknowledgement(req_id=message.req_id, flow_id=flow_id,
@@ -532,13 +537,15 @@ class QuantumNode(SimpleModule):
                           time=self.sim_context.time())
             """
 
+            self.emit_metric("rendezvous_node", int(self.name[2:]))
+
             return
 
 
         # Now, we check whether there is another request in the queue for the same flow in the opposite direction
         # if so, we swap the two requests
         other_direction = "upstream" if direction == "downstream" else "downstream"
-        other_port = self.flows_info[flow_id]["next_port"][other_direction]
+        other_port = "q0" if port_name == "q1" else "q1"
         other_request, _ = self.req_queue.pop_request(flow_id=flow_id, out_port=port_name, policy=RequestQueue.OLDEST)
         if other_request is not None:
             # there is a request in the queue for the same flow in the opposite direction
@@ -549,8 +556,15 @@ class QuantumNode(SimpleModule):
             # we pop the lle for the current request
             lle, lle_time = self.lle_manager.pop_from_req(request=message, raise_error=True)
 
-            wait_time = self.sim_context.time() - other_lle_time
-            self._decohere_state(other_request, wait_time, other_pair=message.meta["qstate"])
+            wait_time = self.sim_context.time() - lle_time
+            other_wait_time = self.sim_context.time() - other_lle_time
+
+            # decohere both states
+            self._decohere_state(other_request, other_wait_time, get_werner_state(fidelity=1.))
+            self._decohere_state(message, wait_time, get_werner_state(fidelity=1.))
+
+            # swap the two requests
+            self._decohere_state(other_request, wait_time=0., other_pair=message.meta["qstate"])
             message.meta["qstate"] = other_request.meta["qstate"]
             # now both states have been updated and match
 
@@ -558,9 +572,18 @@ class QuantumNode(SimpleModule):
             destination_a = self.flows_info[flow_id]["source"] if direction == "upstream" else self.flows_info[flow_id]["destination"]
             destination_b = self.flows_info[flow_id]["source"] if other_direction == "upstream" else self.flows_info[flow_id]["destination"]
 
-            # log a bunch of debug info about who is sending what to whom
-            #sim_log.debug(f"Request {message.req_id} swapped with request {other_request.req_id} for flow {flow_id}. Here is node {self.name}",
-                            #time=self.sim_context.time())
+            # determine which destination is further away from this node on the path
+            path = self.flows_info[flow_id]["path"]
+            idx_a = path.index(destination_a)
+            idx_b = path.index(destination_b)
+            this_idx = path.index(self.name)
+            if abs(idx_a - this_idx) < abs(idx_b - this_idx):  # to determine who collects stats
+                destination_a, destination_b = destination_b, destination_a
+                other_request, message = message, other_request
+                other_direction, direction = direction, other_direction
+                other_port, port_name = port_name, other_port
+
+
 
             ack_a = messages.EntanglementGenAcknowledgement(req_id=message.req_id, flow_id=flow_id,
                                                             destination=destination_a,
@@ -577,6 +600,15 @@ class QuantumNode(SimpleModule):
             # send the acknowledgments
             self.send(ack_a, port_name=port_name)
             self.send(ack_b, port_name=other_port)
+
+            # log a bunch of debug info about who is sending what to whom
+            """sim_log.debug(
+                f"Request {message.req_id} swapped with request {other_request.req_id} for flow {flow_id}. Here is node {self.name}."
+                f" Request {message.req_id} sent to {destination_a} through port {port_name} and request {other_request.req_id} sent to {destination_b} through port {other_port}",
+                time=self.sim_context.time())"""
+
+            self.emit_metric("rendezvous_node", int(self.name[2:]))
+
             return
 
         # we have to check whether we have a lle to swap with the request
@@ -591,9 +623,6 @@ class QuantumNode(SimpleModule):
 
         # there is at least a lle for this flow that can be swapped with the request
         # pop the lle for the request
-        peeked = self.lle_manager.peek_lle(port_name=next_port, flow_id=flow_id, owner=True,
-                                           policy=LLEManager.YOUNGEST)
-
         # pop the youngest suitable lle
         other_lle, other_lle_time = self.lle_manager.pop_lle(port_name=next_port, flow_id=flow_id, owner=True,
                                                              policy=LLEManager.YOUNGEST)
@@ -820,6 +849,10 @@ class QuantumNode(SimpleModule):
         This method is called when an EntanglementGenAcknowledgement is received
         """
         flow_id = message.flow_id
+
+        # log the request acknowledgement
+        """sim_log.debug(f"Request {message.req_id} acknowledged for flow {flow_id}. Here is node {self.name}",
+                      time=self.sim_context.time())"""
 
         if "skip_stats" not in message.meta or not message.meta["skip_stats"]:
             ack_transmission_time = self.sim_context.time() - message.meta["ack_time"]

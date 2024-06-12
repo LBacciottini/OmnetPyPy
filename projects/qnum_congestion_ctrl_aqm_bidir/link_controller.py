@@ -101,7 +101,14 @@ class LinkController(SimpleModule):
 
         # flip a coin to decide which queue to peek
         left_is_owner = False
-        if rng.random(generator=0) < 0.5:
+
+        # get queues length
+        q0_len = queues_info[0].length()
+        q1_len = queues_info[1].length()
+
+        left_prob = q0_len / (q0_len + q1_len)
+
+        if rng.random(generator=0) < left_prob:
             queue = 0
             req, oldest_time = queues_info[0].peek_request(out_port="q1", policy="OLDEST")
             left_is_owner = True

@@ -37,20 +37,22 @@ if __name__ == "__main__":
     df_lat = pd.read_csv("./out/latency_vector.csv")
 
     # Compute the sliding window average
-    window_size_time_units = 40000
+    window_size_time_units = 5000
 
     # create a new column with the sliding window index
     df_lat["sw_index"] = df_lat["timestamp"] // window_size_time_units
 
     # compute the sliding window average
-    sw_avg = df_lat.groupby("sw_index").mean()
+    sw_avg = pd.Series(
+        [df_lat[(df_lat["timestamp"] >= t - window_size_time_units) & (df_lat["timestamp"] < t)]["sample"].mean() for t
+         in df_lat["timestamp"]])
 
-    # divide the timestamp and the sample by 1e3 to have ms
-    sw_avg["timestamp"] /= 1e3
-    sw_avg["sample"] /= 1e3
+    # divide the timestamp by 1e3 to have ms
+    df_lat["timestamp"] /= 1e3
+    sw_avg /= 1e3
 
     # ax2 = ax.twinx()
-    ax.plot(sw_avg["timestamp"], sw_avg["sample"], color="red", label="latency")
+    ax.plot(df_lat["timestamp"], sw_avg, color="red", label="latency")
     # ax.set_ylabel("Latency (ms)")
 
     # still on ax2 print the average secret key rate for the second half of the simulation

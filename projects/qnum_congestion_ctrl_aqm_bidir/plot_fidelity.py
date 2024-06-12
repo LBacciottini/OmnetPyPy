@@ -27,25 +27,27 @@ if __name__ == "__main__":
     df_fid = pd.read_csv("./out/fidelity_vector.csv")
 
     # Compute the sliding window average
-    window_size_time_units = 40000
+    window_size_time_units = 5000
 
     # create a new column with the sliding window index
     df_fid["sw_index"] = df_fid["timestamp"] // window_size_time_units
 
     # compute the sliding window average
-    sw_avg = df_fid.groupby("sw_index").mean()
+    sw_avg = pd.Series(
+        [df_fid[(df_fid["timestamp"] >= t - window_size_time_units) & (df_fid["timestamp"] < t)]["sample"].mean() for t
+         in df_fid["timestamp"]])
 
     # divide the timestamp by 1e3 to have ms
-    sw_avg["timestamp"] /= 1e3
+    df_fid["timestamp"] /= 1e3
 
     ax.set_ylim(0.4, 1)
 
     # ax2 = ax.twinx()
-    ax.plot(sw_avg["timestamp"], sw_avg["sample"], color="red", label="E2E Fidelity")
+    ax.plot(df_fid["timestamp"], sw_avg, color="red", label="E2E Fidelity")
     # ax.set_ylabel("Latency (ms)")
 
     # still on ax2 print the average secret key rate for the second half of the simulation
-    ax.axhline(y=sw_avg[sw_avg.size // 2:].mean(), color='red', linestyle='--',
+    ax.axhline(y=sw_avg[sw_avg.size//2:].mean(), color='red', linestyle='--',
                 label="AVG E2E FID at steady state")
 
     """cur_flows = 4
@@ -73,7 +75,8 @@ if __name__ == "__main__":
 
     # we obtain the secret key rate from df_fid by computing the secret key fraction for each sample
     # the secret key fraction is 1 - 2h(2(1-f)/3), where h is the binary entropy function and f is the fidelity
-    df_skr = df_fid.copy()
+    # read again the fidelity file
+    df_skr = pd.read_csv("./out/fidelity_vector.csv")
 
     def binary_entropy(x):
         return -x * np.log2(x) - (1-x) * np.log2(1-x)

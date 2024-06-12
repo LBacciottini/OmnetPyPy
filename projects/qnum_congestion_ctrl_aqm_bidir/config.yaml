@@ -2,7 +2,7 @@ repetitions: 1
 num_rngs: 50
 simulate_until: 24000000
 topology_file: "topology.yaml"
-output_dir: "out"
+output_dir: "out2"
 engine: "simpy"
 time_unit: "us"
 
@@ -20,6 +20,8 @@ metrics:
   - name: "queue_size_free"
     type: [ "vector" ]
   - name: "fidelity"
+    type: ["vector"]
+  - name: "rendezvous_node"
     type: ["vector"]
 
 max_processes: 8
@@ -40,10 +42,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -61,10 +63,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -82,10 +84,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -103,10 +105,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -124,10 +126,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -145,10 +147,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -166,10 +168,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -187,10 +189,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -208,10 +210,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -229,10 +231,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -250,10 +252,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
@@ -271,10 +273,10 @@ global_params:
       destination: "qn4"
       flow_priority: 0
       success_probs: # success probability of LLE attempts on each link, due to pump power
+        - 0.08
+        - 0.08
         - 0.04
-        - 0.04
-        - 0.04
-        - 0.04
+        - 0.08
       path:
         - "qn0"
         - "lc0"
