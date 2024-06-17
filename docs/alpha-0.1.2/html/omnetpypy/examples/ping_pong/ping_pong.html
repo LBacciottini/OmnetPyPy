@@ -5,22 +5,22 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>omnetpypy.examples.ping_pong &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/graphviz.css" />
 
   
-    <link rel="shortcut icon" href="../../../_static/omnetpypy_icon.ico"/>
+    <link rel="shortcut icon" href="../../../static/omnetpypy_icon.ico"/>
   <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+    <script src="../../../static/js/html5shiv.min.js"></script>
+    <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-    <script src="../../../_static/js/theme.js"></script>
+        <script src="../../../static/jquery.js"></script>
+        <script src="../../../static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../static/documentation_options.js"></script>
+        <script src="../../../static/doctools.js"></script>
+        <script src="../../../static/sphinx_highlight.js"></script>
+    <script src="../../../static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="omnetpypy.examples.ping_pong.ping_pong_simple" href="ping_pong_simple.html" />
@@ -37,7 +37,7 @@
           
           <a href="../../../index.html" class="icon icon-home">
             OmnetPyPy
-              <img src="../../../_static/omnetpypy.png" class="logo" alt="Logo"/>
+              <img src="../../../static/omnetpypy.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -86,7 +86,7 @@
           <li class="breadcrumb-item"><a href="../examples.html">omnetpypy.examples</a></li>
       <li class="breadcrumb-item active">omnetpypy.examples.ping_pong</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../../_sources/omnetpypy/examples/ping_pong/ping_pong.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../sources/omnetpypy/examples/ping_pong/ping_pong.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -102,7 +102,7 @@ which send messages to each other in a ping-pong fashion. The <cite>PingModule</
 which then sends a message back to the <cite>PingModule</cite>. This process is repeated for a specified number of times.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="omnetpypy.examples.ping_pong.__init__.PingPongModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">omnetpypy.examples.ping_pong.__init__.</span></span><span class="sig-name descname"><span class="pre">PingPongModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/omnetpypy/examples/ping_pong/ping_pong_simple.html#PingPongModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.examples.ping_pong.__init__.PingPongModule" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">omnetpypy.examples.ping_pong.__init__.</span></span><span class="sig-name descname"><span class="pre">PingPongModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../modules/omnetpypy/examples/ping_pong/ping_pong_simple.html#PingPongModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.examples.ping_pong.__init__.PingPongModule" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="../../front_end/simple_module.html#omnetpypy.front_end.simple_module.SimpleModule" title="omnetpypy.front_end.simple_module.SimpleModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleModule</span></code></a></p>
 <p>The Ping Pong Module. The behavior between the Ping and Pong modules is the same except for
 who sends the first message (Ping). This differentiation is handled in the initialize method through the name.</p>
@@ -120,7 +120,7 @@ who sends the first message (Ping). This differentiation is handled in the initi
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="omnetpypy.examples.ping_pong.__init__.PingPongModule.handle_message">
-<span class="sig-name descname"><span class="pre">handle_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/omnetpypy/examples/ping_pong/ping_pong_simple.html#PingPongModule.handle_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.examples.ping_pong.__init__.PingPongModule.handle_message" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">handle_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../modules/omnetpypy/examples/ping_pong/ping_pong_simple.html#PingPongModule.handle_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.examples.ping_pong.__init__.PingPongModule.handle_message" title="Permalink to this definition"></a></dt>
 <dd><p>Handle a message received as input to a port.
 This method must be implemented by every subclass to define the behavior of the custom module.</p>
 <dl class="field-list">
@@ -138,7 +138,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 
 <dl class="py method">
 <dt class="sig sig-object py" id="omnetpypy.examples.ping_pong.__init__.PingPongModule.initialize">
-<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/omnetpypy/examples/ping_pong/ping_pong_simple.html#PingPongModule.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.examples.ping_pong.__init__.PingPongModule.initialize" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../modules/omnetpypy/examples/ping_pong/ping_pong_simple.html#PingPongModule.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.examples.ping_pong.__init__.PingPongModule.initialize" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the entity right before the beginning of the simulation.
 This method is automatically called by the simulation context.</p>
 <p>The method is called 5 times, once for each step from 0 to 4. The step number is passed as a parameter.</p>

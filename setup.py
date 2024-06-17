@@ -12,7 +12,7 @@ setup(
         'omnetpypy': ['data/seeds.csv'],
     },
     include_package_data=True,
-    url='https://github.com/LBacciottini/OmnetPyPy',
+    url='https://lbacciottini.github.io/OmnetPyPy/',
     author='Leonardo Bacciottini',
     author_email='baccio.leonardo@gmail.com',
     description='An omnet++-like simulation framework fully implemented on Python, '

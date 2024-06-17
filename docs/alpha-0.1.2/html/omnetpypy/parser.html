@@ -5,22 +5,22 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>omnetpypy.parser &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+      <link rel="stylesheet" type="text/css" href="../static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../static/graphviz.css" />
 
   
-    <link rel="shortcut icon" href="../_static/omnetpypy_icon.ico"/>
+    <link rel="shortcut icon" href="../static/omnetpypy_icon.ico"/>
   <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+    <script src="../static/js/html5shiv.min.js"></script>
+    <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/js/theme.js"></script>
+        <script src="../static/jquery.js"></script>
+        <script src="../static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../static/documentation_options.js"></script>
+        <script src="../static/doctools.js"></script>
+        <script src="../static/sphinx_highlight.js"></script>
+    <script src="../static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="omnetpypy.sim_log" href="sim_log.html" />
@@ -37,7 +37,7 @@
           
           <a href="../index.html" class="icon icon-home">
             OmnetPyPy
-              <img src="../_static/omnetpypy.png" class="logo" alt="Logo"/>
+              <img src="../static/omnetpypy.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -83,7 +83,7 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">omnetpypy.parser</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/omnetpypy/parser.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../sources/omnetpypy/parser.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -96,7 +96,7 @@
 <p>This module provides the tools to parse the YAML configuration and topology files</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.instantiate_compound_module">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">instantiate_compound_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_descriptors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_module_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_channel_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#instantiate_compound_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.instantiate_compound_module" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">instantiate_compound_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_descriptors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_module_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_channel_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#instantiate_compound_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.instantiate_compound_module" title="Permalink to this definition"></a></dt>
 <dd><p>Instantiate a compound module from its yaml descriptor. The function is recursive, as a compound module can contain
 other compound modules. In such case, inner compound modules are fully initialized first.</p>
 <dl class="field-list simple">
@@ -134,7 +134,7 @@ module identifier, the new next channel identifier, and the new next compound mo
 
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.parse_channels">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_descriptors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#parse_channels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_channels" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_descriptors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#parse_channels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_channels" title="Permalink to this definition"></a></dt>
 <dd><p>Parse the channels from raw parsed data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -154,7 +154,7 @@ module identifier, the new next channel identifier, and the new next compound mo
 
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.parse_connection">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_channel_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#parse_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_connection" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_channel_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#parse_connection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_connection" title="Permalink to this definition"></a></dt>
 <dd><p>Parse a connection from raw parsed data and entity classes within a compound module</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -186,7 +186,7 @@ module identifier, the new next channel identifier, and the new next compound mo
 
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.parse_simple_modules">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_simple_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simple_descriptors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#parse_simple_modules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_simple_modules" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_simple_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simple_descriptors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#parse_simple_modules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_simple_modules" title="Permalink to this definition"></a></dt>
 <dd><p>Parse the simple modules from raw parsed data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -206,7 +206,7 @@ module identifier, the new next channel identifier, and the new next compound mo
 
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.parse_yaml_directory">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_yaml_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#parse_yaml_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_yaml_directory" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_yaml_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#parse_yaml_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_yaml_directory" title="Permalink to this definition"></a></dt>
 <dd><p>Parse all the YAML files from the specified directory. Files are parsed in the order listed below.
 The directory should contain:</p>
 <blockquote>
@@ -246,7 +246,7 @@ The directory should contain:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.parse_yaml_file">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_yaml_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#parse_yaml_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_yaml_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">parse_yaml_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#parse_yaml_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.parse_yaml_file" title="Permalink to this definition"></a></dt>
 <dd><p>Parse the YAML configuration file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -266,7 +266,7 @@ The directory should contain:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="omnetpypy.parser.sanitize_compound_descriptors">
-<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">sanitize_compound_descriptors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compound_descriptors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/parser.html#sanitize_compound_descriptors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.sanitize_compound_descriptors" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.parser.</span></span><span class="sig-name descname"><span class="pre">sanitize_compound_descriptors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compound_descriptors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../modules/omnetpypy/parser.html#sanitize_compound_descriptors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.parser.sanitize_compound_descriptors" title="Permalink to this definition"></a></dt>
 <dd><p>Sanitize the compound descriptors to ensure there is no submodule dependency loop that would cause endless
 recursion.</p>
 <dl class="field-list simple">
