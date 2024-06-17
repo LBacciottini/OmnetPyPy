@@ -1,0 +1,11 @@
+# Changelog
+
+## [alpha-0.1.2] - 2024-06-17
+### Added
+- Html documentation!
+- Users can now define many different (and nested) compound modules, the "network" is just the top-level compound module. 
+### Changed
+- Now we use five yaml files to configure the simulation.
+
+### Fixed
+- Bug fixes.
