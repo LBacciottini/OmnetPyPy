@@ -1,0 +1,3 @@
+simple: # simple modules to import. These are the class names of the modules
+  - name: "PingPongModule"
+    package: "omnetpypy.examples.ping_pong"

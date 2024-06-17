@@ -28,7 +28,7 @@ class SimPyConnector(Connector):
         """
         # we load a process that calls initialize for each entity
         self.env.process(initialize_entity(self.simulation.network))
-        if until:
+        if until is not None:
             self.env.run(until=until)
         else:
             self.env.run()
@@ -152,7 +152,7 @@ def initialize_entity(entity):
 
 
 def initialize_entity_with_step(entity, step):
-    entity.initialize(step)
-    if hasattr(entity, "sub_entities"):
+    if hasattr(entity, "sub_modules"):
         for sub_entity in entity.sub_modules.values():
             initialize_entity_with_step(sub_entity, step)
+    entity.initialize(step)

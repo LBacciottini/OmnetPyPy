@@ -4,6 +4,7 @@ Connectors provide a set of functions to interact with the simulation engine,
 such as starting and stopping the simulation, adding and removing entities from the simulation,
 supporting event generation and management.
 """
+import os
 from abc import abstractmethod
 import abc
 import pandas as pd
@@ -21,7 +22,8 @@ class Connector(abc.ABC):
     metrics : list of :class:`~omnetpypy.utilities.FutureMetric` or None, optional
         A list of metrics to be recorded during the simulation.
     output_dir : str, optional
-        The output directory where the simulation data will be stored. Default is "./out".
+        The output directory where the simulation data will be stored. Default is `None`, which means that the
+        simulation data will not be stored.
     repetition : int, optional
         The repetition index of the simulation. Default is 0.
 
@@ -38,10 +40,15 @@ class Connector(abc.ABC):
         The repetition index of the simulation.
     """
 
-    def __init__(self, simulation, metrics=None, output_dir="./out", repetition=0):
+    def __init__(self, simulation, metrics=None, output_dir=None, repetition=0):
         self.simulation = simulation
         self.metrics = metrics
+
         self.output_dir = output_dir
+        # check if the output directory exists, if not create it
+        if output_dir is not None and not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
         self.repetition = repetition
 
         # allocate a dict of numpy dataframes indexed by metric name
@@ -77,8 +84,8 @@ class Connector(abc.ABC):
         entity.set_sim_context(self.simulation)
 
         # check if entity has property sub_modules
-        if hasattr(entity, "sub_entities"):
-            for _, entity in entity.sub_entities.items():
+        if hasattr(entity, "sub_modules"):
+            for _, entity in entity.sub_modules.items():
                 self.add_entity(entity)
 
     @abstractmethod
@@ -170,7 +177,7 @@ class Connector(abc.ABC):
             If value is a dict or a list and the output file format is csv,
             it will be turned into a string and stored as is under the "sample" column.
         """
-        if self.metrics is not None:
+        if self.metrics is not None and self.output_dir is not None:
             # add the value to the metric dataframe by simply appending a new row using loc
 
             if metric in self.metrics_data:
@@ -181,7 +188,7 @@ class Connector(abc.ABC):
                 if len(self.metrics_data[metric].index) > 1000:
                     self.dump_metric(metric)
 
-        else:
+        elif self.metrics is None:
             raise Exception("No metrics have been defined for this simulation")
 
     def dump_metric(self, metric):
@@ -193,7 +200,7 @@ class Connector(abc.ABC):
         metric : str
             The name of the metric to be dumped.
         """
-        if self.metrics is not None:
+        if self.metrics is not None and self.output_dir is not None:
             if metric in self.metrics_data:
                 if not self.metrics_headers[metric]:
                     self.metrics_data[metric].to_csv(f"{self.output_dir}/.{metric}_vector_rep{self.repetition}.csv", mode="w", header=True, index=False)
@@ -201,6 +208,6 @@ class Connector(abc.ABC):
                 else:
                     self.metrics_data[metric].to_csv(f"{self.output_dir}/.{metric}_vector_rep{self.repetition}.csv", mode="a", header=False, index=False)
                 self.metrics_data[metric] = pd.DataFrame(columns=["sample", "timestamp"])
-        else:
+        elif self.metrics is None:
             raise Exception("No metrics have been defined for this simulation")
 

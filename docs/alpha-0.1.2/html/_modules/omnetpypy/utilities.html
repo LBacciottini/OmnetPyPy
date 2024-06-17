@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy.utilities &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../../_static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../../_static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">omnetpypy.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for omnetpypy.utilities</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A set of utility classes and functions that are used across the package.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MultiRandom&#39;</span><span class="p">,</span> <span class="s1">&#39;FutureMetric&#39;</span><span class="p">,</span> <span class="s1">&#39;get_metrics&#39;</span><span class="p">,</span> <span class="s1">&#39;get_metrics_from_csv&#39;</span><span class="p">,</span> <span class="s1">&#39;time_unit_factor&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+
+<div class="viewcode-block" id="MultiRandom"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom">[docs]</a><span class="k">class</span> <span class="nc">MultiRandom</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is a wrapper around the standard library :class:`random.Random` class,</span>
+<span class="sd">    that allows to use multiple random number generators with different seeds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seeds : list or int</span>
+<span class="sd">        A list of seeds for the random number generators.</span>
+<span class="sd">        The length of the list determines the number of generators. If a single integer is provided,</span>
+<span class="sd">        a single generator is created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seeds</span><span class="o">=</span><span class="mi">44</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seeds</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">seeds</span> <span class="o">=</span> <span class="p">[</span><span class="n">seeds</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seeds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">numpy_generators</span> <span class="o">=</span> <span class="p">[</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span> <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">,</span> <span class="n">seeds</span><span class="p">):</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MultiRandom.random"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.random">[docs]</a>    <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the next random floating point number uniformly distributed in the range [0.0, 1.0).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.random`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">random</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MultiRandom.randint"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.randint">[docs]</a>    <span class="k">def</span> <span class="nf">randint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the next random integer N such that a &lt;= N &lt;= b.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a : int</span>
+<span class="sd">            The lower bound of the random integer.</span>
+<span class="sd">        b : int</span>
+<span class="sd">            The upper bound of the random integer.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The next random integer.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.randint`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.choice"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.choice">[docs]</a>    <span class="k">def</span> <span class="nf">choice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random element from the non-empty sequence ``seq``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        seq : iterable</span>
+<span class="sd">            A non-empty sequence.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            A random element from the sequence.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.choice`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.choices"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.choices">[docs]</a>    <span class="k">def</span> <span class="nf">choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cum_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a k sized list of elements chosen from the population with replacement.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sequence : iterable</span>
+<span class="sd">            A non-empty sequence.</span>
+<span class="sd">        weights : list, optional</span>
+<span class="sd">            A list of weights to be used in the selection. If ``None``, the weights are assumed to be equal.</span>
+<span class="sd">            The relative weights determine the probability of selecting each element.</span>
+<span class="sd">        cum_weights : list, optional</span>
+<span class="sd">            A list of cumulative weights to be used in the selection. If ``None``, the weights are assumed to be equal.</span>
+<span class="sd">            The relative weights determine the probability of selecting each element.</span>
+<span class="sd">        k : int, optional</span>
+<span class="sd">            The number of elements to choose. Defaults to 1.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of k elements chosen from the population.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.choices`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">cum_weights</span><span class="o">=</span><span class="n">cum_weights</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.shuffle"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shuffle the sequence x in place.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : iterable</span>
+<span class="sd">            The sequence to shuffle.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.shuffle`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.sample"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a k length list of unique elements chosen from the population sequence or set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : iterable</span>
+<span class="sd">            A non-empty sequence or set.</span>
+<span class="sd">        k : int</span>
+<span class="sd">            The number of unique elements to choose.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of unique elements chosen from the population.</span>
+
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.sample`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.uniform"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.uniform">[docs]</a>    <span class="k">def</span> <span class="nf">uniform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N such that a &lt;= N &lt;= b for a &lt;= b and b &lt;= N &lt;= a for b &lt; a.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a : float</span>
+<span class="sd">            The lower bound of the random number.</span>
+<span class="sd">        b : float</span>
+<span class="sd">            The upper bound of the random number.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.uniform`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.geometric"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.geometric">[docs]</a>    <span class="k">def</span> <span class="nf">geometric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random integer N from a geometric distribution.</span>
+
+<span class="sd">        This is the only method that uses the numpy random number generator (:class:`numpy.random.Generator`) instead</span>
+<span class="sd">        of the standard library random number generator (:class:`random.Random`).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p : float</span>
+<span class="sd">            The probability of success.</span>
+<span class="sd">        size : int or tuple of ints or None, optional</span>
+<span class="sd">            The shape of the output. If None, a single value is returned.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`numpy.random.Generator.geometric`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">numpy_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">geometric</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.triangular"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.triangular">[docs]</a>    <span class="k">def</span> <span class="nf">triangular</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N such that low &lt;= N &lt;= high and with the specified mode between bounds.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        low : float</span>
+<span class="sd">            The lower bound of the random number.</span>
+<span class="sd">        high : float</span>
+<span class="sd">            The upper bound of the random number.</span>
+<span class="sd">        mode : float or None, optional</span>
+<span class="sd">            The mode of the distribution. If None, the mode is the midpoint between the bounds.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.triangular`</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">triangular</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.normalvariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.normalvariate">[docs]</a>    <span class="k">def</span> <span class="nf">normalvariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a normal (Gaussian) distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The mean of the distribution.</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            The standard deviation of the distribution.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.normalvariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">normalvariate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.lognormvariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.lognormvariate">[docs]</a>    <span class="k">def</span> <span class="nf">lognormvariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a lognormal distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The mean of the distribution.</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            The standard deviation of the distribution.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.lognormvariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">lognormvariate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.gauss"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.gauss">[docs]</a>    <span class="k">def</span> <span class="nf">gauss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a normal (Gaussian) distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The mean of the distribution.</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            The standard deviation of the distribution.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.gauss`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.expovariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.expovariate">[docs]</a>    <span class="k">def</span> <span class="nf">expovariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a normal (Gaussian) distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lambd : float</span>
+<span class="sd">            The rate of the exponential distribution.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.expovariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">expovariate</span><span class="p">(</span><span class="n">lambd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.vonmisesvariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.vonmisesvariate">[docs]</a>    <span class="k">def</span> <span class="nf">vonmisesvariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a von Mises distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The mean of the distribution.</span>
+<span class="sd">        kappa : float</span>
+<span class="sd">            The concentration of the distribution.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.vonmisesvariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">vonmisesvariate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">kappa</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.gammavariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.gammavariate">[docs]</a>    <span class="k">def</span> <span class="nf">gammavariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a gamma distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            The shape of the distribution. Can be any positive number.</span>
+<span class="sd">        beta : float</span>
+<span class="sd">            The scale of the distribution. Can be any positive number.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.gammavariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">gammavariate</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.betavariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.betavariate">[docs]</a>    <span class="k">def</span> <span class="nf">betavariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a beta distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            The first shape parameter of the distribution. Can be any positive number.</span>
+<span class="sd">        beta : float</span>
+<span class="sd">            The second shape parameter of the distribution. Can be any positive number.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.betavariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">betavariate</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.paretovariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.paretovariate">[docs]</a>    <span class="k">def</span> <span class="nf">paretovariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a Pareto distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            The shape of the distribution. Can be any positive number.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.parentovariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">paretovariate</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.weibullvariate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.weibullvariate">[docs]</a>    <span class="k">def</span> <span class="nf">weibullvariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a random floating point number N from a Weibull distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            The shape of the distribution. Can be any positive number.</span>
+<span class="sd">        beta : float</span>
+<span class="sd">            The scale of the distribution. Can be any positive number.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The next random floating point number.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.weibullvariate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">weibullvariate</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultiRandom.getstate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.getstate">[docs]</a>    <span class="k">def</span> <span class="nf">getstate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the internal state of the random number generator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.getstate`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">getstate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MultiRandom.setstate"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom.setstate">[docs]</a>    <span class="k">def</span> <span class="nf">setstate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the internal state of the random number generator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state : tuple</span>
+<span class="sd">            The internal state of the random number generator.</span>
+<span class="sd">        generator : int, optional</span>
+<span class="sd">            The index of the generator to use. Defaults to 0.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`random.Random.setstate`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span><span class="p">[</span><span class="n">generator</span><span class="p">]</span><span class="o">.</span><span class="n">setstate</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div></div>
+
+
+<span class="n">FutureMetric</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;FutureMetric&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;vector&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;var&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+                               <span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;percentiles&quot;</span><span class="p">])</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A type that describes the metrics to collect during simulations. The fields, apart from the name, are booleans</span>
+<span class="sd">indicating the statistics to collect for the metric. Such fields are:</span>
+
+<span class="sd">- vector: the complete list of samples of the metric </span>
+<span class="sd">- mean: the mean of the values </span>
+<span class="sd">- median: the median of the values </span>
+<span class="sd">- std: the standard deviation of the values </span>
+<span class="sd">- var: the variance of the values </span>
+<span class="sd">- min: the minimum value </span>
+<span class="sd">- max: the maximum value </span>
+<span class="sd">- count: the number of samples </span>
+<span class="sd">- percentiles: the percentiles of the values (1, 5, 25, 75, 95, 99) </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="get_metrics"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.get_metrics">[docs]</a><span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the statistics for a metric and return them as a dictionary.</span>
+<span class="sd">    Not used in the current version of the package because it requires all samples to be loaded in memory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metric : :class:`~omnetpypy.utilities.FutureMetric`</span>
+<span class="sd">        The metric to collect.</span>
+<span class="sd">    df : :class:`pandas.DataFrame`</span>
+<span class="sd">        The sampled data of the metric.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary containing the requested statistics for the metric.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># always use only the samples column and convert result to float</span>
+
+    <span class="n">final</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">vector</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">median</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;median&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">std</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">var</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;var&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">percentiles</span><span class="p">:</span>
+        <span class="n">quantiles_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">])</span>
+        <span class="n">final</span><span class="p">[</span><span class="s2">&quot;percentiles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantiles_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">final</span></div>
+
+
+<div class="viewcode-block" id="get_metrics_from_csv"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.get_metrics_from_csv">[docs]</a><span class="k">def</span> <span class="nf">get_metrics_from_csv</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the statistics for a metric and return them as a dictionary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metric : :class:`~omnetpypy.utilities.FutureMetric`</span>
+<span class="sd">        The metric to collect.</span>
+<span class="sd">    filename : string</span>
+<span class="sd">        The name of the file containing the sampled data of the metric.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary containing the requested statistics for the metric.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># compute the statistics without loading the whole file in memory</span>
+    <span class="c1"># the csv_iterator is an iterator over the rows of the csv file</span>
+    <span class="c1"># we use the first row to get the column names</span>
+    <span class="c1"># and we use the second row to initialize the statistics</span>
+    <span class="c1"># then we iterate over the remaining rows to update the statistics</span>
+
+    <span class="kn">import</span> <span class="nn">csv</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="c1"># read the first row to get the column names</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_iterator</span><span class="p">:</span>
+        <span class="n">csv_reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csv_iterator</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">csv_reader</span><span class="p">)</span>
+        <span class="n">sample_index</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">)</span>
+
+        <span class="c1"># use metric to initialize the statistics (except for the vector, which is ignored for the moment)</span>
+        <span class="n">final</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">median</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;median&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">std</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">var</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;var&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">percentiles</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;percentiles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># iterate over the remaining rows to update the statistics. Median and percentiles are computed online using</span>
+        <span class="c1"># a list with 10K elements at most and a smaller list that collects the samples for the median as the median of</span>
+        <span class="c1"># the 10k elements. This is done to avoid loading the whole file in memory.</span>
+        <span class="n">median_samples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">median_temp</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">percentiles_samples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">percentiles_temp</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">max_elems</span> <span class="o">=</span> <span class="mi">100000</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">csv_reader</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">sample_index</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span>
+                <span class="n">final</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">median</span><span class="p">:</span>
+                <span class="n">median_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">median_temp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_elems</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">median_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">median_temp</span><span class="p">))</span>
+                    <span class="n">median_temp</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">std</span><span class="p">:</span>
+                <span class="n">final</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">var</span><span class="p">:</span>
+                <span class="n">final</span><span class="p">[</span><span class="s2">&quot;var&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sample</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
+                <span class="n">final</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">final</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span> <span class="n">sample</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+                <span class="n">final</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">final</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">],</span> <span class="n">sample</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
+                <span class="n">final</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">percentiles</span><span class="p">:</span>
+                <span class="n">percentiles_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">percentiles_temp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_elems</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">percentiles_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">percentiles_temp</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">99</span><span class="p">]))</span>
+                    <span class="n">percentiles_temp</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># compute the final statistics</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">/=</span> <span class="n">samples</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">median</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">median_samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">median_temp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">max_elems</span> <span class="o">//</span> <span class="mi">100</span><span class="p">):</span>
+                <span class="n">median_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">median_temp</span><span class="p">))</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;median&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">median_samples</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">std</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">final</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">samples</span> <span class="o">-</span> <span class="n">final</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">var</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;var&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final</span><span class="p">[</span><span class="s2">&quot;var&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">samples</span> <span class="o">-</span> <span class="n">final</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">percentiles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">percentiles_samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">percentiles_temp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">max_elems</span> <span class="o">//</span> <span class="mi">100</span><span class="p">):</span>
+                <span class="n">percentiles_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">percentiles_temp</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">99</span><span class="p">]))</span>
+            <span class="c1"># compute the final percentiles as a list of the sample mean of the respective percentiles in the samples</span>
+            <span class="n">final</span><span class="p">[</span><span class="s2">&quot;percentiles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">percentiles_samples</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">final</span></div>
+
+
+<div class="viewcode-block" id="time_unit_factor"><a class="viewcode-back" href="../../omnetpypy/utilities.html#omnetpypy.utilities.time_unit_factor">[docs]</a><span class="k">def</span> <span class="nf">time_unit_factor</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the factor to convert a time unit to seconds. For example, if the unit is &quot;ms&quot;, the factor is 1e-3.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    unit : str</span>
+<span class="sd">        The time unit to convert. Can be one of the following:</span>
+
+<span class="sd">            - &quot;s&quot; for seconds</span>
+<span class="sd">            - &quot;ms&quot; for milliseconds</span>
+<span class="sd">            - &quot;us&quot; for microseconds</span>
+<span class="sd">            - &quot;ns&quot; for nanoseconds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;s&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;ms&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e3</span>
+    <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;us&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e6</span>
+    <span class="k">elif</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;ns&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1e9</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid time unit&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy package docs &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="_static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="omnetpypy.backends" href="omnetpypy/backends/backends.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            OmnetPyPy
+              <img src="_static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">omnetpypy package docs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="omnetpypy-package-docs">
+<h1>omnetpypy package docs<a class="headerlink" href="#omnetpypy-package-docs" title="Permalink to this heading"></a></h1>
+<p>Welcome to the omnetpypy package documentation.
+This package implements a Pythonic network simulation framework for
+discrete event simulation inspired in concepts by OMNeT++.</p>
+<p>You can download and install the omnetpypy package by
+simply using pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>omnetpypy
+</pre></div>
+</div>
+<p>The package is aimed for those who appreciate the modular structure of
+OMNeT++, but want Python’s simplicity and flexibility.</p>
+<p>The main players within the package are the following:</p>
+<ol class="arabic simple">
+<li><p><strong>Simple Modules</strong>: These are the basic building blocks of the simulation.
+They are the entities that interact with each other by sending messages
+and processing them. The behavior of a custom simple module is defined by the
+user by implementing its <cite>handle_message</cite> method.</p></li>
+<li><p><strong>Compound Modules</strong>: These are non-atomic modules that contain
+other interconnected submodules. They are used to structure the
+simulation model in a hierarchical way and make complex systems
+easier to model. The behavior of a custom compound module is fully
+defined by its submodules and how they are connected to each other.</p></li>
+<li><p><strong>Ports</strong>: These are how modules interact with the outside world.
+Ports of two different modules can be connected so that messages
+can be exchanged between them. You can also forward the input (output) of a
+port to the input (output) of another module port. This port forwarding is
+crucial to bind compound modules’ ports to their submodules ports.</p></li>
+<li><p><strong>Channels</strong>: When two ports are connected, they are connected through a channel.
+Channels are used to define the communication medium between two modules.
+The channel can be used to model different communication media, such as
+wired or wireless communication, with noise, delay, or loss operations.
+Omnetpypy comes with a default bidirectional channel that can be used for simple simulations.
+It supports fixed delay and fixed loss probability.</p></li>
+<li><p><strong>Events</strong>: These are the messages that are exchanged between modules. The simulation
+time is advanced by processing events.</p></li>
+</ol>
+<p>To design a simulation, you just follow these steps:</p>
+<ol class="arabic">
+<li><p>Determine the simple modules that will be part of the simulation. If you need custom
+behavior, you can create a custom simple module by subclassing <cite>SimpleModule</cite>.</p></li>
+<li><p>Create a yaml file called <cite>simple.yaml</cite> that lists all the simple module classes
+that will be part of the simulation. They are dynamically loaded by the simulation engine.
+Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">simple</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClientModule</span>
+<span class="w">      </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_package</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServerModule</span>
+<span class="w">      </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">another_package</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>(optional) Create a yaml file called <cite>channels.yaml</cite> that lists all the custom channel classes
+that will be part of the simulation. They are dynamically loaded by the simulation engine.</p></li>
+<li><p>(optional) Determine the compound modules that will be part of the simulation. You define compound modules
+in another yaml file called <cite>compound.yaml</cite>. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">compound</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClientServerModule</span>
+<span class="w">      </span><span class="nt">submodules</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_1&quot;</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="c1"># class parameters that will be passed to the constructor</span>
+<span class="w">                </span><span class="nt">num_requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">                </span><span class="nt">send_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_2&quot;</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="c1"># class parameters that will be passed to the constructor</span>
+<span class="w">                </span><span class="nt">num_requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">150</span>
+<span class="w">                </span><span class="nt">send_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ServerModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server&quot;</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">service_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">      </span><span class="nt">connections</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_1.lan&quot;</span><span class="w"> </span><span class="c1"># port with format module_name.port_name</span>
+<span class="w">            </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server.lan0&quot;</span>
+<span class="w">            </span><span class="nt">channel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"> </span><span class="c1"># use the default channel, otherwise specify the channel name</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_2.lan&quot;</span><span class="w"> </span><span class="c1"># port with format module_name.port_name</span>
+<span class="w">            </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server.lan1&quot;</span>
+<span class="w">            </span><span class="nt">channel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"> </span><span class="c1"># use the default channel, otherwise specify the channel name</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Create a yaml file called <cite>network.yaml</cite> that describes the network to simulate. In practice,
+the network is the top-level compound module. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">network</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyNetwork</span>
+<span class="w">      </span><span class="nt">submodules</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientServerModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_server&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Create yet another yaml file (it’s the last one, we promise) named as you want, that contains
+the simulation configuration. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">repetitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"> </span><span class="c1"># number of independent runs</span>
+<span class="nt">num_rngs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"> </span><span class="c1"># number of independent random number generators for each run</span>
+<span class="nt">time_unit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;us&quot;</span><span class="w"> </span><span class="c1"># time unit for the simulation, in this case microseconds</span>
+<span class="nt">simulate_until</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000000</span>
+<span class="nt">yaml_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./&quot;</span><span class="w">  </span><span class="c1"># directory where all other yaml files are located, relative to this file</span>
+<span class="nt">output_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./out&quot;</span><span class="w"> </span><span class="c1"># directory where the simulation output will be stored, relative to this file</span>
+<span class="nt">engine</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;simpy&quot;</span><span class="w"> </span><span class="c1"># simulation engine to use, only simpy is supported for now</span>
+<span class="nt">num_processes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w"> </span><span class="c1"># number of parallel Python processes</span>
+
+<span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="c1"># metrics to collect</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;queuing_time&quot;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;vector&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;mean&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># we want the whole vector of samples and the mean</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Run the simulation by instantiating an <cite>Experiment</cite> object and calling its <cite>run_experiments</cite> method. Example:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">omnetpypy.simulation</span> <span class="kn">import</span> <span class="n">Experiment</span>
+
+<span class="n">experiment</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="s2">&quot;./config.yaml&quot;</span><span class="p">)</span>
+<span class="n">experiment</span><span class="o">.</span><span class="n">run_experiments</span><span class="p">()</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/backends/backends.html">omnetpypy.backends</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/backends/backends.html#omnetpypy.backends.__init__.Connector"><code class="docutils literal notranslate"><span class="pre">Connector</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/backends/connector.html">omnetpypy.backends.connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/backends/simpy_connector.html">omnetpypy.backends.simpy_connector</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/examples/examples.html">omnetpypy.examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/examples/ping_pong/ping_pong.html">omnetpypy.examples.ping_pong</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/front_end/front_end.html">omnetpypy.front_end</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/front_end.html#omnetpypy.front_end.__init__.Channel"><code class="docutils literal notranslate"><span class="pre">Channel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/front_end.html#omnetpypy.front_end.__init__.CompoundModule"><code class="docutils literal notranslate"><span class="pre">CompoundModule</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/front_end.html#omnetpypy.front_end.__init__.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/front_end.html#omnetpypy.front_end.__init__.SimpleModule"><code class="docutils literal notranslate"><span class="pre">SimpleModule</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/channel.html">omnetpypy.front_end.channel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/compound_module.html">omnetpypy.front_end.compound_module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/message.html">omnetpypy.front_end.message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/port.html">omnetpypy.front_end.port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/sim_entity.html">omnetpypy.front_end.sim_entity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/front_end/simple_module.html">omnetpypy.front_end.simple_module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/parser.html">omnetpypy.parser</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.instantiate_compound_module"><code class="docutils literal notranslate"><span class="pre">instantiate_compound_module()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.parse_channels"><code class="docutils literal notranslate"><span class="pre">parse_channels()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.parse_connection"><code class="docutils literal notranslate"><span class="pre">parse_connection()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.parse_simple_modules"><code class="docutils literal notranslate"><span class="pre">parse_simple_modules()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.parse_yaml_directory"><code class="docutils literal notranslate"><span class="pre">parse_yaml_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.parse_yaml_file"><code class="docutils literal notranslate"><span class="pre">parse_yaml_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/parser.html#omnetpypy.parser.sanitize_compound_descriptors"><code class="docutils literal notranslate"><span class="pre">sanitize_compound_descriptors()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/sim_log.html">omnetpypy.sim_log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.critical"><code class="docutils literal notranslate"><span class="pre">critical()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.debug"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.error"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.log_to_console"><code class="docutils literal notranslate"><span class="pre">log_to_console()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.log_to_file"><code class="docutils literal notranslate"><span class="pre">log_to_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.remove_console_log"><code class="docutils literal notranslate"><span class="pre">remove_console_log()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.set_log_level"><code class="docutils literal notranslate"><span class="pre">set_log_level()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/sim_log.html#omnetpypy.sim_log.warning"><code class="docutils literal notranslate"><span class="pre">warning()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/simulation.html">omnetpypy.simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/simulation.html#omnetpypy.simulation.Experiment"><code class="docutils literal notranslate"><span class="pre">Experiment</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/simulation.html#omnetpypy.simulation.Simulation"><code class="docutils literal notranslate"><span class="pre">Simulation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="omnetpypy/utilities.html">omnetpypy.utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/utilities.html#omnetpypy.utilities.FutureMetric"><code class="docutils literal notranslate"><span class="pre">FutureMetric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/utilities.html#omnetpypy.utilities.MultiRandom"><code class="docutils literal notranslate"><span class="pre">MultiRandom</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/utilities.html#omnetpypy.utilities.get_metrics"><code class="docutils literal notranslate"><span class="pre">get_metrics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/utilities.html#omnetpypy.utilities.get_metrics_from_csv"><code class="docutils literal notranslate"><span class="pre">get_metrics_from_csv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="omnetpypy/utilities.html#omnetpypy.utilities.time_unit_factor"><code class="docutils literal notranslate"><span class="pre">time_unit_factor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="omnetpypy/backends/backends.html" class="btn btn-neutral float-right" title="omnetpypy.backends" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

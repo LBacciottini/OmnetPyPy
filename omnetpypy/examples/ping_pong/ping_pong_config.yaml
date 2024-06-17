@@ -1,8 +1,7 @@
 repetitions: 1
 num_rngs: 1
 simulate_until: 8000
-topology_file: "ping_pong_net.yaml"
-output_dir: "out"
+yaml_directory: "./"
 engine: "simpy"
 time_unit: "s"
 

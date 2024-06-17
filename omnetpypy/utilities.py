@@ -5,7 +5,7 @@ A set of utility classes and functions that are used across the package.
 import random
 from numpy.random import default_rng
 
-__all__ = ['MultiRandom', 'FutureMetric']
+__all__ = ['MultiRandom', 'FutureMetric', 'get_metrics', 'get_metrics_from_csv', 'time_unit_factor']
 
 from collections import namedtuple
 
@@ -499,30 +499,30 @@ FutureMetric = namedtuple("FutureMetric", ["name", "vector", "mean", "median", "
 r"""
 A type that describes the metrics to collect during simulations. The fields, apart from the name, are booleans
 indicating the statistics to collect for the metric. Such fields are:
-<ul>
-<li> vector: the complete list of samples of the metric </li>
-<li> mean: the mean of the values </li>
-<li> median: the median of the values </li>
-<li> std: the standard deviation of the values </li>
-<li> var: the variance of the values </li>
-<li> min: the minimum value </li>
-<li> max: the maximum value </li>
-<li> count: the number of samples </li>
-<li> percentiles: the percentiles of the values (1, 5, 25, 75, 95, 99) </li>
-</ul>
+
+- vector: the complete list of samples of the metric 
+- mean: the mean of the values 
+- median: the median of the values 
+- std: the standard deviation of the values 
+- var: the variance of the values 
+- min: the minimum value 
+- max: the maximum value 
+- count: the number of samples 
+- percentiles: the percentiles of the values (1, 5, 25, 75, 95, 99) 
+
 """
 
 
 def get_metrics(metric, df):
-    """
+    r"""
     Compute the statistics for a metric and return them as a dictionary.
     Not used in the current version of the package because it requires all samples to be loaded in memory.
 
     Parameters
     ----------
-    metric : FutureMetric
+    metric : :class:`~omnetpypy.utilities.FutureMetric`
         The metric to collect.
-    df : pandas.DataFrame
+    df : :class:`pandas.DataFrame`
         The sampled data of the metric.
 
     Returns
@@ -563,7 +563,7 @@ def get_metrics_from_csv(metric, filename):
 
     Parameters
     ----------
-    metric : FutureMetric
+    metric : :class:`~omnetpypy.utilities.FutureMetric`
         The metric to collect.
     filename : string
         The name of the file containing the sampled data of the metric.
@@ -646,24 +646,25 @@ def get_metrics_from_csv(metric, filename):
                     percentiles_samples.append(np.percentile(percentiles_temp, [1, 5, 25, 75, 95, 99]))
                     percentiles_temp = []
 
-    # compute the final statistics
-    if metric.mean:
-        final["mean"] /= samples
-    if metric.median:
-        if len(median_samples) == 0 or len(median_temp) > (max_elems // 100):
-            median_samples.append(np.median(median_temp))
-        final["median"] = np.mean(median_samples)
-    if metric.std:
-        final["std"] = np.sqrt(final["std"] / samples - final["mean"]**2)
-    if metric.var:
-        final["var"] = final["var"] / samples - final["mean"]**2
-    if metric.count:
-        final["count"] = samples
-    if metric.percentiles:
-        if len(percentiles_samples) == 0 or len(percentiles_temp) > (max_elems // 100):
-            percentiles_samples.append(np.percentile(percentiles_temp, [1, 5, 25, 75, 95, 99]))
-        # compute the final percentiles as a list of the sample mean of the respective percentiles in the samples
-        final["percentiles"] = [np.mean([x[i] for x in percentiles_samples]) for i in range(6)]
+    if samples > 0:
+        # compute the final statistics
+        if metric.mean:
+            final["mean"] /= samples
+        if metric.median:
+            if len(median_samples) == 0 or len(median_temp) > (max_elems // 100):
+                median_samples.append(np.median(median_temp))
+            final["median"] = np.mean(median_samples)
+        if metric.std:
+            final["std"] = np.sqrt(final["std"] / samples - final["mean"]**2)
+        if metric.var:
+            final["var"] = final["var"] / samples - final["mean"]**2
+        if metric.count:
+            final["count"] = samples
+        if metric.percentiles:
+            if len(percentiles_samples) == 0 or len(percentiles_temp) > (max_elems // 100):
+                percentiles_samples.append(np.percentile(percentiles_temp, [1, 5, 25, 75, 95, 99]))
+            # compute the final percentiles as a list of the sample mean of the respective percentiles in the samples
+            final["percentiles"] = [np.mean([x[i] for x in percentiles_samples]) for i in range(6)]
 
     return final
 
@@ -676,12 +677,11 @@ def time_unit_factor(unit):
     ----------
     unit : str
         The time unit to convert. Can be one of the following:
-        <ul>
-        <li> "s" for seconds </li>
-        <li> "ms" for milliseconds </li>
-        <li> "us" for microseconds </li>
-        <li> "ns" for nanoseconds </li>
-        </ul>
+
+            - "s" for seconds
+            - "ms" for milliseconds
+            - "us" for microseconds
+            - "ns" for nanoseconds
     """
 
     if unit == "s":

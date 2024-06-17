@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy.utilities &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../_static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="omnetpypy.simulation" href="simulation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../_static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">omnetpypy.utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric"><code class="docutils literal notranslate"><span class="pre">FutureMetric</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.count"><code class="docutils literal notranslate"><span class="pre">FutureMetric.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.max"><code class="docutils literal notranslate"><span class="pre">FutureMetric.max</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.mean"><code class="docutils literal notranslate"><span class="pre">FutureMetric.mean</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.median"><code class="docutils literal notranslate"><span class="pre">FutureMetric.median</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.min"><code class="docutils literal notranslate"><span class="pre">FutureMetric.min</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.name"><code class="docutils literal notranslate"><span class="pre">FutureMetric.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.percentiles"><code class="docutils literal notranslate"><span class="pre">FutureMetric.percentiles</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.std"><code class="docutils literal notranslate"><span class="pre">FutureMetric.std</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.var"><code class="docutils literal notranslate"><span class="pre">FutureMetric.var</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric.vector"><code class="docutils literal notranslate"><span class="pre">FutureMetric.vector</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom"><code class="docutils literal notranslate"><span class="pre">MultiRandom</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.betavariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.betavariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.choice"><code class="docutils literal notranslate"><span class="pre">MultiRandom.choice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.choices"><code class="docutils literal notranslate"><span class="pre">MultiRandom.choices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.expovariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.expovariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.gammavariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.gammavariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.gauss"><code class="docutils literal notranslate"><span class="pre">MultiRandom.gauss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.geometric"><code class="docutils literal notranslate"><span class="pre">MultiRandom.geometric()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.getstate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.getstate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.lognormvariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.lognormvariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.normalvariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.normalvariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.paretovariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.paretovariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.randint"><code class="docutils literal notranslate"><span class="pre">MultiRandom.randint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.random"><code class="docutils literal notranslate"><span class="pre">MultiRandom.random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.sample"><code class="docutils literal notranslate"><span class="pre">MultiRandom.sample()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.setstate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.setstate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.shuffle"><code class="docutils literal notranslate"><span class="pre">MultiRandom.shuffle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.triangular"><code class="docutils literal notranslate"><span class="pre">MultiRandom.triangular()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.uniform"><code class="docutils literal notranslate"><span class="pre">MultiRandom.uniform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.vonmisesvariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.vonmisesvariate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.utilities.MultiRandom.weibullvariate"><code class="docutils literal notranslate"><span class="pre">MultiRandom.weibullvariate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#omnetpypy.utilities.get_metrics"><code class="docutils literal notranslate"><span class="pre">get_metrics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#omnetpypy.utilities.get_metrics_from_csv"><code class="docutils literal notranslate"><span class="pre">get_metrics_from_csv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#omnetpypy.utilities.time_unit_factor"><code class="docutils literal notranslate"><span class="pre">time_unit_factor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">omnetpypy.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/omnetpypy/utilities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-omnetpypy.utilities">
+<span id="omnetpypy-utilities"></span><h1>omnetpypy.utilities<a class="headerlink" href="#module-omnetpypy.utilities" title="Permalink to this heading"></a></h1>
+<p>A set of utility classes and functions that are used across the package.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">omnetpypy.utilities.</span></span><span class="sig-name descname"><span class="pre">FutureMetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>A type that describes the metrics to collect during simulations. The fields, apart from the name, are booleans
+indicating the statistics to collect for the metric. Such fields are:</p>
+<ul class="simple">
+<li><p>vector: the complete list of samples of the metric</p></li>
+<li><p>mean: the mean of the values</p></li>
+<li><p>median: the median of the values</p></li>
+<li><p>std: the standard deviation of the values</p></li>
+<li><p>var: the variance of the values</p></li>
+<li><p>min: the minimum value</p></li>
+<li><p>max: the maximum value</p></li>
+<li><p>count: the number of samples</p></li>
+<li><p>percentiles: the percentiles of the values (1, 5, 25, 75, 95, 99)</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.count">
+<span class="sig-name descname"><span class="pre">count</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.count" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.max">
+<span class="sig-name descname"><span class="pre">max</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.max" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.mean" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.median">
+<span class="sig-name descname"><span class="pre">median</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.median" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.min">
+<span class="sig-name descname"><span class="pre">min</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.min" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.name" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.percentiles">
+<span class="sig-name descname"><span class="pre">percentiles</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.percentiles" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.std">
+<span class="sig-name descname"><span class="pre">std</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.std" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.var">
+<span class="sig-name descname"><span class="pre">var</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.var" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="omnetpypy.utilities.FutureMetric.vector">
+<span class="sig-name descname"><span class="pre">vector</span></span><a class="headerlink" href="#omnetpypy.utilities.FutureMetric.vector" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">omnetpypy.utilities.</span></span><span class="sig-name descname"><span class="pre">MultiRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Random</span></code></p>
+<p>This class is a wrapper around the standard library <code class="xref py py-class docutils literal notranslate"><span class="pre">random.Random</span></code> class,
+that allows to use multiple random number generators with different seeds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>seeds</strong><span class="classifier">list or int</span></dt><dd><p>A list of seeds for the random number generators.
+The length of the list determines the number of generators. If a single integer is provided,
+a single generator is created.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.betavariate">
+<span class="sig-name descname"><span class="pre">betavariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.betavariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.betavariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a beta distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">float</span></dt><dd><p>The first shape parameter of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>beta</strong><span class="classifier">float</span></dt><dd><p>The second shape parameter of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.betavariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.choice">
+<span class="sig-name descname"><span class="pre">choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.choice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.choice" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random element from the non-empty sequence <code class="docutils literal notranslate"><span class="pre">seq</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>seq</strong><span class="classifier">iterable</span></dt><dd><p>A non-empty sequence.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>object</dt><dd><p>A random element from the sequence.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.choice()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.choices">
+<span class="sig-name descname"><span class="pre">choices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cum_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.choices" title="Permalink to this definition"></a></dt>
+<dd><p>Return a k sized list of elements chosen from the population with replacement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sequence</strong><span class="classifier">iterable</span></dt><dd><p>A non-empty sequence.</p>
+</dd>
+<dt><strong>weights</strong><span class="classifier">list, optional</span></dt><dd><p>A list of weights to be used in the selection. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the weights are assumed to be equal.
+The relative weights determine the probability of selecting each element.</p>
+</dd>
+<dt><strong>cum_weights</strong><span class="classifier">list, optional</span></dt><dd><p>A list of cumulative weights to be used in the selection. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the weights are assumed to be equal.
+The relative weights determine the probability of selecting each element.</p>
+</dd>
+<dt><strong>k</strong><span class="classifier">int, optional</span></dt><dd><p>The number of elements to choose. Defaults to 1.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>list</dt><dd><p>A list of k elements chosen from the population.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.choices()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.expovariate">
+<span class="sig-name descname"><span class="pre">expovariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lambd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.expovariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.expovariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a normal (Gaussian) distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lambd</strong><span class="classifier">float</span></dt><dd><p>The rate of the exponential distribution.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.expovariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.gammavariate">
+<span class="sig-name descname"><span class="pre">gammavariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.gammavariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.gammavariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a gamma distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">float</span></dt><dd><p>The shape of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>beta</strong><span class="classifier">float</span></dt><dd><p>The scale of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.gammavariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.gauss">
+<span class="sig-name descname"><span class="pre">gauss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.gauss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.gauss" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a normal (Gaussian) distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mu</strong><span class="classifier">float</span></dt><dd><p>The mean of the distribution.</p>
+</dd>
+<dt><strong>sigma</strong><span class="classifier">float</span></dt><dd><p>The standard deviation of the distribution.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.gauss()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.geometric">
+<span class="sig-name descname"><span class="pre">geometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.geometric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.geometric" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random integer N from a geometric distribution.</p>
+<p>This is the only method that uses the numpy random number generator (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code>) instead
+of the standard library random number generator (<code class="xref py py-class docutils literal notranslate"><span class="pre">random.Random</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>p</strong><span class="classifier">float</span></dt><dd><p>The probability of success.</p>
+</dd>
+<dt><strong>size</strong><span class="classifier">int or tuple of ints or None, optional</span></dt><dd><p>The shape of the output. If None, a single value is returned.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.random.Generator.geometric()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.getstate">
+<span class="sig-name descname"><span class="pre">getstate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.getstate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.getstate" title="Permalink to this definition"></a></dt>
+<dd><p>Return the internal state of the random number generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.getstate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.lognormvariate">
+<span class="sig-name descname"><span class="pre">lognormvariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.lognormvariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.lognormvariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a lognormal distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mu</strong><span class="classifier">float</span></dt><dd><p>The mean of the distribution.</p>
+</dd>
+<dt><strong>sigma</strong><span class="classifier">float</span></dt><dd><p>The standard deviation of the distribution.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.lognormvariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.normalvariate">
+<span class="sig-name descname"><span class="pre">normalvariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.normalvariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.normalvariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a normal (Gaussian) distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mu</strong><span class="classifier">float</span></dt><dd><p>The mean of the distribution.</p>
+</dd>
+<dt><strong>sigma</strong><span class="classifier">float</span></dt><dd><p>The standard deviation of the distribution.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.normalvariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.paretovariate">
+<span class="sig-name descname"><span class="pre">paretovariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.paretovariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.paretovariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a Pareto distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">float</span></dt><dd><p>The shape of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.parentovariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.randint">
+<span class="sig-name descname"><span class="pre">randint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.randint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.randint" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next random integer N such that a &lt;= N &lt;= b.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>a</strong><span class="classifier">int</span></dt><dd><p>The lower bound of the random integer.</p>
+</dd>
+<dt><strong>b</strong><span class="classifier">int</span></dt><dd><p>The upper bound of the random integer.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>int</dt><dd><p>The next random integer.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.randint()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.random">
+<span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.random"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.random" title="Permalink to this definition"></a></dt>
+<dd><p>Return the next random floating point number uniformly distributed in the range [0.0, 1.0).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.random()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Return a k length list of unique elements chosen from the population sequence or set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>population</strong><span class="classifier">iterable</span></dt><dd><p>A non-empty sequence or set.</p>
+</dd>
+<dt><strong>k</strong><span class="classifier">int</span></dt><dd><p>The number of unique elements to choose.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>list</dt><dd><p>A list of unique elements chosen from the population.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.sample()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.setstate">
+<span class="sig-name descname"><span class="pre">setstate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.setstate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.setstate" title="Permalink to this definition"></a></dt>
+<dd><p>Set the internal state of the random number generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>state</strong><span class="classifier">tuple</span></dt><dd><p>The internal state of the random number generator.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.setstate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.shuffle">
+<span class="sig-name descname"><span class="pre">shuffle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.shuffle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.shuffle" title="Permalink to this definition"></a></dt>
+<dd><p>Shuffle the sequence x in place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">iterable</span></dt><dd><p>The sequence to shuffle.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.shuffle()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.triangular">
+<span class="sig-name descname"><span class="pre">triangular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.triangular"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.triangular" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N such that low &lt;= N &lt;= high and with the specified mode between bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>low</strong><span class="classifier">float</span></dt><dd><p>The lower bound of the random number.</p>
+</dd>
+<dt><strong>high</strong><span class="classifier">float</span></dt><dd><p>The upper bound of the random number.</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier">float or None, optional</span></dt><dd><p>The mode of the distribution. If None, the mode is the midpoint between the bounds.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.triangular()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.uniform">
+<span class="sig-name descname"><span class="pre">uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.uniform" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N such that a &lt;= N &lt;= b for a &lt;= b and b &lt;= N &lt;= a for b &lt; a.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>a</strong><span class="classifier">float</span></dt><dd><p>The lower bound of the random number.</p>
+</dd>
+<dt><strong>b</strong><span class="classifier">float</span></dt><dd><p>The upper bound of the random number.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.uniform()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.vonmisesvariate">
+<span class="sig-name descname"><span class="pre">vonmisesvariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.vonmisesvariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.vonmisesvariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a von Mises distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mu</strong><span class="classifier">float</span></dt><dd><p>The mean of the distribution.</p>
+</dd>
+<dt><strong>kappa</strong><span class="classifier">float</span></dt><dd><p>The concentration of the distribution.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.vonmisesvariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.utilities.MultiRandom.weibullvariate">
+<span class="sig-name descname"><span class="pre">weibullvariate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#MultiRandom.weibullvariate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.MultiRandom.weibullvariate" title="Permalink to this definition"></a></dt>
+<dd><p>Return a random floating point number N from a Weibull distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">float</span></dt><dd><p>The shape of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>beta</strong><span class="classifier">float</span></dt><dd><p>The scale of the distribution. Can be any positive number.</p>
+</dd>
+<dt><strong>generator</strong><span class="classifier">int, optional</span></dt><dd><p>The index of the generator to use. Defaults to 0.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The next random floating point number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">random.Random.weibullvariate()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="omnetpypy.utilities.get_metrics">
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.utilities.</span></span><span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#get_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.get_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the statistics for a metric and return them as a dictionary.
+Not used in the current version of the package because it requires all samples to be loaded in memory.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>metric</strong><span class="classifier"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric" title="omnetpypy.utilities.FutureMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">FutureMetric</span></code></a></span></dt><dd><p>The metric to collect.</p>
+</dd>
+<dt><strong>df</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></span></dt><dd><p>The sampled data of the metric.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>A dictionary containing the requested statistics for the metric.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="omnetpypy.utilities.get_metrics_from_csv">
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.utilities.</span></span><span class="sig-name descname"><span class="pre">get_metrics_from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#get_metrics_from_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.get_metrics_from_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the statistics for a metric and return them as a dictionary.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>metric</strong><span class="classifier"><a class="reference internal" href="#omnetpypy.utilities.FutureMetric" title="omnetpypy.utilities.FutureMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">FutureMetric</span></code></a></span></dt><dd><p>The metric to collect.</p>
+</dd>
+<dt><strong>filename</strong><span class="classifier">string</span></dt><dd><p>The name of the file containing the sampled data of the metric.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>A dictionary containing the requested statistics for the metric.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="omnetpypy.utilities.time_unit_factor">
+<span class="sig-prename descclassname"><span class="pre">omnetpypy.utilities.</span></span><span class="sig-name descname"><span class="pre">time_unit_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnetpypy/utilities.html#time_unit_factor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.utilities.time_unit_factor" title="Permalink to this definition"></a></dt>
+<dd><p>Return the factor to convert a time unit to seconds. For example, if the unit is “ms”, the factor is 1e-3.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>unit</strong><span class="classifier">str</span></dt><dd><p>The time unit to convert. Can be one of the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“s” for seconds</p></li>
+<li><p>“ms” for milliseconds</p></li>
+<li><p>“us” for microseconds</p></li>
+<li><p>“ns” for nanoseconds</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="simulation.html" class="btn btn-neutral float-left" title="omnetpypy.simulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

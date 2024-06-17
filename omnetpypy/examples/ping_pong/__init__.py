@@ -5,6 +5,6 @@ which send messages to each other in a ping-pong fashion. The `PingModule` sends
 which then sends a message back to the `PingModule`. This process is repeated for a specified number of times.
 """
 
-from ping_pong import PingPongModule
+from omnetpypy.examples.ping_pong.ping_pong_simple import PingPongModule
 
 __all__ = ["PingPongModule"]

@@ -1,6 +1,7 @@
 from omnetpypy import SimpleModule, Message
 from omnetpypy import sim_log
 
+__all__ = ["PingPongModule"]
 
 class PingPongModule(SimpleModule):
     """

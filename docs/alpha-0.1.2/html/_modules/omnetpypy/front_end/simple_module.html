@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy.front_end.simple_module &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../../../_static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">omnetpypy.front_end.simple_module</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for omnetpypy.front_end.simple_module</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements the SimpleModule abstract class.</span>
+
+<span class="sd">The class has the same semantic as its homonym in omnet++, and it is meant to be subclassed by the user to define</span>
+<span class="sd">its custom simulation modules.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">omnetpypy.front_end.sim_entity</span> <span class="kn">import</span> <span class="n">SimulatedEntity</span>
+
+
+<div class="viewcode-block" id="SimpleModule"><a class="viewcode-back" href="../../../omnetpypy/front_end/simple_module.html#omnetpypy.front_end.__init__.SimpleModule">[docs]</a><span class="k">class</span> <span class="nc">SimpleModule</span><span class="p">(</span><span class="n">SimulatedEntity</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is an abstract class that represents a simple module in the simulation.</span>
+<span class="sd">    Simple modules are the basic building blocks of the simulation model. They can send and receive messages</span>
+<span class="sd">    through their ports, and they can be connected to other modules through channels connecting their ports.</span>
+<span class="sd">    The behavior of a simple module is defined by how it handles incoming messages.</span>
+<span class="sd">    The user should subclass this class to define custom simulation modules.</span>
+
+<span class="sd">    See :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity` for inherited attributes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the module. This name should be unique within the simulation.</span>
+<span class="sd">    identifier : int</span>
+<span class="sd">        The identifier of the module. This identifier should be unique within the simulation.</span>
+<span class="sd">    port_names : list of str</span>
+<span class="sd">        The names of the ports of the module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">port_names</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">port_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_listening</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="SimpleModule.handle_message"><a class="viewcode-back" href="../../../omnetpypy/front_end/simple_module.html#omnetpypy.front_end.__init__.SimpleModule.handle_message">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">port_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle a message received as input to a port.</span>
+<span class="sd">        This method must be implemented by every subclass to define the behavior of the custom module.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy:front_end.message.Message`</span>
+<span class="sd">            The message to be processed.</span>
+<span class="sd">        port_name : str or None</span>
+<span class="sd">            The name of the port on which the message was received.</span>
+<span class="sd">            If ``None``, the message is a self message scheduled by this module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SimpleModule.connect"><a class="viewcode-back" href="../../../omnetpypy/front_end/simple_module.html#omnetpypy.front_end.__init__.SimpleModule.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_port</span><span class="p">,</span> <span class="n">remote_entity</span><span class="p">,</span> <span class="n">remote_port</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect a port of this module to a port of another remote entity.</span>
+<span class="sd">        The output of a port will be fed as input to the other port</span>
+<span class="sd">        (up to the intermediate actions of a channel, if any).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        local_port : str</span>
+<span class="sd">            The name of the local port to be connected.</span>
+<span class="sd">        remote_entity : :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity`</span>
+<span class="sd">            The remote entity to which the port will be connected.</span>
+<span class="sd">        remote_port : str</span>
+<span class="sd">            The name of the remote port to be connected.</span>
+<span class="sd">        channel : :class:`~omnetpypy.front_end.channel.Channel` or None, optional</span>
+<span class="sd">            The channel through which the connection will be made, if any.</span>
+<span class="sd">            If set, the local port is connected to the &quot;A&quot; port of the channel,</span>
+<span class="sd">            and the &quot;B&quot; port of the channel is connected to the remote port.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">channel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="n">local_port</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">channel</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">])</span>
+            <span class="n">channel</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">remote_entity</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="n">remote_port</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="n">local_port</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">remote_entity</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="n">remote_port</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SimpleModule.emit_metric"><a class="viewcode-back" href="../../../omnetpypy/front_end/simple_module.html#omnetpypy.front_end.__init__.SimpleModule.emit_metric">[docs]</a>    <span class="k">def</span> <span class="nf">emit_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record a metric sample in the simulation context.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the metric.</span>
+<span class="sd">            The metric name must be defined in the simulation configuration.</span>
+<span class="sd">        value : Any</span>
+<span class="sd">            The value of the metric sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">record_metric</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

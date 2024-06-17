@@ -5,3 +5,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+setup.py
+MANIFEST.in
+/omnetpypy/examples/qnum_congestion_ctrl_aqm_bidir/
+/docs/source/conf.py
