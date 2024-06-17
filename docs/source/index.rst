@@ -1,7 +1,7 @@
-omnetpypy package docs
+Welcome to omnetpypy docs
 ====================================
 
-Welcome to the omnetpypy package documentation.
+Welcome to the omnetpypy package documentation!
 This package implements a Pythonic network simulation framework for
 discrete event simulation inspired in concepts by OMNeT++.
 
@@ -14,6 +14,9 @@ simply using pip:
 
 The package is aimed for those who appreciate the modular structure of
 OMNeT++, but want Python's simplicity and flexibility.
+
+OmnetPyPy is open-source and the source code is on `GitHub <https://github.com/LBacciottini/OmnetPyPy>`_.
+Everyone is welcome to contribute to the project!
 
 The main players within the package are the following:
 
