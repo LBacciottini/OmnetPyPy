@@ -1,4 +1,4 @@
-Welcome to omnetpypy docs
+Welcome to omnetpypy docs (alpha-0.1.2)
 ====================================
 
 Welcome to the omnetpypy package documentation!
