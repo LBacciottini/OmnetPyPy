@@ -14,8 +14,8 @@ class SimpleModule(SimulatedEntity):
     This class is an abstract class that represents a simple module in the simulation.
     Simple modules are the basic building blocks of the simulation model. They can send and receive messages
     through their ports, and they can be connected to other modules through channels connecting their ports.
-    The behavior of a simple module is defined by how it handles incoming messages.
-    The user should subclass this class to define custom simulation modules.
+    The behavior of a simple module is defined by how it handles incoming messages. The user should subclass this class
+    to define custom simulation modules.
 
     Simple modules are also in charge of recording metrics samples. The user can call the method
     :meth:`~omnetpypy.front_ent.simple_module.SimpleModule.emit_metric` at any time to record a metric sample.
