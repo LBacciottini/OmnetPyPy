@@ -144,9 +144,9 @@ modelling two different local area networks:
                     channel: "default"
                     delay: 10  # [ms]
                   - source: "server.lan1"
-                    target: "*this.lan0"
+                    target: "self.lan0"
                     type: "forward_output"
-                  - source: "*this.lan0"
+                  - source: "self.lan0"
                     target: "server.lan1"
                     type: "forward_input"
 
@@ -180,9 +180,9 @@ modelling two different local area networks:
                       channel: "default"
                       delay: 10  # [ms]
                     - source: "router.lan3"
-                      target: "*this.lan0"
+                      target: "self.lan0"
                       type: "forward_output"
-                    - source: "*this.lan0"
+                    - source: "self.lan0"
                       target: "router.lan3"
                       type: "forward_input"
 

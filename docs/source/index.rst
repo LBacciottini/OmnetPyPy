@@ -1,5 +1,5 @@
 Welcome to omnetpypy docs (alpha-0.1.2)
-====================================
+========================================
 
 Welcome to the omnetpypy package documentation!
 This package implements a Pythonic network simulation framework for
