@@ -14,9 +14,9 @@ from omnetpypy.backends.simpy_connector import SimPyConnector
 
 class Simulation:
     r"""
-    This class is a container for the simulation configuration parameters.
-    It represents a simulation configuration, and it can be used to store the configuration of a repetition
-    The attributes of this class match the parameters of the constructor.
+    This class is used to run a single simulation using the specified configuration. It takes care of reading the
+    running the simulation and returning the recorded metrics. Users should not instantiate this class directly,
+    but use the :class:`~omnetpypy.simulation.Experiment` to manage multiple simulations.
 
     Parameters
     ----------
@@ -133,9 +133,9 @@ class Simulation:
 
 class Experiment:
     r"""
-    This class is a container for the experiment configuration parameters.
-    It represents an experiment configuration, and it can be used to store the configuration of a set of
-    simulated repetitions
+    This class is used to run a set of independent simulations using the same YAML configuration files.
+    An instance of this class takes care of reading the configuration file, parsing it, running the simulations, and
+    dumping the recorded metrics in the output files.
 
     Parameters
     ----------
@@ -202,6 +202,13 @@ class Experiment:
 
     output_dir : str or None
         The output directory for the simulation. If `None`, no data is stored.
+
+
+    Examples
+    --------
+    >>> exp = Experiment(config_file="config.yaml")
+    >>> exp.run_simulations()
+
     """
 
     def __init__(self, config_file):

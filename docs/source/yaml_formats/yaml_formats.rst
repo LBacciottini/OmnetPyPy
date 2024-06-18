@@ -120,7 +120,7 @@ To design a simulation, you can just follow these steps:
         from omnetpypy.simulation import Experiment
 
         experiment = Experiment(config_file="./config.yaml")
-        experiment.run_experiments()
+        experiment.run_simulations()
 
 
 
