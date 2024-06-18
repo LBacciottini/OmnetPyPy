@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview: module code &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+  <title>Simple Modules YAML file &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../static/graphviz.css" />
@@ -21,7 +22,8 @@
         <script src="../static/sphinx_highlight.js"></script>
     <script src="../static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Network YAML file" href="network.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,7 +47,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
@@ -53,7 +55,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../omnetpypy/simulation.html">omnetpypy.simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../omnetpypy/utilities.html">omnetpypy.utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../yaml_formats/yaml_formats.html">Format and purpose of YAML files</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="yaml_formats.html">Format and purpose of YAML files</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="channels.html">Channels YAML file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compound.html">Compound Modules YAML file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration YAML File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html">Network YAML file</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Simple Modules YAML file</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -70,8 +79,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Overview: module code</li>
+          <li class="breadcrumb-item"><a href="yaml_formats.html">Format and purpose of YAML files</a></li>
+      <li class="breadcrumb-item active">Simple Modules YAML file</li>
       <li class="wy-breadcrumbs-aside">
+            <a href="../sources/yaml_formats/simple.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -79,25 +90,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="omnetpypy/backends/connector.html">omnetpypy.backends.connector</a></li>
-<li><a href="omnetpypy/backends/simpy_connector.html">omnetpypy.backends.simpy_connector</a></li>
-<li><a href="omnetpypy/examples/ping_pong/ping_pong_simple.html">omnetpypy.examples.ping_pong.ping_pong_simple</a></li>
-<li><a href="omnetpypy/front_end/channel.html">omnetpypy.front_end.channel</a></li>
-<li><a href="omnetpypy/front_end/compound_module.html">omnetpypy.front_end.compound_module</a></li>
-<li><a href="omnetpypy/front_end/message.html">omnetpypy.front_end.message</a></li>
-<li><a href="omnetpypy/front_end/port.html">omnetpypy.front_end.port</a></li>
-<li><a href="omnetpypy/front_end/sim_entity.html">omnetpypy.front_end.sim_entity</a></li>
-<li><a href="omnetpypy/front_end/simple_module.html">omnetpypy.front_end.simple_module</a></li>
-<li><a href="omnetpypy/parser.html">omnetpypy.parser</a></li>
-<li><a href="omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
-<li><a href="omnetpypy/simulation.html">omnetpypy.simulation</a></li>
-<li><a href="omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+  <section id="simple-modules-yaml-file">
+<span id="simple-yaml"></span><h1>Simple Modules YAML file<a class="headerlink" href="#simple-modules-yaml-file" title="Permalink to this heading"></a></h1>
+<p>The “simple.yaml” file is <strong>mandatory</strong>. It is used to specify the
+simple modules classes that are going to be used in the simulation.</p>
+<p>The file is a dictionary with one key “simple” that contains a list of dictionaries.
+Each dictionary in the list represents a simple module class to be imported.</p>
+<p>The dictionaries describing the simple modules must have the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“name”: the name of the simple module class to be imported.</p></li>
+<li><p>“package”: the package where the simple module class is located.</p></li>
 </ul>
+</div></blockquote>
+<p>Example of a “simple.yaml” file:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">simple</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientModule&quot;</span>
+<span class="w">    </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_simulation.simple_modules&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ServerModule&quot;</span>
+<span class="w">    </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_simulation.simple_modules&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RouterModule&quot;</span>
+<span class="w">    </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_simulation.simple_modules&quot;</span>
+<span class="c1"># More simple modules can be added here</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="network.html" class="btn btn-neutral float-left" title="Network YAML file" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

@@ -174,9 +174,9 @@ def sanitize_compound_descriptors(compound_descriptors):
         The list of compound module descriptors
 
     Raises
-    -------
+    ------
     ValueError
-        If a dependency loop is detected
+        If a dependency loop is detected or if one of the submodules has an invalid name
     """
 
     def check_dependencies(compound_descriptor, stack):
@@ -185,6 +185,9 @@ def sanitize_compound_descriptors(compound_descriptors):
         stack.append(compound_descriptor['name'])
         for submodule in compound_descriptor.get('submodules', []):
             type_name = submodule['type']
+            submodule_name = submodule['name']
+            if submodule_name == "self":
+                raise ValueError(f"Invalid submodule name 'self' in compound module {compound_descriptor['name']}")
             for desc in compound_descriptors:
                 if desc['name'] == type_name:
                     check_dependencies(desc, stack)

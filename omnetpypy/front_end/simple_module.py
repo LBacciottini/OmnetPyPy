@@ -17,6 +17,9 @@ class SimpleModule(SimulatedEntity):
     The behavior of a simple module is defined by how it handles incoming messages.
     The user should subclass this class to define custom simulation modules.
 
+    Simple modules are also in charge of recording metrics samples. The user can call the method
+    :meth:`~omnetpypy.front_ent.simple_module.SimpleModule.emit_metric` at any time to record a metric sample.
+
     See :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity` for inherited attributes.
 
     Parameters
@@ -78,6 +81,7 @@ class SimpleModule(SimulatedEntity):
     def emit_metric(self, name, value):
         r"""
         Record a metric sample in the simulation context.
+        The metric name must be defined in the main configuration file.
 
         Parameters
         ----------
