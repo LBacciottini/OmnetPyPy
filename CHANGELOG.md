@@ -1,5 +1,10 @@
 # Changelog
 
+## [alpha-0.1.3] - 2024-06-18
+### Fixed
+- Bug fixes.
+- Some minor modifications in the documentation.
+
 ## [alpha-0.1.2] - 2024-06-17
 ### Added
 - Html documentation!
@@ -9,3 +14,4 @@
 
 ### Fixed
 - Bug fixes.
+
