@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/</loc>
+    <lastmod>2024-18-06</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/yaml_formats/yaml_formats.html</loc>
+    <lastmod>2024-18-06</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/simulation.html</loc>
+    <lastmod>2024-18-06</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+
+    <url>
+        <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/backends/connector.html</loc>
+        <lastmod>2024-18-06</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+
+    <url>
+        <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/front_end/simple_module.html</loc>
+        <lastmod>2024-18-06</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+
+    <url>
+        <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/front_end/channel.html</loc>
+        <lastmod>2024-18-06</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+
+    <url>
+        <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/front_end/compound_module.html</loc>
+        <lastmod>2024-18-06</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+
+    <url>
+        <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/front_end/front_end.html</loc>
+        <lastmod>2024-18-06</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+
+    <url>
+        <loc>https://lbacciottini.github.io/OmnetPyPy/last/html/omnetpypy/front_end/backends.html</loc>
+        <lastmod>2024-18-06</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+
+
+</urlset>
