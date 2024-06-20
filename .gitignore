@@ -10,3 +10,5 @@ MANIFEST.in
 /omnetpypy/examples/qnum_congestion_ctrl_aqm_bidir/
 /tests/test_qnum.py
 /docs/source/conf.py
+/docs/make.bat
+/docs/Makefile
