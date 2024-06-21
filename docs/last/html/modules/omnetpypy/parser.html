@@ -257,9 +257,9 @@
 <span class="sd">        The list of compound module descriptors</span>
 
 <span class="sd">    Raises</span>
-<span class="sd">    -------</span>
+<span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If a dependency loop is detected</span>
+<span class="sd">        If a dependency loop is detected or if one of the submodules has an invalid name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">check_dependencies</span><span class="p">(</span><span class="n">compound_descriptor</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
@@ -268,6 +268,9 @@
         <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compound_descriptor</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">submodule</span> <span class="ow">in</span> <span class="n">compound_descriptor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;submodules&#39;</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="n">type_name</span> <span class="o">=</span> <span class="n">submodule</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+            <span class="n">submodule_name</span> <span class="o">=</span> <span class="n">submodule</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">submodule_name</span> <span class="o">==</span> <span class="s2">&quot;self&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid submodule name &#39;self&#39; in compound module </span><span class="si">{</span><span class="n">compound_descriptor</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">compound_descriptors</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">desc</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">type_name</span><span class="p">:</span>
                     <span class="n">check_dependencies</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>

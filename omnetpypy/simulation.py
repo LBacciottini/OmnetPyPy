@@ -18,6 +18,8 @@ class Simulation:
     running the simulation and returning the recorded metrics. Users should not instantiate this class directly,
     but use the :class:`~omnetpypy.simulation.Experiment` to manage multiple simulations.
 
+    All parameters are also stored as attributes.
+
     Parameters
     ----------
     engine : str
@@ -40,6 +42,17 @@ class Simulation:
         The output directory for the simulation.
     global_params : dict
         A dictionary of global parameters. These parameters are available to all the entities in the simulation.
+
+
+    Attributes
+    ----------
+    rng : :class:`~omnetpypy.utilities.MultiRandom`
+        The random number generator for this simulation, already initialized. It is made available to all the entities
+        in the simulation through the :class:`~omnetpypy.backends.connector.Connector`.
+    connector : :class:`~omnetpypy.backends.Connector`
+        The connector to the simulation engine. Its subclass depends on the chosen engine.
+    network : :class:`~omnetpypy.front_end.compound_module.CompoundModule`
+        The network to simulate, parsed from the YAML file "network.yaml".
 
     Raises
     ------

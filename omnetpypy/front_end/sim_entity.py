@@ -22,7 +22,8 @@ class SimulatedEntity:
     identifier : int
         The unique identifier of the entity.
     sim_context : :class:`~omnetpypy.front_end.simulation.Simulation`
-        The simulation where the entity is running.
+        The simulation where the entity is running. Used to access simulation variables like random number generators
+        and the current simulation time.
     parent : :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity`
         The parent entity of the current entity. If the entity is a top-level entity, the parent is None.
     is_listening : bool
@@ -45,6 +46,11 @@ class SimulatedEntity:
     def set_sim_context(self, sim_context):
         r"""
         Set the simulation context of the entity. Automatically called when the entity is added to the simulation.
+
+        Parameters
+        ----------
+        sim_context : :class:`~omnetpypy.front_end.simulation.Simulation`
+            The simulation context where the entity is running.
         """
         self.sim_context = sim_context
 

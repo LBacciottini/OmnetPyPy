@@ -105,7 +105,8 @@
 <span class="sd">    identifier : int</span>
 <span class="sd">        The unique identifier of the entity.</span>
 <span class="sd">    sim_context : :class:`~omnetpypy.front_end.simulation.Simulation`</span>
-<span class="sd">        The simulation where the entity is running.</span>
+<span class="sd">        The simulation where the entity is running. Used to access simulation variables like random number generators</span>
+<span class="sd">        and the current simulation time.</span>
 <span class="sd">    parent : :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity`</span>
 <span class="sd">        The parent entity of the current entity. If the entity is a top-level entity, the parent is None.</span>
 <span class="sd">    is_listening : bool</span>
@@ -128,6 +129,11 @@
 <div class="viewcode-block" id="SimulatedEntity.set_sim_context"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.set_sim_context">[docs]</a>    <span class="k">def</span> <span class="nf">set_sim_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_context</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the simulation context of the entity. Automatically called when the entity is added to the simulation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim_context : :class:`~omnetpypy.front_end.simulation.Simulation`</span>
+<span class="sd">            The simulation context where the entity is running.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span> <span class="o">=</span> <span class="n">sim_context</span></div>
 

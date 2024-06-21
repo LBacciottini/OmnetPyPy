@@ -119,7 +119,8 @@ This is an abstract class, and it is meant to be subclassed by connectors to spe
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>simulation</strong><span class="classifier">Simulation</span></dt><dd><p>The simulation object that describes the simulation configuration.</p>
+<dt><strong>simulation</strong><span class="classifier"><a class="reference internal" href="../simulation.html#omnetpypy.simulation.Simulation" title="omnetpypy.simulation.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a></span></dt><dd><p>The simulation object that describes the simulation configuration and its context. Used for example to access
+the random number generators for the simulation.</p>
 </dd>
 <dt><strong>metrics</strong><span class="classifier">list of <a class="reference internal" href="../utilities.html#omnetpypy.utilities.FutureMetric" title="omnetpypy.utilities.FutureMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">FutureMetric</span></code></a> or None, optional</span></dt><dd><p>A list of metrics to be recorded during the simulation.</p>
 </dd>
@@ -132,7 +133,8 @@ simulation data will not be stored.</p>
 </dd>
 <dt class="field-even">Attributes<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt><strong>simulation</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></span></dt><dd><p>The simulation object that describes the simulation configuration and its context.</p>
+<dt><strong>simulation</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></span></dt><dd><p>The simulation object that describes the simulation configuration and its context. Used for example to access
+the random number generators for the simulation.</p>
 </dd>
 <dt><strong>metrics</strong><span class="classifier">list of <a class="reference internal" href="../utilities.html#omnetpypy.utilities.FutureMetric" title="omnetpypy.utilities.FutureMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">FutureMetric</span></code></a> or None</span></dt><dd><p>A list of metrics to be collected during the simulation. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no metrics will be collected.</p>
 </dd>

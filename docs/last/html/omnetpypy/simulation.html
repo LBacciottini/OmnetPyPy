@@ -256,6 +256,7 @@ These parameters are available to all the entities in the simulation.</p>
 <p>This class is used to run a single simulation using the specified configuration. It takes care of reading the
 running the simulation and returning the recorded metrics. Users should not instantiate this class directly,
 but use the <a class="reference internal" href="#omnetpypy.simulation.Experiment" title="omnetpypy.simulation.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Experiment</span></code></a> to manage multiple simulations.</p>
+<p>All parameters are also stored as attributes.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
@@ -284,6 +285,17 @@ but use the <a class="reference internal" href="#omnetpypy.simulation.Experiment
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>NotImplementedError</dt><dd><p>If the passed <code class="docutils literal notranslate"><span class="pre">engine</span></code> is not implemented.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>rng</strong><span class="classifier"><a class="reference internal" href="utilities.html#omnetpypy.utilities.MultiRandom" title="omnetpypy.utilities.MultiRandom"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiRandom</span></code></a></span></dt><dd><p>The random number generator for this simulation, already initialized. It is made available to all the entities
+in the simulation through the <a class="reference internal" href="backends/connector.html#omnetpypy.backends.connector.Connector" title="omnetpypy.backends.connector.Connector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Connector</span></code></a>.</p>
+</dd>
+<dt><strong>connector</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Connector</span></code></span></dt><dd><p>The connector to the simulation engine. Its subclass depends on the chosen engine.</p>
+</dd>
+<dt><strong>network</strong><span class="classifier"><a class="reference internal" href="front_end/compound_module.html#omnetpypy.front_end.compound_module.CompoundModule" title="omnetpypy.front_end.compound_module.CompoundModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompoundModule</span></code></a></span></dt><dd><p>The network to simulate, parsed from the YAML file “network.yaml”.</p>
 </dd>
 </dl>
 </dd>

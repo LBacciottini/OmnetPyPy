@@ -17,8 +17,9 @@ class Connector(abc.ABC):
 
     Parameters
     ----------
-    simulation : Simulation
-        The simulation object that describes the simulation configuration.
+    simulation : :class:`~omnetpypy.simulation.Simulation`
+        The simulation object that describes the simulation configuration and its context. Used for example to access
+        the random number generators for the simulation.
     metrics : list of :class:`~omnetpypy.utilities.FutureMetric` or None, optional
         A list of metrics to be recorded during the simulation.
     output_dir : str, optional
@@ -31,7 +32,8 @@ class Connector(abc.ABC):
     Attributes
     ----------
     simulation : :class:`~omnetpypy.front_end.simulation.Simulation`
-        The simulation object that describes the simulation configuration and its context.
+        The simulation object that describes the simulation configuration and its context. Used for example to access
+        the random number generators for the simulation.
     metrics : list of :class:`~omnetpypy.utilities.FutureMetric` or None
         A list of metrics to be collected during the simulation. If ``None``, no metrics will be collected.
     output_dir : str

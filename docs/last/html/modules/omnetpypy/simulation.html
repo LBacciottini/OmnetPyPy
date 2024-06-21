@@ -97,9 +97,11 @@
 
 <div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../../omnetpypy/simulation.html#omnetpypy.simulation.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class is a container for the simulation configuration parameters.</span>
-<span class="sd">    It represents a simulation configuration, and it can be used to store the configuration of a repetition</span>
-<span class="sd">    The attributes of this class match the parameters of the constructor.</span>
+<span class="sd">    This class is used to run a single simulation using the specified configuration. It takes care of reading the</span>
+<span class="sd">    running the simulation and returning the recorded metrics. Users should not instantiate this class directly,</span>
+<span class="sd">    but use the :class:`~omnetpypy.simulation.Experiment` to manage multiple simulations.</span>
+
+<span class="sd">    All parameters are also stored as attributes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -123,6 +125,17 @@
 <span class="sd">        The output directory for the simulation.</span>
 <span class="sd">    global_params : dict</span>
 <span class="sd">        A dictionary of global parameters. These parameters are available to all the entities in the simulation.</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rng : :class:`~omnetpypy.utilities.MultiRandom`</span>
+<span class="sd">        The random number generator for this simulation, already initialized. It is made available to all the entities</span>
+<span class="sd">        in the simulation through the :class:`~omnetpypy.backends.connector.Connector`.</span>
+<span class="sd">    connector : :class:`~omnetpypy.backends.Connector`</span>
+<span class="sd">        The connector to the simulation engine. Its subclass depends on the chosen engine.</span>
+<span class="sd">    network : :class:`~omnetpypy.front_end.compound_module.CompoundModule`</span>
+<span class="sd">        The network to simulate, parsed from the YAML file &quot;network.yaml&quot;.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
@@ -216,9 +229,9 @@
 
 <div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../omnetpypy/simulation.html#omnetpypy.simulation.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class is a container for the experiment configuration parameters.</span>
-<span class="sd">    It represents an experiment configuration, and it can be used to store the configuration of a set of</span>
-<span class="sd">    simulated repetitions</span>
+<span class="sd">    This class is used to run a set of independent simulations using the same YAML configuration files.</span>
+<span class="sd">    An instance of this class takes care of reading the configuration file, parsing it, running the simulations, and</span>
+<span class="sd">    dumping the recorded metrics in the output files.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -285,6 +298,13 @@
 
 <span class="sd">    output_dir : str or None</span>
 <span class="sd">        The output directory for the simulation. If `None`, no data is stored.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; exp = Experiment(config_file=&quot;config.yaml&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; exp.run_simulations()</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>

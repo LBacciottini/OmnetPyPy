@@ -100,8 +100,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    simulation : Simulation</span>
-<span class="sd">        The simulation object that describes the simulation configuration.</span>
+<span class="sd">    simulation : :class:`~omnetpypy.simulation.Simulation`</span>
+<span class="sd">        The simulation object that describes the simulation configuration and its context. Used for example to access</span>
+<span class="sd">        the random number generators for the simulation.</span>
 <span class="sd">    metrics : list of :class:`~omnetpypy.utilities.FutureMetric` or None, optional</span>
 <span class="sd">        A list of metrics to be recorded during the simulation.</span>
 <span class="sd">    output_dir : str, optional</span>
@@ -114,7 +115,8 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    simulation : :class:`~omnetpypy.front_end.simulation.Simulation`</span>
-<span class="sd">        The simulation object that describes the simulation configuration and its context.</span>
+<span class="sd">        The simulation object that describes the simulation configuration and its context. Used for example to access</span>
+<span class="sd">        the random number generators for the simulation.</span>
 <span class="sd">    metrics : list of :class:`~omnetpypy.utilities.FutureMetric` or None</span>
 <span class="sd">        A list of metrics to be collected during the simulation. If ``None``, no metrics will be collected.</span>
 <span class="sd">    output_dir : str</span>
