@@ -55,10 +55,20 @@ class Connector(abc.ABC):
 
         # allocate a dict of numpy dataframes indexed by metric name
         if metrics is not None:
-            self.metrics_data = {metric.name: pd.DataFrame(columns=["sample", "timestamp"]) for metric in metrics}
+            metrics_numbers_str = [metric for metric in metrics if metric.type == "number" or metric.type == "str"]
+            metrics_dict = [metric for metric in metrics if metric.type == "dict"]
+            self.metrics_dict = metrics_dict
+            self.metrics_data = {metric.name: pd.DataFrame(columns=["sample", "timestamp"]) for metric in metrics_numbers_str}
+            self.metrics_columns = {metric.name: ["sample", "timestamp"] for metric in metrics_numbers_str}
+            for metric in metrics_dict:
+                self.metrics_data[metric.name] = pd.DataFrame(columns=metric.columns)
+                self.metrics_columns[metric.name] = metric.columns
+
             self.metrics_headers = {metric.name: False for metric in metrics}
         else:
             self.metrics_data = {}
+            self.metrics_dict = []
+            self.metrics_columns = {}
 
     @abstractmethod
     def start_simulation(self, until=None):
@@ -183,8 +193,29 @@ class Connector(abc.ABC):
             # add the value to the metric dataframe by simply appending a new row using loc
 
             if metric in self.metrics_data:
-                self.metrics_data[metric].loc[len(self.metrics_data[metric].index)] = [value, self.get_time()]
-            # otherwise we ignore the emitted metric
+
+                index_dict = -1
+                for i, metric_dict in enumerate(self.metrics_dict):
+                    if metric_dict.name == metric:
+                        index_dict = i
+                        break
+                is_dict = True if index_dict != -1 else False
+
+                if not is_dict:
+                    self.metrics_data[metric].loc[len(self.metrics_data[metric].index)] = [value, self.get_time()]
+
+                else:
+                    assert isinstance(value, dict), "The value of a dict metric must be a dict"
+                    assert set(value.keys()) == set(self.metrics_dict[index_dict].columns).difference({"timestamp"}), \
+                        "The keys of the dict value must match the columns of the metric"
+                    assert "timestamp" not in value.keys(), "The key 'timestamp' is reserved for the timestamp"
+                    assert all([isinstance(value[key], (int, float, str)) for key in value.keys()]), \
+                        "The values of the dict must be int, float or str"
+
+                    # get the row as a list of values whose keys are ordered alphabetically
+                    value["timestamp"] = self.get_time()
+
+                    self.metrics_data[metric].loc[len(self.metrics_data[metric].index)] = value
 
                 # append the metrics to the output file if the dataframes are too big
                 if len(self.metrics_data[metric].index) > 1000:
@@ -209,7 +240,9 @@ class Connector(abc.ABC):
                     self.metrics_headers[metric] = True
                 else:
                     self.metrics_data[metric].to_csv(f"{self.output_dir}/.{metric}_vector_rep{self.repetition}.csv", mode="a", header=False, index=False)
-                self.metrics_data[metric] = pd.DataFrame(columns=["sample", "timestamp"])
+
+                self.metrics_data[metric] = pd.DataFrame(columns=self.metrics_columns[metric])
+
         elif self.metrics is None:
             raise Exception("No metrics have been defined for this simulation")
 

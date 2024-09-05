@@ -7,7 +7,8 @@ time_unit: "s"
 
 metrics:
   - name: "Throughput"
-    type: ["vector", "mean", "percentiles"]
+    collect: ["vector", "mean", "percentiles"]
+    type: "number"
 
 max_processes: 8
 log_level: "info"

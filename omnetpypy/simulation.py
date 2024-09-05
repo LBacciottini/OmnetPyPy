@@ -110,7 +110,12 @@ class Simulation:
 
                 # compute the statistics we need
                 filename = f"{self.output_dir}/.{metric.name}_vector_rep{self.repetition_idx}.csv"
-                collected_data[metric.name] = utilities.get_metrics_from_csv(metric, filename)
+
+                # check metric type
+                if metric.type == "number":
+                    collected_data[metric.name] = utilities.get_metrics_from_csv(metric, filename)
+                else:
+                    collected_data[metric.name] = {}
 
         return collected_data
 
@@ -269,15 +274,39 @@ class Experiment:
 
         for metric in metrics_raw:  # set up metric collection
             name = metric.get("name")
-            types = metric.get("type")
+            metric_type = metric.get("type")
+            collect = metric.get("collect", "number")
 
-            all_types = ["vector", "mean", "std", "min", "max", "median", "percentiles", "count", "var"]
-            params = {k: False for k in all_types}
+            all_collects = ["vector", "mean", "std", "min", "max", "median", "percentiles", "count", "var"]
+            all_types = ["number", "str", "dict"]
 
-            true_params = {k: True for k in types}
-            params.update(true_params)
+            assert all([collect_type in all_collects for collect_type in collect]), f"collect must be one of {all_collects}"
+            assert metric_type in all_types, f"type must be one of {all_types}"
 
-            params["name"] = name
+            params_collect = {k: False for k in all_collects}
+
+            true_params = {k: True for k in collect}
+            params_collect.update(true_params)
+
+            params = {"name": name,
+                      "type": metric_type}
+            params.update(params_collect)
+
+            if metric_type != "number":
+                assert len([k for k, v in params_collect.items() if v]) == 1 and params_collect["vector"], \
+                    "only vector collect type must be set for nun-number typed metrics"
+
+            columns = None
+            if metric_type == "dict":
+                columns = metric.get("columns")
+                assert columns is not None, "columns must be provided for dict type metrics"
+                assert isinstance(columns, list), "columns must be a list"
+                assert all(isinstance(c, str) for c in columns), "columns must be a list of strings"
+                assert len([k for k, v in params_collect.items() if v]) == 1 and params_collect["vector"], \
+                    "only vector collect type must be True for dict type metrics"
+                assert "timestamp" not in columns, "timestamp cannot be a column name, it is added automatically"
+
+            params["columns"] = columns + ["timestamp"] if columns is not None else None
 
             metrics.append(utilities.FutureMetric(**params))
 

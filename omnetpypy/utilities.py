@@ -495,7 +495,7 @@ class MultiRandom(random.Random):
 
 
 FutureMetric = namedtuple("FutureMetric", ["name", "vector", "mean", "median", "std", "var", "min", "max",
-                               "count", "percentiles"])
+                               "count", "percentiles", "type", "columns"])
 r"""
 A type that describes the metrics to collect during simulations. The fields, apart from the name, are booleans
 indicating the statistics to collect for the metric. Such fields are:

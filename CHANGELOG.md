@@ -1,5 +1,12 @@
 # Changelog
 
+## [alpha-0.1.4] - 2024-09-5
+### Fixed
+- Bug fixes.
+
+### Added
+- Metric types, now we support "number", "str", and "dict" metrics with custom columns!
+
 ## [alpha-0.1.3] - 2024-06-18
 ### Fixed
 - Bug fixes.

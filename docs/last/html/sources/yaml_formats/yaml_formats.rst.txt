@@ -34,7 +34,8 @@ To design a simulation, you can just follow these steps:
 
             metrics: # metrics to collect
               - name: "queuing_time"
-                type: ["vector", "mean"] # we want the whole vector of samples and the mean
+                collect: ["vector", "mean"] # we want the whole vector of samples and the mean
+                type: "number"
 
             global_params: # global parameters that can be accessed by any entity in the simulation
               num_servers: 2
