@@ -49,7 +49,7 @@ class Connector(abc.ABC):
         self.output_dir = output_dir
         # check if the output directory exists, if not create it
         if output_dir is not None and not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+            os.makedirs(self.output_dir, exist_ok=True)
 
         self.repetition = repetition
 

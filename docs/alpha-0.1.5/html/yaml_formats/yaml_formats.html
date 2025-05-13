@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Format and purpose of YAML files &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../static/jquery.js"></script>
+        <script src="../static/sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../static/documentation_options.js"></script>
+        <script src="../static/doctools.js"></script>
+        <script src="../static/sphinx_highlight.js"></script>
+    <script src="../static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Channels YAML file" href="channels.html" />
+    <link rel="prev" title="omnetpypy.utilities" href="../omnetpypy/utilities.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Format and purpose of YAML files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="channels.html">Channels YAML file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compound.html">Compound Modules YAML file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration YAML File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html">Network YAML file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simple.html">Simple Modules YAML file</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Format and purpose of YAML files</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../sources/yaml_formats/yaml_formats.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="format-and-purpose-of-yaml-files">
+<span id="yaml-formats"></span><h1>Format and purpose of YAML files<a class="headerlink" href="#format-and-purpose-of-yaml-files" title="Permalink to this heading"></a></h1>
+<p>YAML files are used to configure the simulated experiment in a human-readable format
+that can be automatized if needed.</p>
+<p>In a nutshell, omnetpypy uses YAML files to specify the following information:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>What modules are going to be used in the simulation.</p></li>
+<li><p>How modules are interconnected to form the network.</p></li>
+<li><p>What parameters characterize the experiment.</p></li>
+</ul>
+</div></blockquote>
+<p>Except for the main configuration file, all the other YAML files should be placed in the same
+directory, whose path is specified in the main configuration file itself.</p>
+<p>To design a simulation, you can just follow these steps:</p>
+<ol class="arabic">
+<li><p>Create a yaml file, named as you want, that contains
+the global experiment configuration. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">repetitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">35</span><span class="w"> </span><span class="c1"># number of independent runs</span>
+<span class="nt">num_rngs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"> </span><span class="c1"># number of independent random number generators for each run</span>
+<span class="nt">time_unit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;us&quot;</span><span class="w"> </span><span class="c1"># time unit for the simulation, in this case microseconds</span>
+<span class="nt">simulate_until</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000000</span>
+<span class="nt">yaml_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./&quot;</span><span class="w">  </span><span class="c1"># directory where all other yaml files are located, relative to this file</span>
+<span class="nt">output_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./out&quot;</span><span class="w"> </span><span class="c1"># directory where the simulation output will be stored, relative to this file</span>
+<span class="nt">engine</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;simpy&quot;</span><span class="w"> </span><span class="c1"># simulation engine to use, only simpy is supported for now</span>
+<span class="nt">num_processes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span><span class="w"> </span><span class="c1"># number of parallel Python processes</span>
+
+<span class="nt">metrics</span><span class="p">:</span><span class="w"> </span><span class="c1"># metrics to collect</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;queuing_time&quot;</span>
+<span class="w">    </span><span class="nt">collect</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;vector&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;mean&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># we want the whole vector of samples and the mean</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;number&quot;</span>
+
+<span class="nt">global_params</span><span class="p">:</span><span class="w"> </span><span class="c1"># global parameters that can be accessed by any entity in the simulation</span>
+<span class="w">  </span><span class="nt">num_servers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">num_clients</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="configuration.html#config-file"><span class="std std-ref">configuration file format page</span></a> for details.</p>
+</div></blockquote>
+</li>
+<li><p>Determine the simple modules that will be part of the simulation. If you need custom
+behavior, you can create a custom simple module by subclassing <cite>SimpleModule</cite>.</p></li>
+<li><p>Create a yaml file called <cite>simple.yaml</cite> that lists all the simple module classes
+that will be part of the simulation. They are dynamically loaded by the simulation engine.
+Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">simple</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClientModule</span>
+<span class="w">      </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_package</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServerModule</span>
+<span class="w">      </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">another_package</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>See  the <a class="reference internal" href="simple.html#simple-yaml"><span class="std std-ref">“simple.yaml” format page</span></a> for details.</p>
+</li>
+<li><p>(optional) Create a yaml file called <cite>channels.yaml</cite> that lists all the custom channel classes
+that will be part of the simulation. They are dynamically loaded by the simulation engine.</p>
+<p>See the <a class="reference internal" href="channels.html#channels"><span class="std std-ref">“channels.yaml” format page</span></a> for details.</p>
+</li>
+<li><p>(optional) Determine the compound modules that will be part of the simulation. You define compound modules
+in another yaml file called <cite>compound.yaml</cite>. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">compound</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClientServerModule</span>
+<span class="w">      </span><span class="nt">submodules</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_1&quot;</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="c1"># class parameters that will be passed to the constructor</span>
+<span class="w">                </span><span class="nt">num_requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">                </span><span class="nt">send_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_2&quot;</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="c1"># class parameters that will be passed to the constructor</span>
+<span class="w">                </span><span class="nt">num_requests</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">150</span>
+<span class="w">                </span><span class="nt">send_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ServerModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server&quot;</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">service_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">      </span><span class="nt">connections</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_1.lan&quot;</span><span class="w"> </span><span class="c1"># port with format module_name.port_name</span>
+<span class="w">            </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server.lan0&quot;</span>
+<span class="w">            </span><span class="nt">channel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"> </span><span class="c1"># use the default channel, otherwise specify the channel name</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_2.lan&quot;</span><span class="w"> </span><span class="c1"># port with format module_name.port_name</span>
+<span class="w">            </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server.lan1&quot;</span>
+<span class="w">            </span><span class="nt">channel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"> </span><span class="c1"># use the default channel, otherwise specify the channel name</span>
+<span class="w">            </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="compound.html#compound-modules"><span class="std std-ref">“compound.yaml” format page</span></a> for details.</p>
+</div></blockquote>
+</li>
+<li><p>Create yet another yaml file (it’s the last one, we promise!) called <cite>network.yaml</cite> that describes the network to simulate. In practice,
+the network is the top-level compound module. Example:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">network</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyNetwork</span>
+<span class="w">      </span><span class="nt">submodules</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ClientServerModule&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;client_server&quot;</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="network.html#network-yaml"><span class="std std-ref">“network.yaml” format page</span></a> for details.</p>
+</div></blockquote>
+</li>
+<li><p>Run the simulation by instantiating an <cite>Experiment</cite> object and calling its <cite>run_experiments</cite> method. Example:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">omnetpypy.simulation</span> <span class="kn">import</span> <span class="n">Experiment</span>
+
+<span class="n">experiment</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="s2">&quot;./config.yaml&quot;</span><span class="p">)</span>
+<span class="n">experiment</span><span class="o">.</span><span class="n">run_simulations</span><span class="p">()</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p>For reference, here are all the documentation pages that describe the format of each YAML file:</p>
+<blockquote>
+<div><div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">YAML files formats</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="channels.html">Channels YAML file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compound.html">Compound Modules YAML file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration YAML File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network.html">Network YAML file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple.html">Simple Modules YAML file</a></li>
+</ul>
+</div>
+</div></blockquote>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../omnetpypy/utilities.html" class="btn btn-neutral float-left" title="omnetpypy.utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="channels.html" class="btn btn-neutral float-right" title="Channels YAML file" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

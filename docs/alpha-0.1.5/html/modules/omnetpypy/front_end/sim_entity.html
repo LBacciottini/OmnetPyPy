@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy.front_end.sim_entity &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../../../static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../static/jquery.js"></script>
+        <script src="../../../static/sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../static/documentation_options.js"></script>
+        <script src="../../../static/doctools.js"></script>
+        <script src="../../../static/sphinx_highlight.js"></script>
+    <script src="../../../static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../../../static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../yaml_formats/yaml_formats.html">Format and purpose of YAML files</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">omnetpypy.front_end.sim_entity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for omnetpypy.front_end.sim_entity</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">omnetpypy.front_end.port</span> <span class="kn">import</span> <span class="n">Port</span>
+
+
+<div class="viewcode-block" id="SimulatedEntity"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity">[docs]</a><span class="k">class</span> <span class="nc">SimulatedEntity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A simulated entity is any active entity belonging to the simulation, such as modules and channels.</span>
+<span class="sd">    Every entity may have a set of ports, and must keep a reference to the simulation context.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the entity. Must be unique within the simulation.</span>
+<span class="sd">    identifier : int</span>
+<span class="sd">        The unique identifier of the entity. Must be unique within the simulation.</span>
+<span class="sd">    port_names : list of str</span>
+<span class="sd">        The names of the ports of the entity.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the entity.</span>
+<span class="sd">    identifier : int</span>
+<span class="sd">        The unique identifier of the entity.</span>
+<span class="sd">    sim_context : :class:`~omnetpypy.front_end.simulation.Simulation`</span>
+<span class="sd">        The simulation where the entity is running. Used to access simulation variables like random number generators</span>
+<span class="sd">        and the current simulation time.</span>
+<span class="sd">    parent : :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity`</span>
+<span class="sd">        The parent entity of the current entity. If the entity is a top-level entity, the parent is None.</span>
+<span class="sd">    is_listening : bool</span>
+<span class="sd">        A flag indicating whether the entity is listening for incoming messages.</span>
+<span class="sd">    ports : dict of :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">        The ports of the entity, indexed by their names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">port_names</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_listening</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># if the entity is listening, the connector will call the handle_message method when a message is received</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ports</span> <span class="o">=</span> <span class="p">{</span><span class="n">port_name</span><span class="p">:</span> <span class="n">Port</span><span class="p">(</span><span class="n">port_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">port_name</span> <span class="ow">in</span> <span class="n">port_names</span><span class="p">}</span>
+
+<div class="viewcode-block" id="SimulatedEntity.set_sim_context"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.set_sim_context">[docs]</a>    <span class="k">def</span> <span class="nf">set_sim_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_context</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the simulation context of the entity. Automatically called when the entity is added to the simulation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim_context : :class:`~omnetpypy.front_end.simulation.Simulation`</span>
+<span class="sd">            The simulation context where the entity is running.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span> <span class="o">=</span> <span class="n">sim_context</span></div>
+
+<div class="viewcode-block" id="SimulatedEntity.handle_message"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.handle_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">port_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process a message received as input to a port.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy.front_end.message.Message`</span>
+<span class="sd">            The message to be processed.</span>
+<span class="sd">        port_name : str or None</span>
+<span class="sd">            The name of the port on which the message was received.</span>
+<span class="sd">            If ``None``, the message was sent by the entity itself (self message).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SimulatedEntity.schedule_message"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.schedule_message">[docs]</a>    <span class="k">def</span> <span class="nf">schedule_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Schedule a self message to be received by this entity.</span>
+<span class="sd">        Calls internally the method :meth:`~omnetpypy.front_end.simulation.Simulation.schedule_self_message`.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy.front_end.message.Message`</span>
+<span class="sd">            The message to be processed.</span>
+<span class="sd">        at : float or None, optional</span>
+<span class="sd">            The simulation time at which the message should be processed.</span>
+<span class="sd">            If ``None``, the ``delay`` parameter will be used.</span>
+<span class="sd">        delay : float or None, optional</span>
+<span class="sd">            The time delay from the current simulation time at which the message should be processed.</span>
+<span class="sd">            If ``None``, the ``at`` parameter will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># this sends a self message to the module at the specified time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">schedule_self_message</span><span class="p">(</span><span class="n">entity</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="n">at</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulatedEntity.is_scheduled"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.is_scheduled">[docs]</a>    <span class="k">def</span> <span class="nf">is_scheduled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a message is scheduled as a self message for this entity.</span>
+<span class="sd">        Calls internally the method :meth:`~omnetpypy.front_end.simulation.Simulation.is_scheduled`.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy.front_end.message.Message`</span>
+<span class="sd">            The message to be checked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">is_scheduled</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulatedEntity.send"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">port_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a message out on a specified port.</span>
+<span class="sd">        Calls internally the method :meth:`~omnetpypy.front_end.port.Port.tx_output`.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy.front_end.message.Message`</span>
+<span class="sd">            The message to be sent.</span>
+<span class="sd">        port_name : str</span>
+<span class="sd">            The name of the port on which the message should be sent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ports</span><span class="p">[</span><span class="n">port_name</span><span class="p">]</span><span class="o">.</span><span class="n">tx_output</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulatedEntity.cancel_scheduled"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.cancel_scheduled">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_scheduled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cancel a scheduled self message for this entity.</span>
+<span class="sd">        Calls internally the method :meth:`~omnetpypy.front_end.simulation.Simulation.cancel_scheduled`.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy.front_end.message.Message`</span>
+<span class="sd">            The message to be cancelled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_context</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">cancel_scheduled</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulatedEntity.initialize"><a class="viewcode-back" href="../../../omnetpypy/front_end/sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the entity right before the beginning of the simulation.</span>
+<span class="sd">        This method is automatically called by the simulation context.</span>
+
+<span class="sd">        The method is called 5 times, once for each step from 0 to 4. The step number is passed as a parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step : int, optional</span>
+<span class="sd">            The initialization step number. Default is 0. This parameter is used to allow entities to perform</span>
+<span class="sd">            different initialization actions at different steps, and synchronize with other entities.</span>
+<span class="sd">            The steps are numbered from 0 to 4, and the entity has the guarantee that the previous steps have</span>
+<span class="sd">            already been executed on all entities of the simulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

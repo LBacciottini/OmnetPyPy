@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy.front_end.simple_module &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../../static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../static/jquery.js"></script>
+        <script src="../../static/sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../static/documentation_options.js"></script>
+        <script src="../../static/doctools.js"></script>
+        <script src="../../static/sphinx_highlight.js"></script>
+    <script src="../../static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="omnetpypy.parser" href="../parser.html" />
+    <link rel="prev" title="omnetpypy.front_end.sim_entity" href="sim_entity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../../static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="front_end.html">omnetpypy.front_end</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="front_end.html#omnetpypy.front_end.__init__.Channel"><code class="docutils literal notranslate"><span class="pre">Channel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="front_end.html#omnetpypy.front_end.__init__.CompoundModule"><code class="docutils literal notranslate"><span class="pre">CompoundModule</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="front_end.html#omnetpypy.front_end.__init__.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="front_end.html#omnetpypy.front_end.__init__.SimpleModule"><code class="docutils literal notranslate"><span class="pre">SimpleModule</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="channel.html">omnetpypy.front_end.channel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compound_module.html">omnetpypy.front_end.compound_module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="message.html">omnetpypy.front_end.message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="port.html">omnetpypy.front_end.port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sim_entity.html">omnetpypy.front_end.sim_entity</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">omnetpypy.front_end.simple_module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#omnetpypy.front_end.simple_module.SimpleModule"><code class="docutils literal notranslate"><span class="pre">SimpleModule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#omnetpypy.front_end.simple_module.SimpleModule.connect"><code class="docutils literal notranslate"><span class="pre">SimpleModule.connect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#omnetpypy.front_end.simple_module.SimpleModule.emit_metric"><code class="docutils literal notranslate"><span class="pre">SimpleModule.emit_metric()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#omnetpypy.front_end.simple_module.SimpleModule.handle_message"><code class="docutils literal notranslate"><span class="pre">SimpleModule.handle_message()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities.html">omnetpypy.utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../yaml_formats/yaml_formats.html">Format and purpose of YAML files</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="front_end.html">omnetpypy.front_end</a></li>
+      <li class="breadcrumb-item active">omnetpypy.front_end.simple_module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../sources/omnetpypy/front_end/simple_module.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-omnetpypy.front_end.simple_module">
+<span id="omnetpypy-front-end-simple-module"></span><h1>omnetpypy.front_end.simple_module<a class="headerlink" href="#module-omnetpypy.front_end.simple_module" title="Permalink to this heading"></a></h1>
+<p>This module implements the SimpleModule abstract class.</p>
+<p>The class has the same semantic as its homonym in omnet++, and it is meant to be subclassed by the user to define
+its custom simulation modules.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="omnetpypy.front_end.simple_module.SimpleModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">omnetpypy.front_end.simple_module.</span></span><span class="sig-name descname"><span class="pre">SimpleModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../modules/omnetpypy/front_end/simple_module.html#SimpleModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.front_end.simple_module.SimpleModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity" title="omnetpypy.front_end.sim_entity.SimulatedEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulatedEntity</span></code></a></p>
+<p>This class is an abstract class that represents a simple module in the simulation.
+Simple modules are the basic building blocks of the simulation model. They can send and receive messages
+through their ports, and they can be connected to other modules through channels connecting their ports.
+The behavior of a simple module is defined by how it handles incoming messages. The user should subclass this class
+to define custom simulation modules.</p>
+<p>Simple modules are also in charge of recording metrics samples. The user can call the method
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">emit_metric()</span></code> at any time to record a metric sample.</p>
+<p>See <a class="reference internal" href="sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity" title="omnetpypy.front_end.sim_entity.SimulatedEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulatedEntity</span></code></a> for inherited attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>The name of the module. This name should be unique within the simulation.</p>
+</dd>
+<dt><strong>identifier</strong><span class="classifier">int</span></dt><dd><p>The identifier of the module. This identifier should be unique within the simulation.</p>
+</dd>
+<dt><strong>port_names</strong><span class="classifier">list of str</span></dt><dd><p>The names of the ports of the module.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.front_end.simple_module.SimpleModule.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_entity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../modules/omnetpypy/front_end/simple_module.html#SimpleModule.connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.front_end.simple_module.SimpleModule.connect" title="Permalink to this definition"></a></dt>
+<dd><p>Connect a port of this module to a port of another remote entity.
+The output of a port will be fed as input to the other port
+(up to the intermediate actions of a channel, if any).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>local_port</strong><span class="classifier">str</span></dt><dd><p>The name of the local port to be connected.</p>
+</dd>
+<dt><strong>remote_entity</strong><span class="classifier"><a class="reference internal" href="sim_entity.html#omnetpypy.front_end.sim_entity.SimulatedEntity" title="omnetpypy.front_end.sim_entity.SimulatedEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulatedEntity</span></code></a></span></dt><dd><p>The remote entity to which the port will be connected.</p>
+</dd>
+<dt><strong>remote_port</strong><span class="classifier">str</span></dt><dd><p>The name of the remote port to be connected.</p>
+</dd>
+<dt><strong>channel</strong><span class="classifier"><a class="reference internal" href="channel.html#omnetpypy.front_end.channel.Channel" title="omnetpypy.front_end.channel.Channel"><code class="xref py py-class docutils literal notranslate"><span class="pre">Channel</span></code></a> or None, optional</span></dt><dd><p>The channel through which the connection will be made, if any.
+If set, the local port is connected to the “A” port of the channel,
+and the “B” port of the channel is connected to the remote port.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.front_end.simple_module.SimpleModule.emit_metric">
+<span class="sig-name descname"><span class="pre">emit_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../modules/omnetpypy/front_end/simple_module.html#SimpleModule.emit_metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.front_end.simple_module.SimpleModule.emit_metric" title="Permalink to this definition"></a></dt>
+<dd><p>Record a metric sample in the simulation context.
+The metric name must be defined in the main configuration file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>The name of the metric.
+The metric name must be defined in the simulation configuration.</p>
+</dd>
+<dt><strong>value</strong><span class="classifier">Any</span></dt><dd><p>The value of the metric sample</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="omnetpypy.front_end.simple_module.SimpleModule.handle_message">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">handle_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../modules/omnetpypy/front_end/simple_module.html#SimpleModule.handle_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#omnetpypy.front_end.simple_module.SimpleModule.handle_message" title="Permalink to this definition"></a></dt>
+<dd><p>Handle a message received as input to a port.
+This method must be implemented by every subclass to define the behavior of the custom module.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>message</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></span></dt><dd><p>The message to be processed.</p>
+</dd>
+<dt><strong>port_name</strong><span class="classifier">str or None</span></dt><dd><p>The name of the port on which the message was received.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the message is a self message scheduled by this module.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sim_entity.html" class="btn btn-neutral float-left" title="omnetpypy.front_end.sim_entity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../parser.html" class="btn btn-neutral float-right" title="omnetpypy.parser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

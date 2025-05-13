@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>omnetpypy.front_end.port &mdash; OmnetPyPy alpha-0.1.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../static/graphviz.css" />
+
+  
+    <link rel="shortcut icon" href="../../../static/omnetpypy_icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../static/jquery.js"></script>
+        <script src="../../../static/sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../static/documentation_options.js"></script>
+        <script src="../../../static/doctools.js"></script>
+        <script src="../../../static/sphinx_highlight.js"></script>
+    <script src="../../../static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            OmnetPyPy
+              <img src="../../../static/omnetpypy.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/backends/backends.html">omnetpypy.backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/examples/examples.html">omnetpypy.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/front_end/front_end.html">omnetpypy.front_end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/parser.html">omnetpypy.parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/sim_log.html">omnetpypy.sim_log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/simulation.html">omnetpypy.simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../omnetpypy/utilities.html">omnetpypy.utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../yaml_formats/yaml_formats.html">Format and purpose of YAML files</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">OmnetPyPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">omnetpypy.front_end.port</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for omnetpypy.front_end.port</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements the :class:`~omnetpypy.front_end.port.Port` class.</span>
+<span class="sd">Every port is an object that can receive and send messages. Ports are the interface of modules with the outside world.</span>
+
+<span class="sd">Ports have the same semantic as in omnet++, except that</span>
+<span class="sd">every port is an object itself and does not have to be input or output only.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Port"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port">[docs]</a><span class="k">class</span> <span class="nc">Port</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class represents a port in the simulation model.</span>
+<span class="sd">    Ports are the interface of modules with the outside world.</span>
+<span class="sd">    Every port is an object that can receive and send messages.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the port. This name should be unique within the parent module.</span>
+<span class="sd">    parent : :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity`</span>
+<span class="sd">        The parent entity of the port, i.e., the entity to which the port belongs.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the port.</span>
+<span class="sd">    connected_port : :class:`~omnetpypy.front_end.port.Port` or None</span>
+<span class="sd">        The remote port to which this port is connected. If ``None``, the port is not connected.</span>
+<span class="sd">        See also :meth:`~omnetpypy.front_end.port.Port.connect`.</span>
+<span class="sd">    forwarded_input_port : :class:`~omnetpypy.front_end.port.Port` or None</span>
+<span class="sd">        The remote port to which the input of this port is forwarded. If ``None``, the port does not forward input.</span>
+<span class="sd">        See also :meth:`~omnetpypy.front_end.port.Port.forward_input`.</span>
+<span class="sd">    forwarded_output_port : :class:`~omnetpypy.front_end.port.Port` or None</span>
+<span class="sd">        The remote port to which the output of this port is forwarded. If ``None``, the port does not forward output.</span>
+<span class="sd">        See also :meth:`~omnetpypy.front_end.port.Port.forward_output`.</span>
+<span class="sd">    parent : :class:`~omnetpypy.front_end.sim_entity.SimulatedEntity`</span>
+<span class="sd">        The parent entity of the port.</span>
+<span class="sd">    subscribed_ports : list of :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">        The list of ports that are subscribed to this port.</span>
+<span class="sd">        Every subscribed port receives a copy of each message sent to this port.</span>
+<span class="sd">    is_subscribed : bool</span>
+<span class="sd">        A flag indicating whether this port is subscribed to another port.</span>
+<span class="sd">        See also :meth:`~omnetpypy.front_end.port.Port.subscribe_to`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_input_port</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_output_port</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribed_ports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_subscribed</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Port.connect"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect this port to another remote port.</span>
+<span class="sd">        The output of this port will be fed as input to the other port, and vice versa.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        port : :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">            The remote port to which this port will be connected.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this port is already connected to another port,</span>
+<span class="sd">            if the remote port is already connected to another port,</span>
+<span class="sd">            if this port is already subscribed to another port,</span>
+<span class="sd">            or if this port output is already forwarded to another port.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_subscribed</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot connect a port that is already subscribed to another port&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot connect to a remote port that is already connected&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot connect a port that is already connected&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_output_port</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot connect a port that is forwarding output&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">=</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Port.subscribe_to"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.subscribe_to">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subscribe this port to another remote port.</span>
+<span class="sd">        This port will receive a copy of each message sent to the remote port.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        port : :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">            The remote port to which this port will be subscribed.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this port is already connected to another port,</span>
+<span class="sd">            if the remote port is already connected to another port,</span>
+<span class="sd">            or if the remote port is forwarding output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot subscribe a port that is already connected&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">forwarded_output_port</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot subscribe to a port that is forwarding output&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot subscribe to a port that is already connected&quot;</span><span class="p">)</span>
+
+        <span class="n">port</span><span class="o">.</span><span class="n">subscribed_ports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_subscribed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Port.disconnect"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disconnect this port from another remote port.</span>
+<span class="sd">        If the two ports are not connected to any other port, this does nothing.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        port : :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">            The remote port from which this port will be disconnected.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this or the other port are connected to a third port and not mutually connected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check whether the two ports were actually connected</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">!=</span> <span class="n">port</span> <span class="ow">or</span> <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The two ports are not connected&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Port.forward_input"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.forward_input">[docs]</a>    <span class="k">def</span> <span class="nf">forward_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward the input of this port to another remote port.</span>
+<span class="sd">        The input of this port will be sent as input to the other port.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        port : :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">            The remote port to which the input of this port will be forwarded.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this port is already connected to another port,</span>
+<span class="sd">            or if the remote port is already connected to another port,</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot forward input from a port that is already connected&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot forward input to a port that is already connected&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_input_port</span> <span class="o">=</span> <span class="n">port</span></div>
+
+<div class="viewcode-block" id="Port.forward_output"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.forward_output">[docs]</a>    <span class="k">def</span> <span class="nf">forward_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward the output of this port to another remote port.</span>
+<span class="sd">        The output of this port will be sent as output to the other port.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        port : :class:`~omnetpypy.front_end.port.Port`</span>
+<span class="sd">            The remote port to which the output of this port will be forwarded.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this port is already connected to another port,</span>
+<span class="sd">            or if the remote port is already connected to another port,</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot forward input from a port that is already connected&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">connected_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot forward input to a port that is already connected&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_output_port</span> <span class="o">=</span> <span class="n">port</span></div>
+
+<div class="viewcode-block" id="Port.tx_output"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.tx_output">[docs]</a>    <span class="k">def</span> <span class="nf">tx_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a message as output of this port.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy.front_end.message.Message`</span>
+<span class="sd">            The message to be sent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_output_port</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_output_port</span><span class="o">.</span><span class="n">tx_output</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connected_port</span><span class="o">.</span><span class="n">tx_input</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subscribed_ports</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribed_ports</span><span class="p">:</span>
+                <span class="n">message_cpy</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span>
+                <span class="n">port</span><span class="o">.</span><span class="n">tx_input</span><span class="p">(</span><span class="n">message_cpy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># do nothing, the mesaage is lost</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Port.tx_input"><a class="viewcode-back" href="../../../omnetpypy/front_end/port.html#omnetpypy.front_end.port.Port.tx_input">[docs]</a>    <span class="k">def</span> <span class="nf">tx_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receive a message as input of this port.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : :class:`~omnetpypy:front_end.message.Message`</span>
+<span class="sd">            The message to be received.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_input_port</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forwarded_input_port</span><span class="o">.</span><span class="n">tx_input</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">is_listening</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">sim_context</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">schedule_port_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># do nothing, the mesaage is lost</span>
+            <span class="k">pass</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Leonardo Bacciottini.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
